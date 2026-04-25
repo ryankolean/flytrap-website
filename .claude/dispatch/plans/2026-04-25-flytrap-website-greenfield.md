@@ -74,11 +74,12 @@ Speculative ("build-then-offer") website for The Fly Trap diner in Ferndale, Mic
 | Group | Tasks | Parallelism | Est. Total Tokens |
 |-------|-------|-------------|-------------------|
 | A (Foundation) | 1, 2, 3 | All parallel | ~120,000 |
-| B (Content + Shared libs) | 4, 5, 6, 7 | All parallel after A | ~180,000 |
+| A→B Merge | 3.5 | Sequential | ~5,000 |
+| B (Content + Shared libs) | 4, 5, 6, 7 | All parallel after 3.5 | ~180,000 |
 | C (Pages + Components) | 8, 9, 10, 11, 12, 13, 14, 15 | All parallel after B | ~360,000 |
 | D (Integrations) | 16, 17, 18 | All parallel after C | ~110,000 |
 | FINAL (Audit + Deploy) | 19, 20, 21 | Sequential | ~80,000 |
-| **Total** | **21 tasks** | | **~850,000** |
+| **Total** | **22 tasks** | | **~855,000** |
 
 ## Model Budget
 
@@ -151,7 +152,7 @@ None (low-risk scaffolding). If `create-next-app` would overwrite existing files
 Set up Sanity Studio mounted at `/studio` route plus the client utilities for content fetching.
 
 Steps:
-1. Add to `package.json` dependencies: `sanity@latest`, `next-sanity@latest`, `@sanity/client@latest`, `@sanity/image-url@latest`, `@sanity/vision@latest`, `@sanity/orderable-document-list@latest`, `styled-components` (Sanity v3 peer dep).
+1. Write Sanity-only deps to `.dispatch/sanity-deps.json` (NOT directly into `package.json` — Task 1 owns that file in Group A). Format: `{ "dependencies": { "sanity": "latest", "next-sanity": "latest", "@sanity/client": "latest", "@sanity/image-url": "latest", "@sanity/vision": "latest", "@sanity/orderable-document-list": "latest", "styled-components": "latest" }, "devDependencies": {} }`. Task 3.5 merges these after Group A.
 2. Create `sanity.config.ts` at repo root with:
    - `projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID!`
    - `dataset: process.env.NEXT_PUBLIC_SANITY_DATASET!`
@@ -230,7 +231,44 @@ Steps:
 | MODIFY | README.md | Quick start + status badge |
 
 #### Risk Flags
-None.
+Add `gitleaks` (or equivalent) secret scan as a CI step to catch accidental `.env` / token commits.
+
+---
+
+### Task 3.5: Group A → B Merger (deterministic, sequential)
+
+**Execution group:** A→B (sequential, single worker)
+**Depends on:** Tasks 1, 2, 3 all complete
+**Estimated tokens:** 5,000
+**Recommended model:** Haiku
+**Risk level:** low
+
+#### Instructions
+Merge Sanity deps from `.dispatch/sanity-deps.json` into the canonical `package.json` produced by Task 1, then run install + verify.
+
+Steps:
+1. Read `.dispatch/sanity-deps.json`. Read `package.json`.
+2. Merge `dependencies` and `devDependencies` (Sanity entries override on key collision; expected: no collisions).
+3. Write merged `package.json`.
+4. Run `pnpm install`.
+5. Run `pnpm typecheck && pnpm build`. Both must pass.
+6. Delete `.dispatch/sanity-deps.json`.
+
+#### Acceptance Criteria
+- [ ] `package.json` contains all Task 1 deps AND all Sanity deps from `.dispatch/sanity-deps.json`
+- [ ] `pnpm install` succeeds
+- [ ] `pnpm build` succeeds (Studio route compiles)
+- [ ] `.dispatch/sanity-deps.json` deleted
+
+#### File Manifest
+| Action | Path | Notes |
+|--------|------|-------|
+| READ   | .dispatch/sanity-deps.json, package.json | Inputs |
+| MODIFY | package.json | Merged deps |
+| DELETE | .dispatch/sanity-deps.json | Cleanup |
+
+#### Risk Flags
+None. Group B does not start until this task lands.
 
 ---
 
@@ -300,11 +338,13 @@ Build a single shared library that generates every JSON-LD block consumed by the
 
 Steps:
 1. Create `src/lib/jsonld/` directory with one file per schema:
-   - `restaurant.ts` — Restaurant + LocalBusiness merged graph
+   - `restaurant.ts` — Restaurant + LocalBusiness merged graph. LocalBusiness includes `amenityFeature: [{ "@type": "LocationFeatureSpecification", name: "Outdoor seating", value: true }, { name: "Dog-friendly", value: true }, { name: "Wheelchair accessible entrance", value: true }, { name: "Free parking lot", value: true }]`
    - `menu.ts` — Menu, MenuSection, MenuItem (each MenuItem includes `suitableForDiet` mapped from Sanity dietary flags: `vegetarian` → `https://schema.org/VegetarianDiet`, etc.)
    - `faqPage.ts` — FAQPage with mainEntity Question/Answer
    - `newsArticle.ts` — for press entries that are articles
    - `review.ts` — for press entries that are reviews
+   - `aboutPage.ts` — AboutPage + Organization (foundingDate `"2004-12-28"`, founder array `[{ "@type": "Person", name: "Kara McMillian" }, { "@type": "Person", name: "Gavin McMillian" }]`, knowsAbout `["American diner cuisine", "Diners Drive-Ins and Dives"]`)
+   - `speakable.ts` — SpeakableSpecification for /about (selects H1 + first paragraph of return story) and /visit (selects hours + address blocks)
    - `index.ts` — re-exports + a `<JsonLd>` React Server Component helper
 2. Each generator is a pure function: `(input: SanityType) => SchemaOrgObject`. No fetching inside. Strict types.
 3. Add the canonical `@context: "https://schema.org"` and `@type` to every output.
@@ -313,8 +353,11 @@ Steps:
 6. Validate output against the Schema.org spec by inspection — every required property for each `@type` is present (use schema.org's Type pages for reference).
 
 #### Acceptance Criteria
-- [ ] Every JSON-LD `@type` listed in scope has a generator
+- [ ] All 8 generator files exist (restaurant, menu, faqPage, newsArticle, review, aboutPage, speakable, index)
 - [ ] `MenuItem.suitableForDiet` correctly maps Sanity dietary flags to Schema.org URLs
+- [ ] LocalBusiness output includes `amenityFeature` array (4 entries)
+- [ ] AboutPage output includes Organization with foundingDate, founder, knowsAbout
+- [ ] Speakable spec wired into /about and /visit page heads
 - [ ] `<JsonLd>` helper escapes the closing-script byte sequence (verified by unit test)
 - [ ] Unit test coverage on every generator (>80% line)
 - [ ] `pnpm test` passes
@@ -374,11 +417,11 @@ None.
 
 ---
 
-### Task 7: Layout, Nav, Footer, Theme Provider
+### Task 7: Layout, Nav, Footer, Theme Provider, Metadata Helper, Error Boundaries
 
 **Execution group:** B
-**Depends on:** Task 1 (scaffold)
-**Estimated tokens:** 45,000
+**Depends on:** Tasks 1, 2 (scaffold + Sanity client)
+**Estimated tokens:** 55,000
 **Recommended model:** Sonnet
 **Risk level:** low
 
@@ -405,14 +448,20 @@ Steps:
    - Disclaimer: site under construction (TODO: remove at handoff)
 4. Create `src/components/layout/ThemeZoneProvider.tsx` (client component) and `src/components/layout/ThemeZone.tsx` (server component wrapper). Each `<ThemeZone zone="red" | "gray" | "mustard">` sets section-scoped CSS vars per the three-zone model. Hero/red sections, menu/gray, about/mustard.
 5. Wire everything: `layout.tsx` renders `<Nav />` + `{children}` + `<Footer />`.
+6. Create `src/lib/metadata.ts` exporting `pageMetadata({ title, description, path, ogImage? }): Metadata`. Returns Next.js `Metadata` with: title (suffix ` | The Fly Trap`, total ≤60 chars; truncate input title accordingly), description (≤160 chars; assert at runtime), `alternates.canonical` from `siteSettings.canonicalDomain` + path, `openGraph` (title, description, url, siteName, locale `en_US`, type `website`, images `[{ url: ogImage ?? '/og-default.png', width: 1200, height: 630 }]`), `twitter` (card `summary_large_image`, title, description, images). Every route's `export const metadata = pageMetadata({...})`.
+7. Create `src/app/error.tsx` (route-level error boundary, client component) and `src/app/not-found.tsx`. Each renders a fly spot-illustration + plain-text fallback (no AI-slop). For Sanity-fetch failures inside Server Components, wrap calls in `try { ... } catch (e) { console.error('sanity fetch failed', e); return null }` and the consumer renders a small "Content updating — refresh in a moment" placeholder rather than crashing.
+8. Create a stub `public/og-default.png` (1200×630) — flat brand-red background with the wordmark. Mark TODO for replacement during T18 polish.
 
 #### Acceptance Criteria
 - [ ] Mobile nav drawer opens/closes via hamburger; closed by default
-- [ ] Open/closed badge correctly reflects time vs hours
+- [ ] Open/closed badge correctly reflects time vs hours (consumes Sanity siteSettings)
 - [ ] Three-zone CSS-var scoping works: a `<ThemeZone zone="red">` section's `--color-bg` differs from a `<ThemeZone zone="gray">` section
 - [ ] Restaurant + LocalBusiness JSON-LD renders in the document head site-wide
 - [ ] Footer phone, hours, social link match siteSettings
 - [ ] No emojis in any rendered string
+- [ ] `pageMetadata()` helper exported from `src/lib/metadata.ts` and unit-tested for length caps
+- [ ] `error.tsx` and `not-found.tsx` render without crashing
+- [ ] `public/og-default.png` exists (1200×630)
 
 #### File Manifest
 | Action | Path | Notes |
@@ -454,6 +503,7 @@ Steps:
 3. Wire both sections into `src/app/page.tsx` with `<ThemeZone zone="red">` for the hero and `<ThemeZone zone="mustard">` for Buzzin' Since 2004.
 
 #### Acceptance Criteria
+- [ ] `/` exports `metadata` via `pageMetadata()` with brand-anchor title and description
 - [ ] Hero renders all three taglines with the primary (`a finer diner`) most prominent
 - [ ] Hero rotation cycles only the 5 canonical paintings; bathroom-context paintings never appear
 - [ ] `prefers-reduced-motion` disables rotation
@@ -503,6 +553,7 @@ Steps:
 4. Photographs: each menu item gets the photo from Sanity if present, else a fly-spot-illustration placeholder (see Task 13 for the placeholder set).
 
 #### Acceptance Criteria
+- [ ] `/menu` exports `metadata` via `pageMetadata()` with route-specific title and description
 - [ ] Menu Tease shows all 5 chapters with snap-scroll on mobile
 - [ ] `/menu` renders all 13 sections + 63 items from the seed data
 - [ ] Items flagged `needsReverification` show "Ask your server" instead of a fabricated price
@@ -539,7 +590,7 @@ Build the Toast "Coming Soon" stub with email intent-capture posting to Sanity.
 Steps:
 1. Create `src/components/home/OrderComingSoon.tsx`:
    - Card with "Online ordering — coming soon" copy (verbatim from design doc §9 §3.5)
-   - Greyscale "Powered by Toast" attribution (text-only, no Toast logo asset — they're trademarked; use the wordmark in the Toast sans approximation)
+   - Greyscale plain-text "Powered by Toast" attribution — system font, no logo asset, no Toast brand color, no wordmark approximation. Toast is a registered trademark of Toast Inc.; render only the words.
    - Email intent-capture form: single email field + "Notify me" submit
    - Microcopy under: "We'll send one email when ordering goes live. No marketing."
 2. Create `src/app/order/page.tsx` rendering the same component at the route level (so the home stub and `/order` are visually consistent).
@@ -553,6 +604,7 @@ Steps:
 5. Submitted emails are not displayed back; success state is "Thanks. We'll be in touch."
 
 #### Acceptance Criteria
+- [ ] `/order` exports `metadata` via `pageMetadata()`
 - [ ] Form submits a valid email and creates a Sanity `intentCaptureSubmission` document
 - [ ] Invalid email shows inline error without page reload
 - [ ] Submitting the honeypot field is silently rejected (returns `{ ok: true }` but skips the Sanity write)
@@ -602,6 +654,7 @@ Steps:
 4. About page uses `<ThemeZone zone="mustard">`.
 
 #### Acceptance Criteria
+- [ ] `/about` exports `metadata` via `pageMetadata()`; AboutPage + Speakable JSON-LD rendered in head
 - [ ] About page top is the Fly Art Class painting with no competing headline
 - [ ] All 17 paintings render in the catalog grid
 - [ ] Bathroom-context paintings are visually grouped under a clear divider
@@ -646,6 +699,7 @@ Steps:
 3. Add a TODO comment at the top of `/shop/page.tsx`: "Replace with real product cards + Shopify Lite or Square integration post-handoff."
 
 #### Acceptance Criteria
+- [ ] `/shop` exports `metadata` via `pageMetadata()`
 - [ ] All 3 retail cards render with voice-matched descriptions
 - [ ] No "Add to cart" button is wired — all CTAs are "Notify me" or stubbed
 - [ ] Intent-capture form on /shop posts to Sanity with `source: "shop"`
@@ -725,6 +779,7 @@ Steps:
    - Two visual styles: NewsArticle entries (long-form, with body) and Review entries (pull-quote style)
    - Each entry includes JSON-LD per Task 5
    - Pull-quote bank section: featured short pull-quotes per `docs/02-press-page-spec.md`
+   - "Press inquiries" block at bottom with `mailto:` stub (default `mailto:press@theflytrapferndale.com` — TODO open-question:5, replace with confirmed address at handoff)
 2. `src/app/faq/page.tsx`:
    - All `faqEntry` documents rendered as expandable Q&A
    - Entries with `needsContent: true` are hidden (do not render with empty answer)
@@ -736,6 +791,8 @@ Steps:
 4. Each route uses an appropriate `<ThemeZone>` (press: gray, faq: gray, visit: mustard).
 
 #### Acceptance Criteria
+- [ ] All three routes export `metadata` via `pageMetadata()`
+- [ ] `/visit` LocalBusiness JSON-LD includes amenityFeature array (Outdoor seating, Dog-friendly, Wheelchair accessible entrance, Free parking lot)
 - [ ] All three routes render real content from Sanity
 - [ ] FAQ entries with `needsContent: true` are hidden (not rendered as empty)
 - [ ] Pull-quotes on `/press` match `docs/02-press-page-spec.md` verbatim
@@ -883,7 +940,7 @@ None.
 Sweep the build to meet the Lighthouse ≥95 (mobile) and WCAG 2.2 AA bars.
 
 Steps:
-1. Run Lighthouse against the dev server (Vercel preview) for: `/`, `/menu`, `/order`, `/about`, `/press`, `/faq`, `/visit`. Document scores in `docs/lighthouse-baseline.md`.
+1. Run Lighthouse against `pnpm build && pnpm start` on `localhost:3000` (production-mode build, NOT `next dev`) for: `/`, `/menu`, `/order`, `/about`, `/press`, `/faq`, `/visit`. Document scores in `docs/lighthouse-baseline.md`. After Task 21 deploys, re-run against the Vercel preview and append a second column to the table.
 2. Address any score below 95 on Performance, Accessibility, Best Practices, SEO. Common fixes:
    - Replace any `<img>` with `next/image`; provide explicit `width`, `height`, `sizes`
    - Set `priority` on the LCP image (hero painting on `/`)
@@ -1092,6 +1149,8 @@ For each task, provide Dispatch with:
 ```
 Group A (parallel): 1, 2, 3
    ↓
+A→B Merge (sequential): 3.5
+   ↓
 Group B (parallel): 4, 5, 6, 7
    ↓
 Group C (parallel): 8, 9, 10, 11, 12, 13, 14, 15
@@ -1101,4 +1160,30 @@ Group D (parallel): 16, 17, 18
 Group FINAL (sequential): 19 → 20 → 21
 ```
 
-Total: 21 tasks, 5 groups, ~850K tokens, mix of Haiku/Sonnet/Opus per task.
+Total: 22 tasks, 6 groups, ~855K tokens, mix of Haiku/Sonnet/Opus per task.
+
+### Deferred (out of scope for spec build)
+
+- **Motion catalog from design doc §10** (page-load fly silhouette, checkerboard scroll-wipe, marble-bloom card hover, swat-pulse on CTAs, fly spinner, logo-tap easter egg). Reason: motion polish without final commissioned illustrations risks looking thin; defer cleanly to a post-handoff "Phase 1.5: motion polish" task if Kara engages. Document the deferral in `docs/handoff-checklist.md` so the design-doc commitment is tracked, not silently dropped.
+- **Live integrations** (Instagram OAuth, Toast online ordering, Shopify/Square commerce) — explicit hard constraint per CLAUDE.md.
+- **Professional photography, commissioned spot illustrations, custom domain DNS** — return-visit / handoff scope.
+
+---
+
+## Design-Doc-Review Gate Log (2026-04-25)
+
+Plan was reviewed via the `design-doc-review` skill before Dispatch handoff. 11 autoheals applied:
+
+1. Added Task 3.5 (deterministic package.json merger) — resolves CRITICAL parallel-write race between Tasks 1 and 2.
+2. Expanded Task 5 generators from 6 to 8 (added `aboutPage.ts` and `speakable.ts` per docs/03 AEO requirements).
+3. Added per-route `pageMetadata()` helper to Task 7 plus metadata acceptance criteria on every page task (T8, T9, T10, T11, T12, T14).
+4. Fixed Task 18 Lighthouse target (`pnpm build && pnpm start` locally, NOT Vercel preview which doesn't exist until T21).
+5. Fixed Task 7 dependency (now `Tasks 1, 2` — was missing Sanity dependency for the Open badge).
+6. Stripped Toast wordmark approximation in Task 10 (plain text only — trademark hygiene).
+7. Added `error.tsx`, `not-found.tsx`, and Sanity-fetch try/catch pattern to Task 7.
+8. Added `amenityFeature` array to Task 5 LocalBusiness output and Task 14 Visit acceptance.
+9. Added press `mailto:` stub block to Task 14 (OPEN-QUESTIONS #5).
+10. Documented the design-doc §10 motion catalog as an explicit Phase 1.5 deferral.
+11. Added `gitleaks` (or equivalent) secret scan to Task 3 CI risk flags.
+
+Confidence post-autoheal: HIGH.
