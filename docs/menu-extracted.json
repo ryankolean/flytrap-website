@@ -1,0 +1,677 @@
+{
+  "source": "physical menu, capture 2026-04-25",
+  "sections": [
+    {
+      "id": "all-day-eggs",
+      "name": "All Day Eggs",
+      "description": "",
+      "items": [
+        {
+          "id": "two-eggs-and-toast",
+          "name": "Two Eggs and Toast",
+          "description": "Choose White Toast, English Muffin or Pancakes, Toast and Jelly, or Hash Browns with Choice of (Sausage, Bacon, or Ham)",
+          "price": "11.95",
+          "dietary_flags": [],
+          "modifiers": ["choice of toast type", "choice of meat"],
+          "needs_reverification": false
+        },
+        {
+          "id": "omelet",
+          "name": "Omelet",
+          "description": "Ham, Cheese, Mushrooms, Peppers, Spinach, Tomatoes, Onions & Combination w/ Cheese, Bacon or Sausage",
+          "price": "13.95",
+          "dietary_flags": [],
+          "modifiers": ["choice of fillings"],
+          "needs_reverification": false
+        },
+        {
+          "id": "breakfast-burrito",
+          "name": "Breakfast Burrito",
+          "description": "Diced Potatoes, Two Eggs, Sausage, Bacon & Onions Smothered with Cheese and Salsa",
+          "price": "13.95",
+          "dietary_flags": [],
+          "modifiers": [],
+          "needs_reverification": false
+        },
+        {
+          "id": "breakfast-sandwich",
+          "name": "Breakfast Sandwich",
+          "description": "Two Pancakes, Two Eggs, Two Sausages, Two Pieces of Bacon or Ham",
+          "price": "13.95",
+          "dietary_flags": [],
+          "modifiers": [],
+          "needs_reverification": false
+        },
+        {
+          "id": "country-scramble",
+          "name": "Country Scramble",
+          "description": "Two Eggs Scrambled with Diced Ham, Sausage, Peppers, Onions & Mushrooms Mixed with Hash Browns and Cheese",
+          "price": "13.95",
+          "dietary_flags": [],
+          "modifiers": [],
+          "needs_reverification": false
+        },
+        {
+          "id": "scrambled-eggs-with-toast",
+          "name": "Scrambled Eggs with Toast",
+          "description": "Two Scrambled Eggs with Choice of Sausage, Bacon, or Ham",
+          "price": "11.95",
+          "dietary_flags": [],
+          "modifiers": ["choice of meat"],
+          "needs_reverification": false
+        },
+        {
+          "id": "waffle",
+          "name": "Waffle",
+          "description": "A Fresh & Hot Waffle",
+          "price": "11.95",
+          "dietary_flags": ["vegetarian"],
+          "modifiers": [],
+          "needs_reverification": false
+        },
+        {
+          "id": "pancakes",
+          "name": "Pancakes",
+          "description": "Two Large & Fluffy Pancakes",
+          "price": "11.95",
+          "dietary_flags": ["vegetarian"],
+          "modifiers": [],
+          "needs_reverification": false
+        },
+        {
+          "id": "corned-beef-hash",
+          "name": "Corned Beef Hash",
+          "description": "Served with Two Eggs and Toast",
+          "price": "14.95",
+          "dietary_flags": [],
+          "modifiers": [],
+          "needs_reverification": false
+        },
+        {
+          "id": "hash-browns",
+          "name": "Hash Browns",
+          "description": "Crispy Hash Browns with Two Eggs and Choice of Sausage, Bacon, or Ham",
+          "price": "11.95",
+          "dietary_flags": [],
+          "modifiers": [],
+          "needs_reverification": false
+        }
+      ]
+    },
+    {
+      "id": "lunch-special-everyday-until-3pm",
+      "name": "Lunch Special Everyday Until 3pm",
+      "description": "",
+      "items": [
+        {
+          "id": "hamburger",
+          "name": "Hamburger",
+          "description": "Served with Fries & a Fountain Drink or with Juice",
+          "price": "13.95",
+          "dietary_flags": [],
+          "modifiers": [],
+          "needs_reverification": false
+        },
+        {
+          "id": "cheeseburger",
+          "name": "Cheeseburger",
+          "description": "Served with Fries & a Fountain Drink or with Juice",
+          "price": "13.95",
+          "dietary_flags": [],
+          "modifiers": [],
+          "needs_reverification": false
+        },
+        {
+          "id": "grilled-cheese",
+          "name": "Grilled Cheese",
+          "description": "With Two Slices of American Cheese Bread, Butter, Mayo, Salsa & or Chips of Your Choice",
+          "price": "11.95",
+          "dietary_flags": ["vegetarian"],
+          "modifiers": [],
+          "needs_reverification": false
+        },
+        {
+          "id": "blt",
+          "name": "B.L.T.",
+          "description": "Three Strips of Seasoned Ground Beef, Three Fresh Lettuce, Sliced Tomato & Fresh Mayo w/ Fries or Chips",
+          "price": "11.95",
+          "dietary_flags": [],
+          "modifiers": [],
+          "needs_reverification": true
+        },
+        {
+          "id": "roast-beef-sandwich",
+          "name": "Roast Beef Sandwich",
+          "description": "Sliced Roast Beef with our Special Sauce Served with Fries or Chips of Your Choice",
+          "price": "13.95",
+          "dietary_flags": [],
+          "modifiers": [],
+          "needs_reverification": false
+        },
+        {
+          "id": "pulled-pork-sandwich",
+          "name": "Pulled Pork Sandwich",
+          "description": "Tender Pulled Pork & Onions Smothered with Cheese, Pepper Onion & BBQ Sauce on a Toasted Bun Served with Fries or Chips",
+          "price": "13.95",
+          "dietary_flags": [],
+          "modifiers": [],
+          "needs_reverification": false
+        },
+        {
+          "id": "turkey-club-sandwich",
+          "name": "Turkey Club Sandwich",
+          "description": "with Sliced Cucumbers, Cheese Lettuce, Salsa or Chips of Your Choice",
+          "price": "13.95",
+          "dietary_flags": [],
+          "modifiers": [],
+          "needs_reverification": false
+        }
+      ]
+    },
+    {
+      "id": "dinner-items",
+      "name": "Dinner Items",
+      "description": "",
+      "items": [
+        {
+          "id": "fish-and-chips",
+          "name": "Fish and Chips",
+          "description": "Home Breaded Fish or Chicken with Lemon and Malt Vinegar, Tartar Sauce, French Fried Potatoes, Coleslaw",
+          "price": "18.95",
+          "dietary_flags": [],
+          "modifiers": ["choice of fish or chicken"],
+          "needs_reverification": false
+        },
+        {
+          "id": "ribeye-steak",
+          "name": "Ribeye Steak",
+          "description": "Tender Grilled Steak, Steak, Sautéed Mushrooms, Onions, Salad Coleslaw, Gravy, Vegetables & Mash Peas with Garlic Mashed Potatoes or Fries",
+          "price": null,
+          "price_unclear": true,
+          "dietary_flags": [],
+          "modifiers": ["choice of side"],
+          "needs_reverification": true
+        },
+        {
+          "id": "roasted-chicken",
+          "name": "Roasted Chicken",
+          "description": "Freshly Roasted Half Chicken with Vegetables, Mash Peas with Garlic Mashed Potatoes or Fries",
+          "price": null,
+          "price_unclear": true,
+          "dietary_flags": [],
+          "modifiers": ["choice of side"],
+          "needs_reverification": true
+        },
+        {
+          "id": "pork-chops",
+          "name": "Pork Chops",
+          "description": "Tender Grilled Pork Chops, Sautéed Mushrooms, Onions, Salad Coleslaw, Gravy & Vegetables with Garlic Mashed Potatoes or Fries",
+          "price": null,
+          "price_unclear": true,
+          "dietary_flags": [],
+          "modifiers": ["choice of side"],
+          "needs_reverification": true
+        }
+      ]
+    },
+    {
+      "id": "sandwiches",
+      "name": "Sandwiches",
+      "description": "Served with Fries or Chips",
+      "items": [
+        {
+          "id": "philly-cheesesteak",
+          "name": "Philly Cheesesteak",
+          "description": "Sliced Steak, Sautéed Mushroom, Onion, Peppers, Lettuce, Tomato, Salad Cucumber, Cheese & Mash Peas with Garlic",
+          "price": "14.95",
+          "dietary_flags": [],
+          "modifiers": [],
+          "needs_reverification": false
+        },
+        {
+          "id": "chicken-sandwich",
+          "name": "Chicken Sandwich",
+          "description": "Grilled Chicken Breast, Sautéed Mushrooms, Onions, Peppers, Salad, Tomatoes & Dressing Stuffed in a Pita or Sandwich",
+          "price": "14.95",
+          "dietary_flags": [],
+          "modifiers": ["choice of bread"],
+          "needs_reverification": false
+        },
+        {
+          "id": "gyro",
+          "name": "Gyro",
+          "description": "Sliced Beef and Lamb, Sautéed Onions, Peppers, Salad, Tomatoes & Tzatziki in a Pita",
+          "price": "13.95",
+          "dietary_flags": [],
+          "modifiers": [],
+          "needs_reverification": false
+        },
+        {
+          "id": "patty-melt",
+          "name": "Patty Melt",
+          "description": "Ground Beef, Swiss Cheese, Sautéed Mushrooms & Onions, Pepper, Mustard, Tomato & Dressing on Rye",
+          "price": "13.95",
+          "dietary_flags": [],
+          "modifiers": [],
+          "needs_reverification": false
+        },
+        {
+          "id": "hot-pastrami",
+          "name": "Hot Pastrami",
+          "description": "Hot Pastrami, Sautéed Mushrooms & Onions, Pepper, Mustard, Tomato & Dressing on Rye",
+          "price": "13.95",
+          "dietary_flags": [],
+          "modifiers": [],
+          "needs_reverification": false
+        },
+        {
+          "id": "tuna-melt",
+          "name": "Tuna Melt",
+          "description": "Tuna Salad, Cheese, Sautéed Mushrooms & Onions, Pepper, Mustard, Tomato & Dressing on Rye",
+          "price": "13.95",
+          "dietary_flags": [],
+          "modifiers": [],
+          "needs_reverification": false
+        },
+        {
+          "id": "portobello-mushroom-sandwich",
+          "name": "Portobello Mushroom Sandwich",
+          "description": "Grilled Portobello Mushroom, Sautéed Mushrooms, Onions, Peppers, Salad, Tomatoes & Dressing Stuffed in a Pita or Sandwich",
+          "price": "13.95",
+          "dietary_flags": ["vegetarian", "vegan"],
+          "modifiers": ["choice of bread"],
+          "needs_reverification": false
+        }
+      ]
+    },
+    {
+      "id": "salads",
+      "name": "Salads",
+      "description": "",
+      "items": [
+        {
+          "id": "garden-salad",
+          "name": "Garden Salad",
+          "description": "Fresh Greens, Lettuce, Tomato, Cucumber, Peppers, Onions, Olives & Croutons",
+          "price": "11.95",
+          "dietary_flags": ["vegetarian", "vegan"],
+          "modifiers": [],
+          "needs_reverification": false
+        },
+        {
+          "id": "caesar-salad",
+          "name": "Caesar Salad",
+          "description": "Fresh Greens with Parmesan Cheese & Croutons",
+          "price": "13.95",
+          "dietary_flags": ["vegetarian"],
+          "modifiers": [],
+          "needs_reverification": false
+        },
+        {
+          "id": "cobb-salad",
+          "name": "Cobb Salad",
+          "description": "Fresh Greens, Turkey, Bacon, Bleu Cheese, Avocado, Tomato, Egg & Croutons",
+          "price": "15.95",
+          "dietary_flags": [],
+          "modifiers": [],
+          "needs_reverification": false
+        },
+        {
+          "id": "greek-salad",
+          "name": "Greek Salad",
+          "description": "Fresh Greens, Onion & Cucumber, Feta Cheese & Olives, Tomato & Dressing",
+          "price": "13.95",
+          "dietary_flags": ["vegetarian"],
+          "modifiers": [],
+          "needs_reverification": false
+        },
+        {
+          "id": "tuna-salad",
+          "name": "Tuna Salad",
+          "description": "Fresh Greens with Tuna, Olives, Tomato & Cucumbers with Dressing",
+          "price": "15.95",
+          "dietary_flags": [],
+          "modifiers": [],
+          "needs_reverification": false
+        }
+      ]
+    },
+    {
+      "id": "appetizers",
+      "name": "Appetizers",
+      "description": "",
+      "items": [
+        {
+          "id": "cheese-and-crackers",
+          "name": "Cheese and Crackers",
+          "description": "Assorted Cheese and Crackers",
+          "price": "9.95",
+          "dietary_flags": ["vegetarian"],
+          "modifiers": [],
+          "needs_reverification": false
+        },
+        {
+          "id": "mozzarella-sticks",
+          "name": "Mozzarella Sticks",
+          "description": "Golden Fried Mozzarella Sticks",
+          "price": "9.95",
+          "dietary_flags": ["vegetarian"],
+          "modifiers": [],
+          "needs_reverification": false
+        },
+        {
+          "id": "fried-calamari",
+          "name": "Fried Calamari",
+          "description": "Golden Fried Calamari with Marinara",
+          "price": "11.95",
+          "dietary_flags": [],
+          "modifiers": [],
+          "needs_reverification": false
+        },
+        {
+          "id": "chicken-wings",
+          "name": "Chicken Wings",
+          "description": "Roasted Chicken Wings Fully Cooked and Sauced, Buffalo, Garlic & BBQ, Sautéed Mushroom, Lemon & Herb with Ranch & Blue Cheese Dressing",
+          "price": "13.95",
+          "dietary_flags": [],
+          "modifiers": ["choice of sauce"],
+          "needs_reverification": false
+        },
+        {
+          "id": "breaded-mushrooms",
+          "name": "Breaded Mushrooms",
+          "description": "Mushrooms Sautéed and Breaded, Pepper, Onion, Spinach & Preservatives Stuffed in a One-Sandwich",
+          "price": "10.95",
+          "dietary_flags": ["vegetarian"],
+          "modifiers": [],
+          "needs_reverification": true
+        },
+        {
+          "id": "onion-rings",
+          "name": "Onion Rings",
+          "description": "Onion Rings or Cha Chim Salsa Served with Fries or Chips",
+          "price": "9.95",
+          "dietary_flags": ["vegetarian"],
+          "modifiers": [],
+          "needs_reverification": true
+        },
+        {
+          "id": "french-fries",
+          "name": "French Fries",
+          "description": "Our Fresh Hand Cut Fries",
+          "price": "5.95",
+          "dietary_flags": ["vegetarian", "vegan"],
+          "modifiers": [],
+          "needs_reverification": false
+        }
+      ]
+    },
+    {
+      "id": "fly-mimosas",
+      "name": "Fly Mimosas",
+      "description": "All items served on brunch menu only. Mimosas made with fresh-squeezed orange juice.",
+      "items": [
+        {
+          "id": "classic-mimosa",
+          "name": "Classic",
+          "description": "Orange Juice & Champagne",
+          "price": "6.95",
+          "dietary_flags": [],
+          "modifiers": [],
+          "needs_reverification": false
+        },
+        {
+          "id": "strawberry-mimosa",
+          "name": "Strawberry",
+          "description": "Strawberry Juice & Champagne",
+          "price": "7.95",
+          "dietary_flags": [],
+          "modifiers": [],
+          "needs_reverification": false
+        },
+        {
+          "id": "peach-mimosa",
+          "name": "Peach",
+          "description": "Peach Juice & Champagne",
+          "price": "7.95",
+          "dietary_flags": [],
+          "modifiers": [],
+          "needs_reverification": false
+        },
+        {
+          "id": "mango-mimosa",
+          "name": "Mango",
+          "description": "Mango Juice & Champagne",
+          "price": "7.95",
+          "dietary_flags": [],
+          "modifiers": [],
+          "needs_reverification": false
+        }
+      ]
+    },
+    {
+      "id": "cocktails",
+      "name": "Cocktails",
+      "description": "The Fly Berry on Tap. Fly Passion Fruit Margarita. Fly Lemonade. Scream Fly Coffee.",
+      "items": [
+        {
+          "id": "fly-berry-on-tap",
+          "name": "Fly Berry on Tap",
+          "description": "ask our bartender",
+          "price": null,
+          "price_unclear": true,
+          "dietary_flags": [],
+          "modifiers": [],
+          "needs_reverification": false
+        },
+        {
+          "id": "fly-passion-fruit-margarita",
+          "name": "Fly Passion Fruit Margarita",
+          "description": "ask our bartender",
+          "price": null,
+          "price_unclear": true,
+          "dietary_flags": [],
+          "modifiers": [],
+          "needs_reverification": false
+        },
+        {
+          "id": "fly-lemonade",
+          "name": "Fly Lemonade",
+          "description": "ask our bartender",
+          "price": null,
+          "price_unclear": true,
+          "dietary_flags": [],
+          "modifiers": [],
+          "needs_reverification": false
+        },
+        {
+          "id": "scream-fly-coffee",
+          "name": "Scream Fly Coffee",
+          "description": "ask our bartender",
+          "price": null,
+          "price_unclear": true,
+          "dietary_flags": [],
+          "modifiers": [],
+          "needs_reverification": false
+        }
+      ]
+    },
+    {
+      "id": "wine",
+      "name": "Wine",
+      "description": "",
+      "items": [
+        {
+          "id": "red-wine",
+          "name": "Red Wine - Mountain",
+          "description": "ask bartender for selection",
+          "price": null,
+          "price_unclear": true,
+          "dietary_flags": [],
+          "modifiers": ["glass", "bottle"],
+          "needs_reverification": true
+        },
+        {
+          "id": "white-wine",
+          "name": "White Wine - Sparkling/Chablis/Pinot Grigio",
+          "description": "ask bartender for selection",
+          "price": null,
+          "price_unclear": true,
+          "dietary_flags": [],
+          "modifiers": ["glass", "bottle"],
+          "needs_reverification": true
+        }
+      ]
+    },
+    {
+      "id": "beer-on-draft",
+      "name": "Beer on Draft",
+      "description": "ask about our rotating taps",
+      "items": [
+        {
+          "id": "bud-light",
+          "name": "Bud Light",
+          "description": "",
+          "price": null,
+          "price_unclear": true,
+          "dietary_flags": [],
+          "modifiers": [],
+          "needs_reverification": true
+        },
+        {
+          "id": "modelo",
+          "name": "Modelo",
+          "description": "",
+          "price": null,
+          "price_unclear": true,
+          "dietary_flags": [],
+          "modifiers": [],
+          "needs_reverification": true
+        },
+        {
+          "id": "stella-artois",
+          "name": "Stella Artois",
+          "description": "",
+          "price": null,
+          "price_unclear": true,
+          "dietary_flags": [],
+          "modifiers": [],
+          "needs_reverification": true
+        }
+      ]
+    },
+    {
+      "id": "beer-bottles",
+      "name": "Beer - Bottles",
+      "description": "ask about our rotating selection",
+      "items": [
+        {
+          "id": "corona-extra",
+          "name": "Corona Extra",
+          "description": "",
+          "price": null,
+          "price_unclear": true,
+          "dietary_flags": [],
+          "modifiers": [],
+          "needs_reverification": true
+        }
+      ]
+    },
+    {
+      "id": "beer-cans",
+      "name": "Beer - Cans",
+      "description": "",
+      "items": [
+        {
+          "id": "busch-light",
+          "name": "Busch Light",
+          "description": "",
+          "price": null,
+          "price_unclear": true,
+          "dietary_flags": [],
+          "modifiers": [],
+          "needs_reverification": true
+        },
+        {
+          "id": "bud-light-can",
+          "name": "Bud Light",
+          "description": "",
+          "price": null,
+          "price_unclear": true,
+          "dietary_flags": [],
+          "modifiers": [],
+          "needs_reverification": true
+        },
+        {
+          "id": "modelo-can",
+          "name": "Modelo",
+          "description": "",
+          "price": null,
+          "price_unclear": true,
+          "dietary_flags": [],
+          "modifiers": [],
+          "needs_reverification": true
+        },
+        {
+          "id": "miller-lite",
+          "name": "Miller Lite",
+          "description": "",
+          "price": null,
+          "price_unclear": true,
+          "dietary_flags": [],
+          "modifiers": [],
+          "needs_reverification": true
+        },
+        {
+          "id": "natural-light",
+          "name": "Natural Light",
+          "description": "",
+          "price": null,
+          "price_unclear": true,
+          "dietary_flags": [],
+          "modifiers": [],
+          "needs_reverification": true
+        }
+      ]
+    },
+    {
+      "id": "non-alcoholic",
+      "name": "N/A",
+      "description": "",
+      "items": [
+        {
+          "id": "pop-soda",
+          "name": "Pop/Soda",
+          "description": "ask what we have",
+          "price": null,
+          "price_unclear": true,
+          "dietary_flags": [],
+          "modifiers": [],
+          "needs_reverification": true
+        },
+        {
+          "id": "fresh-juice",
+          "name": "Fresh Juice Drafts",
+          "description": "ask what we have",
+          "price": null,
+          "price_unclear": true,
+          "dietary_flags": [],
+          "modifiers": [],
+          "needs_reverification": true
+        }
+      ]
+    }
+  ],
+  "footnotes": [
+    "OTHER FLY TRAP HAS A FULL BAR, WINE AND BRUNCH, AFTER 3 BREAKFAST"
+  ],
+  "open_questions": [
+    "BLT description mentions 'Three Strips of Seasoned Ground Beef' which seems inconsistent with a BLT — may be mislabeled or photo quality issue",
+    "Several dinner item prices are illegible in the photos",
+    "Breaded Mushrooms description unclear: 'Preservatives Stuffed in a One-Sandwich' does not parse — needs verification",
+    "Onion Rings description mentions 'Cha Chim Salsa' which may be a transcription error — needs verification",
+    "Beer and wine prices are not visible in photos — all marked as needing verification",
+    "Cocktail prices are not visible in the photos — all marked as needing verification",
+    "Several appetizer descriptions may have transcription errors due to photo quality"
+  ]
+}

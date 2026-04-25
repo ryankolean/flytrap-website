@@ -1,0 +1,223 @@
+/* Fly Trap Design Tokens — CSS Custom Properties
+   ================================================
+   Mirroring the Tailwind theme in :root CSS variables for use outside
+   of Tailwind utility classes or in components that require raw CSS.
+
+   Sampled from on-site capture (April 25, 2026).
+   Source: docs/07-capture-audit-and-discoveries.md
+
+   To use: import this file in your global CSS or component stylesheets.
+   Access via var(--color-flytrap-red-deep), var(--space-2), etc.
+*/
+
+:root {
+  /* ========== COLORS ========== */
+
+  /* Primary brand reds */
+  --color-flytrap-red-deep: #992F1E;     /* Marble bar epoxy matrix — primary brand accent */
+  --color-flytrap-red-bright: #CC4433;   /* TODO: dining-room wall color (return visit pending) */
+
+  /* Zone colors (three-zone model) */
+  --color-bar-fog: #797A7E;               /* Gray-lavender bar walls */
+  --color-corridor-mustard: #B9A651;      /* Yellow restroom corridor walls */
+
+  /* Neutrals & backgrounds */
+  --color-cream-paper: #F5EEDC;           /* Menu paper (verify on-site visit) */
+  --color-checker-black: #1A1A1A;         /* Menu border + restroom sign */
+
+  /* Semantic text colors */
+  --color-text-ink: #1A1A1A;              /* Primary body text, high-contrast */
+  --color-text-charcoal: #4A4A4E;         /* Secondary text, supporting copy */
+  --color-text-light: #F5EEDC;            /* Text on dark backgrounds */
+
+  /* Semantic background colors */
+  --color-bg-white: #FFFFFF;              /* Page backgrounds, card fills */
+  --color-bg-off-white: #F5EEDC;          /* Subtle fill, menu cards, section breaks */
+
+  /* Marble spectrum (jewel tones — decorative palette only, never solid fills) */
+  --color-marble-ruby: #C00A1A;           /* TODO: sample from bar marble */
+  --color-marble-ultramarine: #0A2A66;    /* TODO: sample from bar marble */
+  --color-marble-emerald: #00664C;        /* TODO: sample from bar marble */
+  --color-marble-gold: #D4A574;           /* TODO: sample from bar marble (butterscotch) */
+  --color-marble-plum: #6B4C7A;           /* TODO: sample from bar marble */
+  --color-marble-teal: #00A39C;           /* TODO: sample from bar marble */
+  --color-marble-jade: #2D9C7E;           /* TODO: sample from bar marble */
+  --color-marble-white: #F5F5F5;          /* White marble from bar */
+
+  /* ========== SPACING (8px base grid) ========== */
+
+  --space-1: 8px;    /* Tight spacing: button padding, inline gaps */
+  --space-2: 16px;   /* Standard padding: card padding, section margins */
+  --space-3: 24px;   /* Medium margins: section breaks, stacked elements */
+  --space-4: 32px;   /* Large margins: page section spacing */
+  --space-5: 40px;   /* Hero spacing: margin between hero and next section */
+  --space-6: 48px;   /* XL spacing: vertical rhythm between major sections */
+  --space-8: 64px;   /* XXL spacing: full-viewport breathing room */
+
+  /* ========== BORDER RADIUS ========== */
+
+  --radius-none: 0;           /* Checkerboard patterns, strict rectangles */
+  --radius-sm: 4px;           /* Small buttons, subtle rounding */
+  --radius-md: 8px;           /* Card corners, input fields */
+  --radius-lg: 12px;          /* Large interactive components */
+  --radius-full: 9999px;      /* Pills, circular elements */
+
+  /* ========== SHADOWS ========== */
+
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);       /* Subtle depth on cards */
+  --shadow-md: 0 4px 6px rgba(0,0,0,0.1);        /* Standard card elevation */
+  --shadow-lg: 0 10px 15px rgba(0,0,0,0.15);     /* Modal/overlay depth */
+  --shadow-xl: 0 20px 25px rgba(0,0,0,0.2);      /* High-impact hero depth */
+
+  /* ========== TYPOGRAPHY ========== */
+
+  /* Font families (three-option selection pending Phase 1 prototype) */
+  --font-sans: 'Inter', 'Figtree', system-ui, sans-serif;
+  --font-serif: 'Fraunces', 'Recoleta', Georgia, serif;
+  --font-script: 'Caveat', 'Reenie Beanie', cursive;
+
+  /* Type scale (desktop baseline; mobile reduces ~15–20% at breakpoint) */
+  --font-size-h1: 48px;
+  --line-height-h1: 1.2;
+
+  --font-size-h2: 36px;
+  --line-height-h2: 1.3;
+
+  --font-size-h3: 28px;
+  --line-height-h3: 1.4;
+
+  --font-size-h4: 24px;
+  --line-height-h4: 1.4;
+
+  --font-size-body-lg: 18px;
+  --line-height-body-lg: 1.6;
+
+  --font-size-body-base: 16px;
+  --line-height-body-base: 1.6;
+
+  --font-size-body-sm: 14px;
+  --line-height-body-sm: 1.5;
+
+  --font-size-caption: 12px;
+  --line-height-caption: 1.4;
+
+  /* ========== MOTION ========== */
+
+  /* Transition durations */
+  --duration-fast: 150ms;   /* Quick feedback (button press, input focus) */
+  --duration-base: 200ms;   /* Standard transitions (hover, fade-in) */
+  --duration-slow: 300ms;   /* Dramatic reveals (scroll-triggered) */
+
+  /* Transition timing functions */
+  --timing-ease-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --timing-ease-in-out: cubic-bezier(0.4, 0, 0.4, 1);
+}
+
+/* ========== USAGE EXAMPLES ========== */
+
+/* Hero section with flytrap red background */
+.hero {
+  background-color: var(--color-flytrap-red-deep);
+  padding: var(--space-8);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+}
+
+/* Card with bar-fog background */
+.card {
+  background-color: var(--color-bar-fog);
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+}
+
+/* Text with semantic color */
+.body-text {
+  font-family: var(--font-sans);
+  font-size: var(--font-size-body-base);
+  line-height: var(--line-height-body-base);
+  color: var(--color-text-ink);
+}
+
+/* CTA button with motion */
+.button {
+  background-color: var(--color-flytrap-red-deep);
+  color: var(--color-text-light);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-sm);
+  transition: transform var(--duration-fast) var(--timing-ease-out),
+              background-color var(--duration-base) var(--timing-ease-out);
+}
+
+.button:hover {
+  transform: scale(1.05);
+}
+
+/* Accent marble detail */
+.marble-accent {
+  color: var(--color-marble-gold);
+  font-weight: 600;
+}
+
+/* Marble-halftone background (reference: design doc §6) */
+.hero-with-marble {
+  background: linear-gradient(135deg,
+    rgba(200, 10, 26, 0.15),
+    rgba(212, 165, 116, 0.15)
+  );
+}
+
+/* Accessibility: respect prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  .button,
+  [transition],
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Mobile typography scale down (~15–20% reduction on 375px viewports) */
+@media (max-width: 640px) {
+  :root {
+    --font-size-h1: 40px;
+    --font-size-h2: 30px;
+    --font-size-h3: 24px;
+    --font-size-h4: 20px;
+    --font-size-body-lg: 16px;
+    --font-size-body-base: 14px;
+    --font-size-body-sm: 12px;
+    --font-size-caption: 11px;
+
+    /* Reduce vertical spacing on mobile */
+    --space-6: 32px;
+    --space-8: 48px;
+  }
+}
+
+/* ========== DOCUMENTATION ========== */
+
+/*
+Integration:
+  1. Import into your global CSS:
+     @import url('./tokens-css-vars.css');
+
+  2. Use variables in component styles:
+     <div style="background-color: var(--color-bar-fog); padding: var(--space-3);">
+
+  3. For Tailwind integration, see tailwind-theme-snippet.ts
+
+References:
+  - Full token guide: docs/design-tokens.md
+  - Sampled colors: docs/07-capture-audit-and-discoveries.md
+  - Design rationale: docs/01-design-document-v1.7.md §6
+  - Three-zone color model: docs/design-tokens.md "Overview"
+
+TODOs:
+  - marble-* colors: calibrate from bar close-up on return visit
+  - flytrap-red-bright: sample dining-room wall color
+  - cream-paper: verify placeholder against physical menu
+
+Last updated: April 25, 2026
+*/
