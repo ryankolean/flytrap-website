@@ -86,14 +86,20 @@ Full audit: `docs/voice-audit-report.md`.
 | `flytrap-red-deep` | `#992F1E` | Marble bar epoxy. Primary brand accent, CTAs, body accents |
 | `flytrap-red-bright` | `#CC4433` | Placeholder for dining-room wall (return-visit sample TBD). Hero impact |
 
-#### Zone neutrals (three-zone model — see §5)
+#### Wall zones (6-wall expanded model — see §5)
 
-| Token | Hex | Zone | Use |
+Sampled from 2026-04-26 photo batch. Any wall zone can back any section per §5.
+
+| Token | Hex | Wall source | Use |
 |---|---|---|---|
-| `bar-fog` | `#797A7E` | Bar | Section bg, data-heavy zones (menu, FAQ) |
-| `corridor-mustard` | `#B9A651` | Corridor | Playful accents, secondary CTAs (visit, shop) |
-| `cream-paper` | `#F5EEDC` | All | Page bg, menu cards (verify on return visit) |
-| `checker-black` | `#1A1A1A` | All | Text, borders, structural framing |
+| `cream-paper` | `#F5EEDC` | Page canvas | Default page bg, body sections, menu cards |
+| `butter-yellow` | `#C8B880` | Solid butter wall (corridor) | Warm/inviting sections, accent fills |
+| `chartreuse` | `#C8B000` | Atomic-pendant back-bar | High-energy sections, bold accents |
+| `terracotta` | `#D88858` | Burnt-orange wall | Loud sections (about, press), warm callouts |
+| `plum` | `#685050` | Ceramic-jacks installation room | Loud sections, dark callouts |
+| `navy-slate` | `#383838` | Chalkboard-menu wall | Dark sections, footer, contrast bg |
+| `back-bar-mauve` | `#6A6A6E` | Joe Strummer back-bar wall | Mid-tone neutrals, data-dense sections |
+| `checker-black` | `#1A1A1A` | Floor / structural | Text, borders, structural framing |
 
 #### Semantic text + bg
 
@@ -107,18 +113,20 @@ Full audit: `docs/voice-audit-report.md`.
 
 #### Marble jewel tones (decorative ONLY — never solid fills)
 
+Calibrated against marble-bar close-up (2026-04-26 batch). Bar top is a critical Fly Trap motif — the embedded-marble epoxy bar is one of the diner's signatures.
+
 | Token | Hex | Note |
 |---|---|---|
-| `marble-ruby` | `#C00A1A` | TBD calibrate from photo |
-| `marble-ultramarine` | `#0A2A66` | TBD |
-| `marble-emerald` | `#00664C` | TBD |
-| `marble-gold` | `#D4A574` | TBD (butterscotch) |
-| `marble-plum` | `#6B4C7A` | TBD |
-| `marble-teal` | `#00A39C` | TBD |
-| `marble-jade` | `#2D9C7E` | TBD |
+| `marble-ruby` | `#C00A1A` | Confirmed cluster (sample median #B5252C) |
+| `marble-ultramarine` | `#0A2A66` | Held from prior capture audit |
+| `marble-emerald` | `#00664C` | Confirmed cluster (sample emerald-teal range) |
+| `marble-gold` | `#D4A574` | Confirmed cluster (sample median #AE924F, brightened to butterscotch) |
+| `marble-plum` | `#6B4C7A` | Held from prior capture audit |
+| `marble-teal` | `#00A39C` | Confirmed cluster (sample teal #46727D, brightened) |
+| `marble-jade` | `#2D9C7E` | Held from prior capture audit |
 | `marble-white` | `#F5F5F5` | White marble |
 
-Used for spot-illustration tints, hover states, decorative touches.
+Used for spot-illustration tints, hover states, decorative touches, and bar-top motif callouts.
 
 ### 4b. Typography
 
@@ -188,17 +196,29 @@ Used for spot-illustration tints, hover states, decorative touches.
 
 ---
 
-## 5. Three-Zone Color Rule
+## 5. Wall-Zone Color Rule (6-wall expanded model)
 
-The diner's interior is deliberately color-zoned. The site mirrors this: **one primary zone color per section**. Never layer zones in the same view.
+The diner's interior has six distinct painted-wall zones. The site mirrors this: **one primary zone color per section**. Never layer zones in the same view.
 
-| Zone | Wall | Emotional tone | Site use |
-|---|---|---|---|
-| Bar | gray-lavender `#797A7E` | Calming | Data-heavy sections (menu, FAQ) |
-| Corridor | yellow-mustard `#B9A651` | Playful | Warm/inviting (visit, shop) |
-| Dining room | brick red `#992F1E` (epoxy proxy) | Bold | Hero, primary CTAs |
+| Zone | Wall | Hex | Emotional tone | Default site use |
+|---|---|---|---|---|
+| Canvas | cream-paper | `#F5EEDC` | Calm, neutral | Page bg, body sections, menu cards, FAQ |
+| Butter | butter-yellow | `#C8B880` | Warm, inviting | Warm callouts, secondary accents |
+| Chartreuse | chartreuse | `#C8B000` | High-energy | Bold accents, daily special, shop |
+| Terracotta | terracotta | `#D88858` | Loud, warm | About, press, hero variants |
+| Plum | plum | `#685050` | Loud, dark | About variants, gallery callouts |
+| Navy-slate | navy-slate | `#383838` | Dark, anchored | Footer, dark contrast sections |
+| Mauve mid | back-bar-mauve | `#6A6A6E` | Neutral mid-tone | Data-dense sections, gallery |
+| Brand red | flytrap-red-deep | `#992F1E` | Bold, primary | Hero, primary CTAs, brand accents |
 
-Tokens are in `tailwind.config.ts` and `docs/tokens-css-vars.css`.
+**Pairing rules** (keep cohesion across the page):
+- Headlines in `flytrap-red-deep` work over `cream-paper`, `butter-yellow`, `chartreuse`.
+- Body text: `checker-black` or `flytrap-red-deep` on light zones; `cream-paper` or `butter-yellow` on `plum` / `navy-slate` / `back-bar-mauve`.
+- `terracotta` and `plum` reserved for "loud" content sections — not navigation, not footer.
+- `navy-slate` is the default footer.
+- Adjacent sections should not repeat the same zone color — alternate.
+
+Tokens live in `src/app/globals.css` `@theme` block (Tailwind v4 CSS-first).
 
 ---
 
@@ -211,15 +231,15 @@ Mobile-first. One `/` route. Sticky nav with anchor links. Each numbered block =
 | 0 | Sticky nav | — | cream-paper | Wordmark + anchors (Menu / Visit / About / Shop) + Order CTA |
 | 1 | Hero | `#top` | red-deep + checkerboard | Wordmark, *a finer diner*, hero painting (rotates 5), primary CTA, hours strip |
 | 2 | Intro / About | `#about` | cream-paper | Origin story 3-beat: founded 2004 → 2021–24 pause → returned Oct 2024. DDD badge. Kara quote. |
-| 3 | The Room (gallery) | `#gallery` | bar-fog | Horizontally-swipeable 5-painting hero gallery + 6-tile interior grid (checkerboard floor, marble bar, pressed-tin ceiling, marble spheres, salt-shaker wall, exterior golden hour) |
-| 4 | Menu highlights | `#menu` | bar-fog | 4–6 signature dishes (Cowboy Curtis, The Forager, Veggie Rumble, etc.) + link to full menu PDF or expanded list |
-| 5 | Daily special | `#special` | corridor-mustard | One rotating dish (named after pop-culture figure — *The Lee Ho Fooks*, *The Hari Kondabolu* style). Photo + name + price |
-| 6 | Order online | `#order` | red-deep | Toast "Coming Soon" + email intent-capture form |
-| 7 | Swat Shop | `#shop` | corridor-mustard | 3 product cards (Swat Sauces, Gift Cards, T-Shirts) all "Coming Soon" + single email-capture form (option B confirmed) |
-| 8 | Press + DDD | `#press` | bar-fog | DDD badge, 3–4 press quotes (Crain's, Detroit Free Press, Eater Detroit), link-out chips |
-| 9 | Visit | `#visit` | corridor-mustard | Address, phone tap-to-call, hours block, embedded map, parking note (lot exists), dog-friendly note, accessibility note, Get Directions button |
+| 3 | The Room (gallery) | `#gallery` | back-bar-mauve | Horizontally-swipeable 5-painting hero gallery + 6-tile interior grid (checkerboard floor, marble bar, pressed-tin ceiling, marble spheres, salt-shaker wall, exterior golden hour) |
+| 4 | Menu highlights | `#menu` | cream-paper | 4–6 signature dishes (Cowboy Curtis, The Forager, Veggie Rumble, etc.) + link to full menu PDF or expanded list |
+| 5 | Daily special | `#special` | chartreuse | One rotating dish (named after pop-culture figure — *The Lee Ho Fooks*, *The Hari Kondabolu* style). Photo + name + price |
+| 6 | Order online | `#order` | flytrap-red-deep | Toast "Coming Soon" + email intent-capture form |
+| 7 | Swat Shop | `#shop` | chartreuse | 3 product cards (Swat Sauces, Gift Cards, T-Shirts) all "Coming Soon" + single email-capture form (option B confirmed) |
+| 8 | Press + DDD | `#press` | terracotta | DDD badge, 3–4 press quotes (Crain's, Detroit Free Press, Eater Detroit), link-out chips |
+| 9 | Visit | `#visit` | butter-yellow | Address, phone tap-to-call, hours block, embedded map, parking note (lot exists), dog-friendly note, accessibility note, Get Directions button |
 | 10 | FAQ | `#faq` | cream-paper | 6–8 accordions (hours, parking, reservations, kid-friendly, dietary, group size, gift cards, daily-special schedule) |
-| 11 | Footer | — | checker-black | Wordmark, real socials (IG `@theflytrapferndale`, FB `/flytrapferndale`), credits, legal |
+| 11 | Footer | — | navy-slate | Wordmark, real socials (IG `@theflytrapferndale`, FB `/flytrapferndale`), credits, legal |
 
 ### Hero rotation (locked)
 1. *Fly Art Class* — flies painting flies; brand thesis
@@ -239,7 +259,7 @@ Mobile-first. One `/` route. Sticky nav with anchor links. Each numbered block =
 - **Reflections in framed art:** present at ≤1200px wide; flaws imperceptible at that size. Re-shoot post-handoff.
 - **Identifiable people:** crop out before publishing. Two back-bar shots have staff at POS + customer at counter. Hold or crop. Never blur (reads evasive).
 - **Glass + glare:** light in-painting OK. No AI-extend or content alteration.
-- **Capture gaps for return visit:** clean dining-room red wall sample, marble bar close-up (per-stone hex sampling), exterior, food, salt-and-pepper shaker wall, receipt close-up.
+- **Capture gaps for return visit:** clean dining-room red wall sample, exterior, food, salt-and-pepper shaker wall, receipt close-up. (Marble bar close-up captured 2026-04-26 — palette calibrated.)
 
 ---
 
@@ -263,7 +283,7 @@ Plausible analytics, paid Sanity tier, Shopify Lite or Square Online, Toast Take
 1. **This file** — `docs/CLAUDE-DESIGN.md` (start here)
 2. `docs/01-design-document-v1.7.md` — strategic spine
 3. `docs/08-capture-reconciliation.md` — resolves capture-doc conflicts
-4. `docs/07-capture-audit-and-discoveries.md` — color sampling, three-zone model
+4. `docs/07-capture-audit-and-discoveries.md` — color sampling, three-zone model (superseded — see §5 above for current 6-wall model)
 5. `docs/06-capture-debrief.md` — fly-painting catalog, photo rules
 6. `docs/03-seo-aeo-strategy.md` — JSON-LD, llms.txt, FAQ
 7. `docs/02-press-page-spec.md` — press inventory

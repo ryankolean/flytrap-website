@@ -24,6 +24,34 @@ export default function Home() {
           </code>{' '}
           for section outline and tokens.
         </p>
+
+        <section
+          aria-label="Wall-zone token swatches"
+          className="mt-12 grid grid-cols-2 gap-2 sm:grid-cols-4"
+        >
+          <div className="bg-cream-paper p-4 text-body-sm text-checker-black ring-1 ring-checker-black/20">
+            cream-paper
+          </div>
+          <div className="bg-butter-yellow p-4 text-body-sm text-checker-black">
+            butter-yellow
+          </div>
+          <div className="bg-chartreuse p-4 text-body-sm text-checker-black">
+            chartreuse
+          </div>
+          <div className="bg-terracotta p-4 text-body-sm text-checker-black">
+            terracotta
+          </div>
+          <div className="bg-plum p-4 text-body-sm text-cream-paper">plum</div>
+          <div className="bg-navy-slate p-4 text-body-sm text-cream-paper">
+            navy-slate
+          </div>
+          <div className="bg-back-bar-mauve p-4 text-body-sm text-cream-paper">
+            back-bar-mauve
+          </div>
+          <div className="bg-flytrap-red-deep p-4 text-body-sm text-cream-paper">
+            flytrap-red-deep
+          </div>
+        </section>
       </div>
     </main>
   );

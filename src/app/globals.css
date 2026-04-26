@@ -5,10 +5,14 @@
   --color-flytrap-red-deep: #992F1E;
   --color-flytrap-red-bright: #CC4433;
 
-  /* Zone neutrals */
-  --color-bar-fog: #797A7E;
-  --color-corridor-mustard: #B9A651;
+  /* Wall zones (6-wall expanded model — see docs/CLAUDE-DESIGN.md §5) */
   --color-cream-paper: #F5EEDC;
+  --color-butter-yellow: #C8B880;
+  --color-chartreuse: #C8B000;
+  --color-terracotta: #D88858;
+  --color-plum: #685050;
+  --color-navy-slate: #383838;
+  --color-back-bar-mauve: #6A6A6E;
   --color-checker-black: #1A1A1A;
 
   /* Semantic text */
