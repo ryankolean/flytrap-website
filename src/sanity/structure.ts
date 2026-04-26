@@ -1,72 +1,67 @@
 import type { StructureResolver } from 'sanity/structure';
 import { orderableDocumentListDeskItem } from '@sanity/orderable-document-list';
 
-export const customStructure: StructureResolver = (S) =>
+export const customStructure: StructureResolver = (S, context) =>
   S.list()
     .title('Content')
     .items([
-      // Singleton: siteSettings
-      S.documentTypeListItem('siteSettings')
+      S.listItem()
         .title('Site Settings')
         .child(
           S.document()
             .schemaType('siteSettings')
             .documentId('siteSettings')
-            .title('Site Settings')
+            .title('Site Settings'),
         ),
 
       S.divider(),
 
-      // Menu system with ordering
-      S.listItem()
-        .title('Menu Sections')
-        .child(
-          orderableDocumentListDeskItem({
-            type: 'menuSection',
-            title: 'Menu Sections',
-            S: S,
-          })
-        ),
+      orderableDocumentListDeskItem({
+        type: 'menuSection',
+        title: 'Menu Sections',
+        S,
+        context,
+      }),
 
-      S.documentTypeListItem('menuItem')
-        .title('Menu Items'),
+      S.documentTypeListItem('menuItem').title('Menu Items'),
 
       S.divider(),
 
-      // Press & media with ordering
       orderableDocumentListDeskItem({
         type: 'pressEntry',
         title: 'Press Entries',
-        S: S,
+        S,
+        context,
       }),
 
       S.divider(),
 
-      // Content with ordering
       orderableDocumentListDeskItem({
         type: 'faqEntry',
         title: 'FAQ Entries',
-        S: S,
+        S,
+        context,
       }),
 
       orderableDocumentListDeskItem({
         type: 'dailySpecial',
         title: 'Daily Specials',
-        S: S,
+        S,
+        context,
       }),
 
       S.divider(),
 
-      // Gallery with ordering
       orderableDocumentListDeskItem({
         type: 'flyPainting',
         title: 'Fly Paintings',
-        S: S,
+        S,
+        context,
       }),
 
       S.divider(),
 
-      // Form captures
-      S.documentTypeListItem('intentCaptureSubmission')
-        .title('Intent Capture Submissions'),
+      S.documentTypeListItem('intentCaptureSubmission').title(
+        'Intent Capture Submissions',
+      ),
     ]);
