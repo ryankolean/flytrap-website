@@ -281,19 +281,22 @@ Plausible analytics, paid Sanity tier, Shopify Lite or Square Online, Toast Take
 ## 9. Reference docs (in priority order)
 
 1. **This file** — `docs/CLAUDE-DESIGN.md` (start here)
-2. `docs/01-design-document-v1.7.md` — strategic spine
-3. `docs/08-capture-reconciliation.md` — resolves capture-doc conflicts
-4. `docs/07-capture-audit-and-discoveries.md` — color sampling, three-zone model (superseded — see §5 above for current 6-wall model)
-5. `docs/06-capture-debrief.md` — fly-painting catalog, photo rules
-6. `docs/03-seo-aeo-strategy.md` — JSON-LD, llms.txt, FAQ
-7. `docs/02-press-page-spec.md` — press inventory
-8. `docs/04-instagram-integration-spec.md` — Phase A mock-data shape
-9. `docs/voice-audit-report.md` — voice rules + violations rewritten
-10. `docs/design-tokens.md` — full token narrative
-11. `docs/tokens-css-vars.css` — CSS-var equivalents
-12. `docs/tailwind-theme-snippet.ts` — Tailwind config block
-13. `docs/menu-extracted.json` — parsed menu data
-14. `docs/OPEN-QUESTIONS.md` — non-blocker open questions
+2. `docs/KICKOFF-PROMPT.md` — paste-ready kickoff for design implementation session
+3. `docs/PHOTO-INVENTORY.md` — every photo in `assets/photos-web/` mapped to its section placement
+4. `docs/01-design-document-v1.7.md` — strategic spine
+5. `docs/08-capture-reconciliation.md` — resolves capture-doc conflicts
+6. `docs/07-capture-audit-and-discoveries.md` — color sampling, three-zone model (superseded — see §5 above for current 6-wall model)
+7. `docs/06-capture-debrief.md` — fly-painting catalog, photo rules
+8. `docs/03-seo-aeo-strategy.md` — JSON-LD, llms.txt, FAQ
+9. `docs/02-press-page-spec.md` — press inventory
+10. `docs/04-instagram-integration-spec.md` — Phase A mock-data shape
+11. `docs/voice-audit-report.md` — voice rules + violations rewritten
+12. `docs/design-tokens.md` — full token narrative (note: legacy `bar-fog` / `corridor-mustard` references are superseded by §5 above)
+13. `docs/tokens-css-vars.css` — CSS-var equivalents (legacy — current source is `src/app/globals.css` `@theme` block)
+14. `docs/tailwind-theme-snippet.ts` — legacy Tailwind v3 config snippet (do NOT use; v4 is CSS-first, no `tailwind.config.ts`)
+15. `docs/menu-extracted.json` — parsed menu data
+16. `docs/OPEN-QUESTIONS.md` — non-blocker open questions
+17. `docs/09-game-day-and-kickoff-prompt.md` — historical, original capture+build kickoff (pre-design-handoff)
 
 If `06` and `07` disagree, trust `08-capture-reconciliation.md`.
 
