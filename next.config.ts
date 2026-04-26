@@ -12,6 +12,22 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  headers: async () => {
+    if (process.env.NEXT_PUBLIC_ALLOW_INDEXING === 'true') {
+      return [];
+    }
+    return [
+      {
+        source: '/:path*',
+        headers: [
+          {
+            key: 'X-Robots-Tag',
+            value: 'noindex, nofollow',
+          },
+        ],
+      },
+    ];
+  },
 };
 
 export default nextConfig;
