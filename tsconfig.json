@@ -39,6 +39,7 @@
   ],
   "exclude": [
     "node_modules",
+    "docs",
     "**/*.test.ts",
     "**/*.test.tsx",
     "vitest.config.ts"
