@@ -38,7 +38,7 @@ const PRODUCTS = [
 
 export default function ShopPage() {
   return (
-    <main className="min-h-screen bg-amber-50">
+    <main id="main" className="min-h-screen bg-amber-50">
       <div className="max-w-3xl mx-auto px-4 py-16">
         <header className="mb-12">
           <h1 className="text-3xl font-bold text-stone-900 mb-3">Swat Shop</h1>
@@ -61,7 +61,7 @@ export default function ShopPage() {
           <IntentCaptureForm source="shop" />
         </section>
 
-        <ul className="flex flex-col gap-10" role="list">
+        <ul className="flex flex-col gap-10">
           {PRODUCTS.map((product) => (
             <li
               key={product.id}

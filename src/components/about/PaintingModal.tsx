@@ -6,6 +6,7 @@
 // Focus is trapped to the close button on open.
 // from docs/06-capture-debrief.md (catalog) and plan Task 11.
 
+import Image from 'next/image';
 import { useEffect, useRef } from 'react';
 
 export interface ModalPainting {
@@ -50,6 +51,9 @@ export function PaintingModal({ painting, onClose }: PaintingModalProps) {
   }
 
   return (
+    // Keyboard: Escape is handled natively by <dialog> via the cancel event above.
+    // The onClick is backdrop-click detection only — the close button handles keyboard access.
+    /* eslint-disable jsx-a11y/no-noninteractive-element-interactions, jsx-a11y/click-events-have-key-events */
     <dialog
       ref={dialogRef}
       onClick={handleBackdropClick}
@@ -71,12 +75,18 @@ export function PaintingModal({ painting, onClose }: PaintingModalProps) {
         </div>
 
         {painting.imageUrl ? (
-          <img
-            src={painting.imageUrl}
-            alt={painting.alt ?? painting.title}
-            className="w-full object-contain"
-            style={{ maxHeight: 'calc(90vh - 8rem)' }}
-          />
+          <div
+            className="relative w-full"
+            style={{ maxHeight: 'calc(90vh - 8rem)', aspectRatio: '4/3' }}
+          >
+            <Image
+              src={painting.imageUrl}
+              alt={painting.alt ?? painting.title}
+              fill
+              className="object-contain"
+              sizes="(max-width: 768px) 100vw, 768px"
+            />
+          </div>
         ) : (
           <div
             className="flex aspect-square w-full items-center justify-center bg-[color:var(--color-bar-fog)]"

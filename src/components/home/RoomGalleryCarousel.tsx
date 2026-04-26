@@ -6,6 +6,7 @@
 // Used by TheRoom.tsx (server component hands data down).
 // from plan Task 11.
 
+import Image from 'next/image';
 import { useRef, useState } from 'react';
 
 interface CarouselPainting {
@@ -55,12 +56,13 @@ export function RoomGalleryCarousel({ paintings }: RoomGalleryCarouselProps) {
               className="group relative block w-full overflow-hidden rounded-xl focus-visible:outline focus-visible:outline-2 focus-visible:outline-[color:var(--color-marble-gold)]"
               aria-label={painting.title}
             >
-              <div className="aspect-[4/5] w-full overflow-hidden bg-[color:var(--color-bar-fog)]/30">
-                <img
+              <div className="relative aspect-[4/5] w-full overflow-hidden bg-[color:var(--color-bar-fog)]/30">
+                <Image
                   src={painting.imageUrl}
                   alt={painting.alt}
-                  className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.03]"
-                  loading="lazy"
+                  fill
+                  className="object-cover transition-transform duration-300 group-hover:scale-[1.03]"
+                  sizes="min(72vw, 280px)"
                 />
               </div>
               {/* Title overlay — visible on hover/focus */}

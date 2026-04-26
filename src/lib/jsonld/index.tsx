@@ -53,7 +53,7 @@ export function JsonLd({ data }: { data: SchemaOrgObject }): React.JSX.Element {
     <script
       type="application/ld+json"
       // safe: content is safeStringify() output — see comment above
-      dangerouslySetInnerHTML={{ __html: safeStringify(data) }} // eslint-disable-line react/no-danger
+      dangerouslySetInnerHTML={{ __html: safeStringify(data) }}
     />
   );
 }

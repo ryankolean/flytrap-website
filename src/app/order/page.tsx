@@ -10,7 +10,7 @@ export const metadata: Metadata = pageMetadata({
 
 export default function OrderPage() {
   return (
-    <main className="min-h-screen flex items-start justify-center pt-16 px-4">
+    <main id="main" className="min-h-screen flex items-start justify-center pt-16 px-4">
       <OrderComingSoon />
     </main>
   );

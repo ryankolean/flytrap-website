@@ -7,6 +7,7 @@
 // from docs/06-capture-debrief.md (painting catalog, categories)
 // and plan Task 11.
 
+import Image from 'next/image';
 import { useState } from 'react';
 
 import { PaintingModal } from './PaintingModal';
@@ -57,11 +58,12 @@ function PaintingCard({
     >
       <div className="relative aspect-square w-full overflow-hidden">
         {painting.imageUrl ? (
-          <img
+          <Image
             src={painting.imageUrl}
             alt={painting.alt ?? painting.title}
-            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-            loading="lazy"
+            fill
+            className="object-cover transition-transform duration-300 group-hover:scale-105"
+            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
           />
         ) : (
           <div

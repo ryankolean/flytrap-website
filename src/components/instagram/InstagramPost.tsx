@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import type { InstagramMedia } from '@/data/instagram-mock.types';
 
 interface InstagramPostProps {
@@ -13,13 +14,13 @@ export default function InstagramPost({ post }: InstagramPostProps) {
       className="flex-none w-64 snap-start flex flex-col"
     >
       <div className="aspect-square w-full overflow-hidden bg-neutral-100">
-        <img
+        <Image
           src={post.media_url}
           alt=""
-          loading="lazy"
           width={256}
           height={256}
           className="w-full h-full object-cover"
+          sizes="256px"
         />
       </div>
       {post.caption && (

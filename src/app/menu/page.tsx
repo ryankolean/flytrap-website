@@ -126,7 +126,7 @@ export default async function MenuPage() {
     <>
       <JsonLd data={menuJsonLd} />
 
-      <main>
+      <main id="main">
         <SectionNav sections={sections} />
 
         <div className="max-w-2xl mx-auto px-4 py-8">

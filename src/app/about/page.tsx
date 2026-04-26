@@ -5,6 +5,7 @@
 // from CLAUDE.md: About-page anchor rule (Fly Art Class only at top, no headline).
 
 import type { Metadata } from 'next';
+import Image from 'next/image';
 
 import { PaintingGrid } from '@/components/about/PaintingGrid';
 import type { Painting } from '@/components/about/PaintingGrid';
@@ -103,16 +104,18 @@ export default async function AboutPage() {
       <JsonLd data={aboutJsonLd} />
       <JsonLd data={speakableJsonLd} />
 
+      <main id="main">
       {/* ---- Hero: Fly Art Class painting, no competing headline ---- */}
       <section aria-label="Fly Art Class" className="relative w-full">
         {artClassImageUrl ? (
-          <div className="relative w-full">
-            <img
+          <div className="relative w-full" style={{ maxHeight: '85vh', aspectRatio: '4/3' }}>
+            <Image
               src={artClassImageUrl}
               alt={artClass?.alt ?? 'Fly Art Class — a fly model posed on a pedestal while three fly artists paint at their easels'}
-              className="w-full object-contain"
-              style={{ maxHeight: '85vh' }}
-              fetchPriority="high"
+              fill
+              priority
+              className="object-contain"
+              sizes="100vw"
             />
           </div>
         ) : (
@@ -233,6 +236,7 @@ export default async function AboutPage() {
           </div>
         </div>
       </section>
+      </main>
     </>
   );
 }

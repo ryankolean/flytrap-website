@@ -91,7 +91,7 @@ export default async function PressPage() {
   const isEmpty = entries.length === 0;
 
   return (
-    <main>
+    <main id="main">
       <div className="max-w-2xl mx-auto px-4 py-8">
         <header className="mb-8">
           <h1 className="text-3xl font-bold text-stone-900 leading-tight">

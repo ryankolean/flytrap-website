@@ -5,6 +5,7 @@
 // Single-file client component: fetches the five hero-eligible paintings from Sanity on mount,
 // then cross-fades every 6 seconds. Respects prefers-reduced-motion (no rotation, first frame only).
 
+import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
@@ -100,11 +101,14 @@ export function Hero() {
     >
       <div className="absolute inset-0" aria-hidden="true">
         {visiblePaintings.map((painting, i) => (
-          <img
+          <Image
             key={painting._id}
             src={painting.imageUrl}
             alt=""
-            className="absolute inset-0 h-full w-full object-cover transition-opacity duration-1000 ease-in-out"
+            fill
+            priority={i === 0}
+            className="object-cover transition-opacity duration-1000 ease-in-out"
+            sizes="100vw"
             style={{ opacity: i === activeIndex ? 1 : 0 }}
           />
         ))}

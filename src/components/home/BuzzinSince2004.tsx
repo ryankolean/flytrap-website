@@ -3,6 +3,7 @@
 // Voice-matched to the existing About-page register: "magnificent life", warm, theatrical, unhurried.
 // Visual: Fly Art Class painting (the brand thesis in one image, per §9 Section 4).
 
+import Image from 'next/image';
 import { client } from '@/sanity/lib/client';
 import { urlFor } from '@/sanity/lib/image';
 
@@ -80,10 +81,13 @@ export async function BuzzinSince2004() {
         <div className="order-1 flex justify-center md:order-2">
           {painting ? (
             <figure className="w-full max-w-md">
-              <img
+              <Image
                 src={painting.imageUrl}
                 alt={painting.alt}
+                width={700}
+                height={700}
                 className="h-auto w-full rounded-md shadow-xl"
+                sizes="(max-width: 768px) 100vw, 448px"
               />
               <figcaption className="mt-3 font-sans text-sm italic text-[color:var(--color-text-charcoal)]">
                 Fly Art Class — flies painting flies, on the back wall.

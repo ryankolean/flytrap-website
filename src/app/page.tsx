@@ -18,7 +18,7 @@ export const metadata = pageMetadata({
 
 export default function Home() {
   return (
-    <main>
+    <main id="main">
       <ThemeZone zone="red">
         <Hero />
       </ThemeZone>

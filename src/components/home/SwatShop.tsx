@@ -35,7 +35,7 @@ export function SwatShop() {
           A little piece of the Fly Trap — to go.
         </p>
 
-        <ul className="grid grid-cols-1 gap-6 sm:grid-cols-3" role="list">
+        <ul className="grid grid-cols-1 gap-6 sm:grid-cols-3">
           {PRODUCTS.map((product) => (
             <li key={product.slug}>
               <Link
