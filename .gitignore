@@ -24,6 +24,8 @@ coverage/
 .vscode/
 !.vscode/settings.example.json
 
+.claude/worktrees/
+
 assets/photos-full-res/
 *.psd
 *.ai
