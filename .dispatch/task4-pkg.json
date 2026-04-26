@@ -1,0 +1,8 @@
+{
+  "scripts": {
+    "seed": "tsx scripts/seed.ts"
+  },
+  "devDependencies": {
+    "tsx": "^4.7.0"
+  }
+}
