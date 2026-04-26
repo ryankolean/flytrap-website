@@ -1,0 +1,253 @@
+# Voice-audit input — extracted strings (deduplicated)
+# Generated for Task 20 (voice-match auditor pass).
+# Scope: every visible string > 8 chars across:
+#   - src/components/**/*.tsx
+#   - src/app/**/*.tsx (incl. error.tsx, not-found.tsx)
+#   - src/lib/metadata.ts
+#   - src/lib/jsonld/*.ts (descriptive props only — names, descriptions, headlines)
+#   - src/sanity/schemas/*.ts (description fields, default values)
+#   - docs/discoverability/llms.txt and llms-full.txt (served via src/app/llms*.txt/route.ts)
+# Method: per-file read; technical strings (CSS classes, GROQ, schema.org @type, file paths) elided.
+
+## ====== HOME / HERO (src/components/home/Hero.tsx) ======
+"a finer diner"
+"Under Old Management"
+"Catch a Buzz"
+"Twenty years of Buzzin', a room loud in the best way, and a pan of magnificent eggs waiting on Woodward."
+"Order Online"
+"See Menu"
+
+## ====== HOME / BUZZIN' (src/components/home/BuzzinSince2004.tsx) ======
+"Buzzin' Since 2004"
+"The doors of The Fly Trap were thrown open on a December morning in 2004, and Kara & Gavin McMillian welcomed their first customers and started a magnificent life as a corner of Woodward Avenue that has been buzzing ever since."
+"For twenty years, beloved and inquisitive customers asked after the name, the flies on the walls, the marbles set into the bar. In 2021, after a long pandemic stretch, the founders stepped back. A trusted friend and fellow restaurateur held the room for them, kept the menu honest, and waited."
+"In October 2024, the McMillians came home. The receipts now read Under Old Management, the eggs are still magnificent, and the flies are still painting flies. Twenty-plus years on, a finer diner means what it has always meant: come in, sit down, catch a buzz."
+"Fly Art Class — flies painting flies, on the back wall."
+"Fly Art Class — flies painting flies, the brand thesis in one image."
+"Fly Trap painting"
+
+## ====== HOME / MENU TEASE (src/components/home/MenuTease.tsx) ======
+"Menu chapters"
+"What we make"
+"Mon–Sun, 8am–3pm. 22950 Woodward Ave, Ferndale."
+"Coming soon"
+"See full chapter"
+
+## ====== HOME / ORDER COMING SOON (src/components/home/OrderComingSoon.tsx) ======
+"Online ordering — coming soon"
+"We'll send one email when ordering goes live. No marketing."
+"Powered by Toast"
+
+## ====== HOME / SWAT SHOP TEASE (src/components/home/SwatShop.tsx) ======
+"Swat Shop"
+"A little piece of the Fly Trap — to go."
+"Swat Sauces"
+"House-made hot sauces born in the kitchen. Bring the Fly Trap home."
+"Gift Cards"
+"The gift that guarantees a magnificent meal on Woodward."
+"T-Shirts"
+"Wear your buzz. Soft tees with the fly art you know and love."
+"Coming soon"
+"See everything in the shop"
+
+## ====== HOME / THE ROOM (src/components/home/TheRoom.tsx) ======
+"The Room"
+"The pressed-tin ceiling overhead is original to the 1907 building — embossed panels patinated silver-gray, track lights bolted straight through, decades of breakfast rising into it. Beneath it: a marble-inlay bar top where every marble is different, hundreds of them pressed into red epoxy edge to edge, the whole surface a kind of accidental jewel."
+"The walls hold jewel-tone spheres, giant fly silhouettes painted straight onto the plaster, and twenty-two years of fly paintings hung where lesser diners hang mirrors. This is a room that rewards close looking."
+"Checkerboard floors, fire-engine red where it counts, and the kind of careful weirdness that takes two decades to build. Come for the magnificent eggs. Stay because you can't stop looking at the bar."
+"See the full collection"
+
+## ====== HOME / TODAY'S BUZZING (src/components/home/TodaysBuzzing.tsx) ======
+"Today's Buzzing"
+"See on Instagram"
+
+## ====== HOME / VISIT TEASER (src/components/home/VisitTeaser.tsx) ======
+"Come on in."
+"22950 Woodward Ave"
+"Ferndale, MI 48220"
+"Monday – Sunday"
+"8 am – 3 pm"
+"Get directions"
+
+## ====== HOME / ROOM GALLERY CAROUSEL (src/components/home/RoomGalleryCarousel.tsx) ======
+"Paintings coming soon."
+"Fly painting gallery"
+
+## ====== ABOUT / PAINTING GRID + MODAL ======
+"View {painting.title}"
+"Also in the bathroom"
+"Close painting"
+
+## ====== LAYOUT / NAV (src/components/layout/Nav.tsx) ======
+"The Fly Trap"
+"22950 Woodward Ave, Ferndale MI"
+"Open menu"
+"Primary mobile"
+
+## ====== LAYOUT / FOOTER (src/components/layout/Footer.tsx) ======
+"Visit"
+"22950 Woodward Ave"
+"Ferndale, MI 48220"
+"(248) 399-5150"
+"Mon–Sun, 8am to 3pm"
+"Find your way"
+"The Fly Trap"
+"Buzzin' since 2004."
+"All rights reserved."
+
+## ====== LAYOUT / OPEN BADGE ======
+"Open now"
+"Closed — opens 8:00 AM"
+
+## ====== LAYOUT / INTENT FORM (src/components/order/IntentCaptureForm.tsx) ======
+"Sending..."
+"Notify me"
+"Thanks. We'll be in touch."
+"Email address"
+"your@email.com"
+
+## ====== INSTAGRAM (src/components/instagram/InstagramCarousel.tsx) ======
+"Instagram feed"
+"Showing recent posts (mock data — live feed at handoff)"
+"Tag us @theflytrapferndale"
+
+## ====== PRESS / CARD ======
+"Read the full piece →"
+
+## ====== VISIT / MAP EMBED ======
+"Load map"
+"The Fly Trap on Google Maps"
+
+## ====== APP / LAYOUT (src/app/layout.tsx) ======
+"Skip to main content"
+
+## ====== APP / HOME PAGE METADATA (src/app/page.tsx) ======
+"The Fly Trap"
+"Buzzin' since 2004. The Fly Trap is a finer diner at 22950 Woodward Ave, Ferndale MI. Mon to Sun, 8am to 3pm."
+
+## ====== APP / ABOUT PAGE (src/app/about/page.tsx) ======
+"Fly Trap is a finer diner on Woodward, Buzzin' since 2004. Kara and Gavin McMillian's twenty-two-year art project — magnificent eggs, a marble bar, and 17 fly paintings on the walls."
+"Fly Art Class — a fly model posed on a pedestal while three fly artists paint at their easels"
+"Fly Art Class"
+"The Fly Trap opened on December 28, 2004, on Woodward Avenue in Ferndale. Kara and Gavin McMillian built it into a neighborhood institution over seventeen years — the kind of place where the menu names the bartender and the daily special is named after a Warren Zevon song."
+"When the McMillians returned in October 2024, they brought back the original menu, all twelve staff from the interim era, and one extra line on every receipt: Under Old Management."
+"They have been buzzing since 2004. The ceiling has been pressed tin since 1907. The eggs have always been magnificent."
+"The bar top is real marbles pressed into red epoxy, edge to edge at high density, each marble different from the one beside it — swirls, eye patterns, solid colors, semi-translucent. Mounted on the wall above it: a dozen large ceramic spheres, each unique, the same marble vocabulary scaled up to sculpture. The room earns the close looking."
+"Overhead: the original pressed-tin ceiling, embossed square panels patinated silver-gray, modern track lighting bolted straight through it. Two giant fly silhouettes are painted directly on the plaster behind the bar. The checkerboard extends from the floor to the restroom signs — hand-fabricated bespoke signage, built into the building, not decorated onto it."
+"The Collection"
+"Address"
+"Hours"
+"Mon–Sun, 8am–3pm"
+"Owners"
+"Kara & Gavin McMillian"
+"Origin"
+"Buzzin' since 2004"
+
+## ====== APP / FAQ (src/app/faq/page.tsx) ======
+"Common questions about The Fly Trap — hours, parking, dogs, reservations, vegan options, ownership, and the Diners Drive-Ins and Dives feature."
+"Frequently Asked Questions"
+"Everything you want to know before your first — or fiftieth — visit."
+"Questions and answers are on their way. In the meantime, call us at"
+
+## ====== APP / MENU (src/app/menu/page.tsx) ======
+"The full Fly Trap menu — All Things Eggs, Oh Sugar Shack, Green Things, Between Bread, and Other Stuff. Mon–Sun 8am–3pm at 22950 Woodward Ave, Ferndale MI."
+"Mon–Sun, 8am–3pm. Breakfast and lunch all day."
+"The full menu is on its way. Stop in at 22950 Woodward Ave, Ferndale."
+"Items coming soon."
+"Menu sections"
+
+## ====== APP / ORDER (src/app/order/page.tsx) ======
+"Online ordering at The Fly Trap, Buzzin since 2004. Coming soon."
+
+## ====== APP / SHOP (src/app/shop/page.tsx) ======
+"Swat Sauces, gift cards, T-shirts. Coming soon to The Fly Trap."
+"Swat Shop"
+"A little piece of the Fly Trap — to go. Everything here is coming soon. Drop your email and we'll let you know when it opens."
+"Be the first to know"
+"We'll send one email when the shop goes live. No newsletters."
+"The same house-made hot sauces that show up on your plate — bottled and ready for your kitchen. Rotating flavors, limited batches."
+"Glass bottle, 5 oz. Refrigerate after opening."
+"Give someone a magnificent morning on Woodward. Redeemable in-diner, no expiration."
+"Available in $10, $25, and $50 denominations."
+"Soft unisex tees featuring the fly art from our walls. Buzzin' since 2004 — now on cotton."
+"Sizes XS–3XL. Printed locally in Michigan."
+"Coming soon"
+
+## ====== APP / PRESS (src/app/press/page.tsx) ======
+"Twenty-plus years of coverage — Food Network Diners Drive-Ins and Dives, Crain's Detroit Business, Detroit Free Press, Detroit News, and more."
+"Press"
+"Twenty-plus years of third-party validation — national TV, Detroit's biggest papers, and the neighborhood press that has always had our back."
+"What people say"
+"Featured Coverage"
+"In the News"
+"Press archive is being assembled. Check back soon."
+"Press Inquiries"
+"For interview requests, press kit access, or event coverage inquiries, reach us at"
+"When I started watching the show, one of the first restaurants I saw was a little joint in Ferndale, MI called The Fly Trap. It was fabulous."
+"Guy Fieri, Food Network — Diners, Drive-Ins and Dives"
+"We want to make sure the legacy of The Fly Trap lives on."
+"Kara McMillian, Crain's Detroit Business, October 2024"
+"Coming back wasn't exactly something that was anticipated."
+"As good as ever."
+"The Detroit News, July 2022"
+
+## ====== APP / VISIT (src/app/visit/page.tsx) ======
+"The Fly Trap is at 22950 Woodward Ave, Ferndale MI. Open Monday through Sunday, 8am to 3pm. Free parking lot. Dog-friendly patio. Wheelchair accessible."
+"Neighborhood diner on Woodward Ave in Ferndale, Michigan. Serving elevated American comfort food with global accents since 2004. Featured on Food Network's Diners, Drive-Ins and Dives."
+"Find us in Ferndale"
+"22950 Woodward Ave, Ferndale, MI 48220"
+"Hours"
+"Monday – Sunday"
+"Breakfast and lunch all day, every day. No reservations — walk-ins only."
+"Address & Phone"
+"Parking"
+"Free parking lot directly behind the building, accessible from the alley off Woodward. Street parking is also available on Woodward Ave and the surrounding side streets."
+"Accessibility"
+"The Fly Trap has a wheelchair-accessible entrance. If you have specific accessibility questions before your visit, call us at"
+"Dogs"
+"Well-behaved dogs are welcome on our outdoor patio. Water bowls available on request. Please keep dogs leashed and off the furniture."
+"Map"
+"Map loads from Google. Click to consent to Google's privacy policy."
+
+## ====== APP / ERROR (src/app/error.tsx) ======
+"A glitch in the wing."
+"Something went sideways. Try again, or head back to the diner."
+"Try again"
+"Back to home"
+
+## ====== APP / NOT-FOUND (src/app/not-found.tsx) ======
+"We could not find that page."
+"It might be on the other side of the screen door. Try the menu, or visit the diner."
+"Home"
+"Menu"
+"Visit"
+
+## ====== LIB / METADATA (src/lib/metadata.ts) ======
+"The Fly Trap — a finer diner"
+"Buzzin' since 2004. The Fly Trap is a finer diner at 22950 Woodward Ave, Ferndale MI. Mon–Sun 8am to 3pm."
+"The Fly Trap, a finer diner"
+
+## ====== LIB / JSONLD (src/lib/jsonld/*) ======
+# All technical Schema.org @types and identifiers — no narrative copy.
+# Restaurant amenities (LocationFeatureSpecification names):
+"Outdoor seating"
+"Dog-friendly"
+"Wheelchair accessible entrance"
+"Free parking lot"
+# Cuisine types:
+"American"
+"Diner"
+
+## ====== SANITY SCHEMAS — descriptions (visible to studio editors only) ======
+# These don't reach the public site, but the audit covers them per the task scope.
+# Sample descriptions (each schema has tone-neutral helper text — no banned words):
+"A piece from the restaurant's fly-art collection. 17 total pieces catalogued. Five pinned for home-page hero rotation."
+"A single press mention or review of The Fly Trap. Feeds NewsArticle or Review JSON-LD."
+"A single dish on the menu (e.g., Gingerbread Waffles, The Forager). Feeds MenuItem JSON-LD."
+"A short caption or story about the piece. What is the fly doing? Why is it funny or meaningful?"
+
+## ====== DOCS / DISCOVERABILITY (served by /llms.txt and /llms-full.txt routes) ======
+"# The Fly Trap — A Finer Diner"
+"Neighborhood diner on Woodward Ave in Ferndale, Michigan. Serving elevated American comfort food with global accents since 2004. Featured on Food Network's Diners, Drive-Ins and Dives."
+"It is the primary tagline, capturing the restaurant's positioning: elevated comfort food in a diner setting, decorated with personality and pride rather than indifference or minimalism."
+"The restaurant's design philosophy is expressed through its fly artwork — depicting flies in human situations. As a manifesto: take something the world has decided to dismiss, give it dignity and personality, and watch people fall in love with it. This principle applies to every element, from the building (an ordinary strip-mall storefront painted unmissable yellow-green) to the menu (utilitarian comfort food elevated through thoughtful naming and execution)."

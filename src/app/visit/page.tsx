@@ -16,7 +16,7 @@ export const metadata: Metadata = pageMetadata({
 
 const restaurantJsonLd = generateRestaurantJsonLd({
   description:
-    "Neighborhood diner on Woodward Ave in Ferndale, Michigan. Serving elevated American comfort food with global accents since 2004. Featured on Food Network's Diners, Drive-Ins and Dives.",
+    "Neighborhood diner on Woodward Ave in Ferndale, Michigan. American comfort food with global cooks' tables since 2004 — pho, Thai peanut, Italian, breakfast all day. Featured on Food Network's Diners, Drive-Ins and Dives.",
 });
 
 export default function VisitPage() {

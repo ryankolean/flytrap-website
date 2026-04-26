@@ -98,7 +98,7 @@ export default async function PressPage() {
             Press
           </h1>
           <p className="text-stone-500 text-sm mt-1">
-            Twenty-plus years of third-party validation — national TV, Detroit&rsquo;s biggest
+            Twenty-plus years of people writing about us — national TV, Detroit&rsquo;s biggest
             papers, and the neighborhood press that has always had our back.
           </p>
         </header>
@@ -160,7 +160,7 @@ export default async function PressPage() {
 
         {isEmpty && (
           <p className="text-stone-500 text-center py-16">
-            Press archive is being assembled. Check back soon.
+            We&rsquo;re still pulling the clippings together. Check back soon.
           </p>
         )}
 
