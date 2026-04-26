@@ -10,9 +10,11 @@ While building: do not contact, message, or pitch Kara in any form.
 
 ## Source of truth
 
-Read in this order before touching code:
+**Primary handoff doc — read first:** `docs/CLAUDE-DESIGN.md`. Single-source design + content reference for the single-page implementation. Tokens, voice rules, section outline, photo rules, stack, verification — all consolidated. If you only read one file, read this.
 
-1. `docs/README.md` — bundle entry point (originally `flytrap-website-context-bundle/README.md`)
+Deeper drill-downs (read as needed):
+
+1. `docs/CLAUDE-DESIGN.md` — **PRIMARY** (start here)
 2. `docs/01-design-document-v1.7.md` — strategic spine
 3. `docs/08-capture-reconciliation.md` — resolves conflicts between the two capture analyses
 4. `docs/07-capture-audit-and-discoveries.md` — color tokens, three-zone color model
@@ -20,6 +22,8 @@ Read in this order before touching code:
 6. `docs/04-instagram-integration-spec.md` — Phase A mock-data shape
 7. `docs/03-seo-aeo-strategy.md` — JSON-LD, llms.txt, FAQ
 8. `docs/02-press-page-spec.md` — press inventory
+9. `docs/voice-audit-report.md` — voice rules and banned-word violations rewritten
+10. `docs/README.md` — original bundle entry point (historical context)
 
 If `06` and `07` disagree, trust `08-capture-reconciliation.md`. Capture date is 2026-04-25 (one debrief doc has 04-26 — that is wrong).
 
