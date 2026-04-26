@@ -1,111 +1,106 @@
-:root {
-  /* ========== COLORS ========== */
+@import "tailwindcss";
 
-  /* Primary brand reds */
-  --color-flytrap-red-deep: #992F1E;     /* Marble bar epoxy matrix — primary brand accent */
-  --color-flytrap-red-bright: #CC4433;   /* TODO: dining-room wall color (return visit pending) */
+@theme {
+  /* Brand reds */
+  --color-flytrap-red-deep: #992F1E;
+  --color-flytrap-red-bright: #CC4433;
 
-  /* Zone colors (three-zone model) */
-  --color-bar-fog: #797A7E;               /* Gray-lavender bar walls */
-  --color-corridor-mustard: #B9A651;      /* Yellow restroom corridor walls */
+  /* Zone neutrals */
+  --color-bar-fog: #797A7E;
+  --color-corridor-mustard: #B9A651;
+  --color-cream-paper: #F5EEDC;
+  --color-checker-black: #1A1A1A;
 
-  /* Neutrals & backgrounds */
-  --color-cream-paper: #F5EEDC;           /* Menu paper (verify on-site visit) */
-  --color-checker-black: #1A1A1A;         /* Menu border + restroom sign */
+  /* Semantic text */
+  --color-text-ink: #1A1A1A;
+  --color-text-charcoal: #4A4A4E;
+  --color-text-light: #F5EEDC;
 
-  /* Semantic text colors */
-  --color-text-ink: #1A1A1A;              /* Primary body text, high-contrast */
-  --color-text-charcoal: #4A4A4E;         /* Secondary text, supporting copy */
-  --color-text-light: #F5EEDC;            /* Text on dark backgrounds */
+  /* Semantic bg */
+  --color-bg-white: #FFFFFF;
+  --color-bg-off-white: #F5EEDC;
 
-  /* Semantic background colors */
-  --color-bg-white: #FFFFFF;              /* Page backgrounds, card fills */
-  --color-bg-off-white: #F5EEDC;          /* Subtle fill, menu cards, section breaks */
+  /* Marble jewel tones (decorative) */
+  --color-marble-ruby: #C00A1A;
+  --color-marble-ultramarine: #0A2A66;
+  --color-marble-emerald: #00664C;
+  --color-marble-gold: #D4A574;
+  --color-marble-plum: #6B4C7A;
+  --color-marble-teal: #00A39C;
+  --color-marble-jade: #2D9C7E;
+  --color-marble-white: #F5F5F5;
 
-  /* Marble spectrum (jewel tones — decorative palette only, never solid fills) */
-  --color-marble-ruby: #C00A1A;           /* TODO: sample from bar marble */
-  --color-marble-ultramarine: #0A2A66;    /* TODO: sample from bar marble */
-  --color-marble-emerald: #00664C;        /* TODO: sample from bar marble */
-  --color-marble-gold: #D4A574;           /* TODO: sample from bar marble (butterscotch) */
-  --color-marble-plum: #6B4C7A;           /* TODO: sample from bar marble */
-  --color-marble-teal: #00A39C;           /* TODO: sample from bar marble */
-  --color-marble-jade: #2D9C7E;           /* TODO: sample from bar marble */
-  --color-marble-white: #F5F5F5;          /* White marble from bar */
-
-  /* ========== SPACING (8px base grid) ========== */
-
-  --space-1: 8px;    /* Tight spacing: button padding, inline gaps */
-  --space-2: 16px;   /* Standard padding: card padding, section margins */
-  --space-3: 24px;   /* Medium margins: section breaks, stacked elements */
-  --space-4: 32px;   /* Large margins: page section spacing */
-  --space-5: 40px;   /* Hero spacing: margin between hero and next section */
-  --space-6: 48px;   /* XL spacing: vertical rhythm between major sections */
-  --space-8: 64px;   /* XXL spacing: full-viewport breathing room */
-
-  /* ========== BORDER RADIUS ========== */
-
-  --radius-none: 0;           /* Checkerboard patterns, strict rectangles */
-  --radius-sm: 4px;           /* Small buttons, subtle rounding */
-  --radius-md: 8px;           /* Card corners, input fields */
-  --radius-lg: 12px;          /* Large interactive components */
-  --radius-full: 9999px;      /* Pills, circular elements */
-
-  /* ========== SHADOWS ========== */
-
-  --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);       /* Subtle depth on cards */
-  --shadow-md: 0 4px 6px rgba(0,0,0,0.1);        /* Standard card elevation */
-  --shadow-lg: 0 10px 15px rgba(0,0,0,0.15);     /* Modal/overlay depth */
-  --shadow-xl: 0 20px 25px rgba(0,0,0,0.2);      /* High-impact hero depth */
-
-  /* ========== TYPOGRAPHY ========== */
-
-  /* Font families (three-option selection pending Phase 1 prototype) */
+  /* Font families */
   --font-sans: 'Inter', 'Figtree', system-ui, sans-serif;
   --font-serif: 'Fraunces', 'Recoleta', Georgia, serif;
   --font-script: 'Caveat', 'Reenie Beanie', cursive;
 
-  /* Type scale (desktop baseline; mobile reduces ~15–20% at breakpoint) */
-  --font-size-h1: 48px;
-  --line-height-h1: 1.2;
+  /* Type scale */
+  --text-h1: 48px;
+  --text-h1--line-height: 1.2;
+  --text-h2: 36px;
+  --text-h2--line-height: 1.3;
+  --text-h3: 28px;
+  --text-h3--line-height: 1.4;
+  --text-h4: 24px;
+  --text-h4--line-height: 1.4;
+  --text-body-lg: 18px;
+  --text-body-lg--line-height: 1.6;
+  --text-body-base: 16px;
+  --text-body-base--line-height: 1.6;
+  --text-body-sm: 14px;
+  --text-body-sm--line-height: 1.5;
+  --text-caption: 12px;
+  --text-caption--line-height: 1.4;
 
-  --font-size-h2: 36px;
-  --line-height-h2: 1.3;
+  /* Spacing (8px grid) */
+  --spacing-1: 8px;
+  --spacing-2: 16px;
+  --spacing-3: 24px;
+  --spacing-4: 32px;
+  --spacing-5: 40px;
+  --spacing-6: 48px;
+  --spacing-8: 64px;
 
-  --font-size-h3: 28px;
-  --line-height-h3: 1.4;
+  /* Radius */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
 
-  --font-size-h4: 24px;
-  --line-height-h4: 1.4;
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+  --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
+  --shadow-lg: 0 10px 15px rgba(0,0,0,0.15);
+  --shadow-xl: 0 20px 25px rgba(0,0,0,0.2);
 
-  --font-size-body-lg: 18px;
-  --line-height-body-lg: 1.6;
+  /* Motion */
+  --duration-fast: 150ms;
+  --duration-base: 200ms;
+  --duration-slow: 300ms;
+  --ease-out-token: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-in-out-token: cubic-bezier(0.4, 0, 0.4, 1);
 
-  --font-size-body-base: 16px;
-  --line-height-body-base: 1.6;
-
-  --font-size-body-sm: 14px;
-  --line-height-body-sm: 1.5;
-
-  --font-size-caption: 12px;
-  --line-height-caption: 1.4;
-
-  /* ========== MOTION ========== */
-
-  /* Transition durations */
-  --duration-fast: 150ms;   /* Quick feedback (button press, input focus) */
-  --duration-base: 200ms;   /* Standard transitions (hover, fade-in) */
-  --duration-slow: 300ms;   /* Dramatic reveals (scroll-triggered) */
-
-  /* Transition timing functions */
-  --timing-ease-out: cubic-bezier(0.4, 0, 0.2, 1);
-  --timing-ease-in-out: cubic-bezier(0.4, 0, 0.4, 1);
+  /* Decorative gradient */
+  --background-image-marble-halftone: linear-gradient(135deg, rgba(200, 10, 26, 0.15), rgba(212, 165, 116, 0.15));
 }
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/* Mobile typography scale-down */
+@media (max-width: 640px) {
+  @theme {
+    --text-h1: 40px;
+    --text-h2: 30px;
+    --text-h3: 24px;
+    --text-h4: 20px;
+    --text-body-lg: 16px;
+    --text-body-base: 14px;
+    --text-body-sm: 12px;
+    --text-caption: 11px;
+    --spacing-6: 32px;
+    --spacing-8: 48px;
+  }
+}
 
-/* Accessibility: respect prefers-reduced-motion */
+/* Respect prefers-reduced-motion */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -113,23 +108,5 @@
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
-  }
-}
-
-/* Mobile typography scale down (~15–20% reduction on 375px viewports) */
-@media (max-width: 640px) {
-  :root {
-    --font-size-h1: 40px;
-    --font-size-h2: 30px;
-    --font-size-h3: 24px;
-    --font-size-h4: 20px;
-    --font-size-body-lg: 16px;
-    --font-size-body-base: 14px;
-    --font-size-body-sm: 12px;
-    --font-size-caption: 11px;
-
-    /* Reduce vertical spacing on mobile */
-    --space-6: 32px;
-    --space-8: 48px;
   }
 }

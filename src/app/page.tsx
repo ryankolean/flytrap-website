@@ -1,12 +1,3 @@
-import Hero from '@/components/home/Hero';
-import TodaysBuzzing from '@/components/home/TodaysBuzzing';
-import { MenuTease } from '@/components/home/MenuTease';
-import { OrderComingSoon } from '@/components/home/OrderComingSoon';
-import { TheRoom } from '@/components/home/TheRoom';
-import BuzzinSince2004 from '@/components/home/BuzzinSince2004';
-import { SwatShop } from '@/components/home/SwatShop';
-import VisitTeaser from '@/components/home/VisitTeaser';
-import { ThemeZone } from '@/components/layout/ThemeZone';
 import { pageMetadata } from '@/lib/metadata';
 
 export const metadata = pageMetadata({
@@ -18,38 +9,22 @@ export const metadata = pageMetadata({
 
 export default function Home() {
   return (
-    <main id="main">
-      <ThemeZone zone="red">
-        <Hero />
-      </ThemeZone>
-
-      <ThemeZone zone="mustard">
-        <TodaysBuzzing />
-      </ThemeZone>
-
-      <ThemeZone zone="gray">
-        <MenuTease />
-      </ThemeZone>
-
-      <ThemeZone zone="gray">
-        <OrderComingSoon />
-      </ThemeZone>
-
-      <ThemeZone zone="gray">
-        <TheRoom />
-      </ThemeZone>
-
-      <ThemeZone zone="mustard">
-        <BuzzinSince2004 />
-      </ThemeZone>
-
-      <ThemeZone zone="gray">
-        <SwatShop />
-      </ThemeZone>
-
-      <ThemeZone zone="mustard">
-        <VisitTeaser />
-      </ThemeZone>
+    <main id="main" className="min-h-screen bg-cream-paper text-text-ink">
+      <div className="mx-auto max-w-3xl px-4 py-16">
+        <h1 className="font-serif text-h1 text-flytrap-red-deep">
+          the fly trap
+        </h1>
+        <p className="mt-2 font-script text-h3 text-text-charcoal">
+          a finer diner
+        </p>
+        <p className="mt-8 text-body-base">
+          Single-page rebuild placeholder. See{' '}
+          <code className="rounded bg-bg-off-white px-2 py-1 font-mono text-body-sm">
+            docs/CLAUDE-DESIGN.md
+          </code>{' '}
+          for section outline and tokens.
+        </p>
+      </div>
     </main>
   );
 }

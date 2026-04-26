@@ -9,17 +9,13 @@
     "lint": "eslint 'src/**/*.{ts,tsx}'",
     "typecheck": "tsc --noEmit",
     "format": "prettier --write .",
-    "seed": "tsx scripts/seed.ts",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
     "audit:content": "tsx scripts/audit.ts"
   },
   "dependencies": {
-    "@sanity/client": "^6.22.0",
-    "@sanity/image-url": "^1.1.0",
     "next": "^15.0.0",
-    "next-sanity": "^9.8.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "zod": "^3.23.0"

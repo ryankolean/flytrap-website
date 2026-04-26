@@ -1,8 +1,5 @@
 import type { Viewport } from 'next';
 import './globals.css';
-import { Nav } from '@/components/layout/Nav';
-import { Footer } from '@/components/layout/Footer';
-import { ThemeZoneProvider } from '@/components/layout/ThemeZoneProvider';
 import { defaultMetadata } from '@/lib/metadata';
 
 export const metadata = defaultMetadata;
@@ -27,11 +24,7 @@ export default function RootLayout({
         >
           Skip to main content
         </a>
-        <ThemeZoneProvider>
-          <Nav />
-          {children}
-          <Footer />
-        </ThemeZoneProvider>
+        {children}
       </body>
     </html>
   );
