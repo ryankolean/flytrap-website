@@ -1,0 +1,12 @@
+{
+  "dependencies": {
+    "sanity": "latest",
+    "next-sanity": "latest",
+    "@sanity/client": "latest",
+    "@sanity/image-url": "latest",
+    "@sanity/vision": "latest",
+    "@sanity/orderable-document-list": "latest",
+    "styled-components": "latest"
+  },
+  "devDependencies": {}
+}
