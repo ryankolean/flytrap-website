@@ -11,7 +11,7 @@ export default async function TodaysBuzzing() {
   return (
     <section aria-label="Today's Buzzing">
       <div className="flex items-center gap-3 mb-4">
-        <FlyPouringCoffee className="w-10 h-10 shrink-0" aria-hidden="true" />
+        <FlyPouringCoffee className="w-10 h-10 shrink-0" aria-hidden={true} />
         <h2 className="font-display text-2xl leading-tight">
           Today&rsquo;s Buzzing
         </h2>
