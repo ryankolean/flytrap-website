@@ -136,6 +136,19 @@ window.Hero = function HeroWrap(props) {
   const bg = colorMap[props.heroColor] || "var(--color-flytrap-red-deep)";
   const lightOnDark = !["butter", "chartreuse"].includes(props.heroColor);
 
+  const [now, setNow] = uS(() => new Date());
+  uE(() => {
+    const t = setInterval(() => setNow(new Date()), 60000);
+    return () => clearInterval(t);
+  }, []);
+  const tzParts = new Intl.DateTimeFormat("en-US", {
+    timeZone: "America/Detroit", hour: "numeric", minute: "numeric", hour12: false,
+  }).formatToParts(now);
+  const dHour = parseInt(tzParts.find(p => p.type === "hour").value, 10);
+  const dMin = parseInt(tzParts.find(p => p.type === "minute").value, 10);
+  const minutesNow = dHour * 60 + dMin;
+  const isOpen = minutesNow >= 8 * 60 && minutesNow < 15 * 60;
+
   return (
     <header className="hero hero-solid" id="top" style={{ background: bg, color: lightOnDark ? "var(--color-cream-paper)" : "var(--color-checker-black)" }}>
       <div className="hero-content">
@@ -152,7 +165,7 @@ window.Hero = function HeroWrap(props) {
 
       <div className="hero-strip" style={{ color: "inherit" }}>
         <div className="grp">
-          <span className="open-now"><span className="dot" /> Open now</span>
+          <span className={"open-now" + (isOpen ? "" : " closed")}><span className="dot" /> {isOpen ? "Open now" : "Closed"}</span>
           <span>Mon–Sun · 8a — 3p</span>
         </div>
         <div className="grp">

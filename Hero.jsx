@@ -5,12 +5,27 @@ function Hero({ onOpenMenu }) {
   const paintings = window.FT_DATA.paintings;
   const [idx, setIdx] = useState(0);
   const [paused, setPaused] = useState(false);
+  const [now, setNow] = useState(() => new Date());
 
   useEffect(() => {
     if (paused) return;
     const t = setInterval(() => setIdx(i => (i + 1) % paintings.length), 6000);
     return () => clearInterval(t);
   }, [paused, paintings.length]);
+
+  useEffect(() => {
+    const t = setInterval(() => setNow(new Date()), 60000);
+    return () => clearInterval(t);
+  }, []);
+
+  // Hours: Mon-Sun 8a-3p, America/Detroit
+  const tzParts = new Intl.DateTimeFormat('en-US', {
+    timeZone: 'America/Detroit', hour: 'numeric', minute: 'numeric', hour12: false,
+  }).formatToParts(now);
+  const hour = parseInt(tzParts.find(p => p.type === 'hour').value, 10);
+  const minute = parseInt(tzParts.find(p => p.type === 'minute').value, 10);
+  const minutesNow = hour * 60 + minute;
+  const isOpen = minutesNow >= 8 * 60 && minutesNow < 15 * 60;
 
   return (
     <header className="hero" id="top">
@@ -57,7 +72,7 @@ function Hero({ onOpenMenu }) {
 
       <div className="hero-strip">
         <div className="grp">
-          <span className="open-now"><span className="dot" /> Open now</span>
+          <span className={"open-now" + (isOpen ? "" : " closed")}><span className="dot" /> {isOpen ? "Open now" : "Closed"}</span>
           <span>Mon–Sun · 8a — 3p</span>
         </div>
         <div className="grp">

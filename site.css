@@ -240,7 +240,9 @@ button { font-family: inherit; }
   min-height: 100svh;
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
   padding: 120px 20px 80px;
 }
 @media (min-width: 768px) {
@@ -257,7 +259,6 @@ button { font-family: inherit; }
   color: var(--color-cream-paper);
   text-shadow: 0 2px 8px rgba(0,0,0,.5);
   margin-bottom: 8px;
-  align-self: flex-start;
   transform: rotate(-2deg);
 }
 .hero-kicker::before {
@@ -281,7 +282,7 @@ button { font-family: inherit; }
   font-size: 18px;
   line-height: 1.5;
   max-width: 36ch;
-  margin: 0 0 32px;
+  margin: 0 auto 32px;
   color: var(--color-cream-paper);
   text-shadow: 0 1px 8px rgba(0,0,0,.6);
 }
@@ -290,6 +291,7 @@ button { font-family: inherit; }
 .hero-actions {
   display: flex;
   flex-wrap: wrap;
+  justify-content: center;
   gap: 12px;
 }
 .btn {
@@ -352,6 +354,10 @@ button { font-family: inherit; }
   width: 8px; height: 8px; border-radius: 50%;
   background: #4CD17A;
   box-shadow: 0 0 12px #4CD17A;
+}
+.hero-strip .open-now.closed .dot {
+  background: #C44;
+  box-shadow: 0 0 12px #C44;
 }
 @media (min-width: 1024px) { .hero-strip { display: flex; } }
 
