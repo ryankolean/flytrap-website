@@ -1,46 +1,34 @@
-# flytrap-website
+# The Fly Trap — static site
 
-[![CI](https://github.com/ryankolean/flytrap-website/actions/workflows/ci.yml/badge.svg)](https://github.com/ryankolean/flytrap-website/actions/workflows/ci.yml)
-
-Speculative website build for The Fly Trap, a diner in Ferndale, Michigan. Engagement model: build-then-offer.
-
-See [`CLAUDE.md`](./CLAUDE.md) for engagement constraints and stack decisions. See [`docs/`](./docs/) for the strategic spine and capture analyses (start with [`docs/README.md`](./docs/README.md)). Full-resolution photo originals live in the private [flytrap-website-assets-archive](https://github.com/ryankolean/flytrap-website-assets-archive) repo.
-
-## Status
-
-Pre-scaffold. Specs ingested 2026-04-25.
-
-## Stack
-
-Next.js 15 (App Router), Tailwind, Sanity Studio, Vercel free tier, TypeScript.
+Plain static HTML/CSS/JS. No build step. Open `index.html` in a browser, or serve the directory with any static server.
 
 ## Quick start
 
-Install dependencies:
-
-```sh
-pnpm install
+```bash
+# any static server works; here are two:
+npx serve .
+# or
+python3 -m http.server 8000
 ```
 
-Run the dev server:
+Then visit http://localhost:8000 (or whatever port your server prints).
 
-```sh
-pnpm dev
-```
+## Stack
 
-Open [http://localhost:3000](http://localhost:3000) in your browser.
+- HTML + CSS + React (loaded via UMD `<script>` tags)
+- JSX transpiled in-browser via Babel standalone
+- No bundler, no npm install
 
-### Environment variables
+## Files
 
-Copy `.env.example` to `.env.local` and fill in the required values:
+- `index.html` — entry point
+- `App.jsx` — root component, navigation, hero
+- `Nav.jsx`, `Hero.jsx`, `Menu.jsx`, `Sections.jsx` — page sections
+- `data.js` — menu + content data
+- `colors_and_type.css`, `site.css` — styles
+- `assets/` — images, paintings, wordmarks
+- `fonts/` — self-hosted Fraunces + Inter (woff2)
 
-- `NEXT_PUBLIC_SANITY_PROJECT_ID` — Sanity project ID
-- `NEXT_PUBLIC_SANITY_DATASET` — Sanity dataset name
-- `SANITY_API_TOKEN` — Sanity API read token
+## Deploy
 
-The Sanity Studio is available at `/studio` and requires `NEXT_PUBLIC_SANITY_PROJECT_ID` and `SANITY_API_TOKEN` to be configured.
-
-## Documentation
-
-- [`CLAUDE.md`](./CLAUDE.md) — Engagement model and architecture decisions
-- [`docs/README.md`](./docs/README.md) — Strategic spine and capture analyses
+Drop the contents of this folder onto any static host (Vercel, Netlify, GitHub Pages, S3+CloudFront). No env vars, no server.
