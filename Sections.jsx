@@ -1,9 +1,53 @@
 // About + Gallery + Retail + Press + Buzz band + Visit + Footer + DailyBuzz page
 
+function Specials() {
+  const data = window.FT_DATA;
+  const specials = data.specials || [];
+  return (
+    <section id="specials" className="section specials" data-screen-label="Specials">
+      <div className="container">
+        <div className="section-head center reveal">
+          <div className="eyebrow">This week only</div>
+          <h2 className="title">Two specials. Fresh every week.</h2>
+          <p className="lede">
+            What the cooks are running this week — straight off our Instagram. Here through {data.weekOf ? data.weekOf.replace(/^Week of /, "") : "Sunday"}, then gone.
+          </p>
+        </div>
+
+        <div className="specials-grid">
+          {specials.map((s, i) =>
+          <article className="special-card reveal" key={s.id}>
+              <div className="special-photo">
+                <image-slot
+                id={s.id}
+                shape="rect"
+                fit="cover"
+                placeholder="Drop this week's photo">
+                </image-slot>
+                <span className="special-badge">{s.eyebrow}</span>
+              </div>
+              <div className="special-body">
+                <div className="special-headline">
+                  <h3>{s.name}</h3>
+                  {s.veg ? <span className="veg-tag">Veg</span> : null}
+                </div>
+                <p className="special-desc">{s.desc}</p>
+                <div className="special-foot">
+                  <span className="special-price">${s.price}</span>
+                </div>
+              </div>
+            </article>
+          )}
+        </div>
+      </div>
+    </section>);
+
+}
+
 function BuzzBand({ onGoBuzz }) {
   const today = new Date();
-  const dayName = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"][today.getDay()];
-  const buzz = window.FT_DATA.buzz.find(b => b.day === dayName) || window.FT_DATA.buzz[0];
+  const dayName = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"][today.getDay()];
+  const buzz = window.FT_DATA.buzz.find((b) => b.day === dayName) || window.FT_DATA.buzz[0];
 
   return (
     <section className="buzz-band" id="daily-buzz-band" data-screen-label="Buzz Band">
@@ -17,14 +61,14 @@ function BuzzBand({ onGoBuzz }) {
             <h3>{buzz.name}</h3>
             <p>{buzz.desc}</p>
           </div>
-          <a className="buzz-cta" href="#daily-buzz" onClick={(e) => { e.preventDefault(); onGoBuzz(); }}>
+          <a className="buzz-cta" href="#daily-buzz" onClick={(e) => {e.preventDefault();onGoBuzz();}}>
             See the week
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M13 5l7 7-7 7" /></svg>
           </a>
         </div>
       </div>
-    </section>
-  );
+    </section>);
+
 }
 
 function About() {
@@ -61,8 +105,8 @@ function About() {
           </div>
         </div>
       </div>
-    </section>
-  );
+    </section>);
+
 }
 
 function Gallery() {
@@ -76,23 +120,23 @@ function Gallery() {
         </div>
       </div>
       <div className="gallery-track">
-        {paintings.map((p, i) => (
-          <div className="gallery-card" key={i} style={{ backgroundImage: `url(${p.src})` }}>
+        {paintings.map((p, i) =>
+        <div className="gallery-card" key={i} style={{ backgroundImage: `url(${p.src})` }}>
             <div className="label">{p.label}</div>
           </div>
-        ))}
+        )}
       </div>
-    </section>
-  );
+    </section>);
+
 }
 
 function Retail() {
   const cards = [
-    { cls: "swat", label: "SWAT", title: "SWAT Hot Sauces", desc: "Three heat levels, named like a tactical unit. Smoky and slow, sharp and green, or the one that goes on the eggs whether you like it or not. Bottled at the diner.", price: "$8 / bottle", ask: "Ask at the counter" },
-    { cls: "jam", label: "Seasonal Jam", title: "Seasonal Jam", desc: "Whatever's in season, cooked down in the same pan as the gingerbread waffle topping. Cherry in summer, plum in fall, marmalade in February.", price: "$10 / jar", ask: "Limited supply" },
-    { cls: "tees", label: "the fly trap", title: "T-Shirts", desc: "Black tee, the wordmark on the chest, the fly on the sleeve. Soft after one wash, softer after twenty.", price: "$25", ask: "S · M · L · XL · XXL" },
-    { cls: "gift", label: "Gift Cards", title: "Gift Cards", desc: "Any amount you like. Hand-written on a card with the wordmark, sealed in an envelope. Use it on breakfast, on a burger, on the bar tab.", price: "$25 / $50 / $100", ask: "In person or by phone" },
-  ];
+  { cls: "swat", label: "SWAT", photo: "assets/retail/swat-hot-sauce.png", title: "SWAT Hot Sauces", desc: "Three heat levels, named like a tactical unit. Smoky and slow, sharp and green, or the one that goes on the eggs whether you like it or not. Bottled at the diner.", price: "$8 / bottle", ask: "Ask at the counter" },
+  { cls: "jam", label: "Seasonal Jam", photo: "assets/retail/wham-jam.png", title: "Seasonal Jam", desc: "Whatever's in season, cooked down in the same pan as the gingerbread waffle topping. Cherry in summer, plum in fall, marmalade in February.", price: "$10 / jar", ask: "Limited supply" },
+  { cls: "tees", label: "the fly trap", title: "T-Shirts", desc: "Black tee, the wordmark on the chest, the fly on the sleeve. Soft after one wash, softer after twenty.", price: "$25", ask: "S · M · L · XL · XXL" },
+  { cls: "gift", label: "Gift Cards", title: "Gift Cards", desc: "Any amount you like. Hand-written on a card with the wordmark, sealed in an envelope. Use it on breakfast, on a burger, on the bar tab.", price: "$25 / $50 / $100", ask: "In person or by phone" }];
+
   return (
     <section id="retail" className="section retail" data-screen-label="Retail">
       <div className="container">
@@ -102,9 +146,13 @@ function Retail() {
           <p className="lede">Hot sauces made in-house, jam from the back of the back of the kitchen, t-shirts that have outlasted three managers, gift cards in any amount. Available at the front counter — ask Kara.</p>
         </div>
         <div className="retail-grid">
-          {cards.map(c => (
-            <article key={c.cls} className={"retail-card reveal " + c.cls}>
-              <div className="ph"><span className="ph-label">{c.label}</span></div>
+          {cards.map((c) =>
+          <article key={c.cls} className={"retail-card reveal " + c.cls}>
+              <div className="ph">
+                {c.photo ?
+              <img className="ph-img" src={c.photo} alt={c.title} loading="lazy" /> :
+              <span className="ph-label">{c.label}</span>}
+              </div>
               <div className="body">
                 <h3>{c.title}</h3>
                 <p className="desc">{c.desc}</p>
@@ -114,11 +162,11 @@ function Retail() {
                 </div>
               </div>
             </article>
-          ))}
+          )}
         </div>
       </div>
-    </section>
-  );
+    </section>);
+
 }
 
 function Press() {
@@ -133,8 +181,8 @@ function Press() {
         <p className="press-pull reveal">A long love letter to the marble bar and the seventeen flies.</p>
         <p className="press-pull-attr reveal">— Metro Times</p>
         <div className="press-list reveal">
-          {items.map((it, i) => (
-            <a key={i} className="press-item" href="#" onClick={e => e.preventDefault()}>
+          {items.map((it, i) =>
+          <a key={i} className="press-item" href="#" onClick={(e) => e.preventDefault()}>
               <span className="year">{it.year}</span>
               <span className="body">
                 <span className="outlet">{it.outlet}</span>
@@ -142,19 +190,19 @@ function Press() {
               </span>
               <span className="arrow">↗</span>
             </a>
-          ))}
+          )}
         </div>
       </div>
-    </section>
-  );
+    </section>);
+
 }
 
 function Visit() {
   const today = new Date().getDay();
   const days = [
-    { i: 1, label: "Mon" }, { i: 2, label: "Tue" }, { i: 3, label: "Wed" },
-    { i: 4, label: "Thu" }, { i: 5, label: "Fri" }, { i: 6, label: "Sat" }, { i: 0, label: "Sun" },
-  ];
+  { i: 1, label: "Mon" }, { i: 2, label: "Tue" }, { i: 3, label: "Wed" },
+  { i: 4, label: "Thu" }, { i: 5, label: "Fri" }, { i: 6, label: "Sat" }, { i: 0, label: "Sun" }];
+
   // Native maps deep link — universal "maps:" scheme falls back to https on web
   const mapsUrl = "https://maps.google.com/?q=22950+Woodward+Ave,+Ferndale,+MI+48220";
 
@@ -173,7 +221,7 @@ function Visit() {
             <a className="visit-addr-link" href={mapsUrl} target="_blank" rel="noopener" aria-label="Open in maps">
               <p className="visit-addr">22950 Woodward Avenue<br />Ferndale, MI 48220</p>
               <span className="addr-cta">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" /><circle cx="12" cy="10" r="3" /></svg>
                 Open in maps
               </span>
             </a>
@@ -188,19 +236,19 @@ function Visit() {
             <h4>Hours</h4>
             <table className="hours">
               <tbody>
-                {days.map(d => (
-                  <tr key={d.i} className={d.i === today ? "today" : ""}>
+                {days.map((d) =>
+                <tr key={d.i} className={d.i === today ? "today" : ""}>
                     <td>{d.label}{d.i === today ? " · today" : ""}</td>
                     <td>8:00a — 3:00p</td>
                   </tr>
-                ))}
+                )}
               </tbody>
             </table>
           </div>
         </div>
       </div>
-    </section>
-  );
+    </section>);
+
 }
 
 function Footer({ onNavigate }) {
@@ -218,16 +266,16 @@ function Footer({ onNavigate }) {
           <div className="footer-col">
             <h6>Eat</h6>
             <ul>
-              <li><a href="#menu" onClick={(e) => { e.preventDefault(); onNavigate("#menu"); }}>Menu</a></li>
-              <li><a href="#retail" onClick={(e) => { e.preventDefault(); onNavigate("#retail"); }}>Retail</a></li>
+              <li><a href="#menu" onClick={(e) => {e.preventDefault();onNavigate("#menu");}}>Menu</a></li>
+              <li><a href="#retail" onClick={(e) => {e.preventDefault();onNavigate("#retail");}}>Retail</a></li>
             </ul>
           </div>
           <div className="footer-col">
             <h6>Know</h6>
             <ul>
-              <li><a href="#about" onClick={(e) => { e.preventDefault(); onNavigate("#about"); }}>About</a></li>
-              <li><a href="#press" onClick={(e) => { e.preventDefault(); onNavigate("#press"); }}>Press</a></li>
-              <li><a href="#visit" onClick={(e) => { e.preventDefault(); onNavigate("#visit"); }}>Contact</a></li>
+              <li><a href="#about" onClick={(e) => {e.preventDefault();onNavigate("#about");}}>About</a></li>
+              <li><a href="#press" onClick={(e) => {e.preventDefault();onNavigate("#press");}}>Press</a></li>
+              <li><a href="#visit" onClick={(e) => {e.preventDefault();onNavigate("#visit");}}>Contact</a></li>
             </ul>
           </div>
           <div className="footer-col">
@@ -243,13 +291,13 @@ function Footer({ onNavigate }) {
           <span>Designed with marbles, hot sauce, and seventeen flies.</span>
         </div>
       </div>
-    </footer>
-  );
+    </footer>);
+
 }
 
 function DailyBuzzPage({ onBack }) {
   const todayIdx = new Date().getDay(); // 0=Sun..6=Sat
-  const dayMap = { Sunday:0, Monday:1, Tuesday:2, Wednesday:3, Thursday:4, Friday:5, Saturday:6 };
+  const dayMap = { Sunday: 0, Monday: 1, Tuesday: 2, Wednesday: 3, Thursday: 4, Friday: 5, Saturday: 6 };
   const buzz = window.FT_DATA.buzz;
   const soup = window.FT_DATA.soup;
   const pastry = window.FT_DATA.pastry;
@@ -258,7 +306,7 @@ function DailyBuzzPage({ onBack }) {
   const today = new Date();
   const dateFor = (dayOfWeek) => {
     const d = new Date(today);
-    const diff = ((dayOfWeek - today.getDay()) + 7) % 7;
+    const diff = (dayOfWeek - today.getDay() + 7) % 7;
     d.setDate(today.getDate() + diff);
     return d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
   };
@@ -267,8 +315,8 @@ function DailyBuzzPage({ onBack }) {
     <main data-screen-label="Daily Buzz Page">
       <section className="db-hero">
         <div className="container">
-          <a href="#top" className="crumb" onClick={(e) => { e.preventDefault(); onBack(); }}>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+          <a href="#top" className="crumb" onClick={(e) => {e.preventDefault();onBack();}}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M19 12H5M12 19l-7-7 7-7" /></svg>
             Back to home
           </a>
           <div style={{ fontFamily: "var(--font-script)", fontSize: 32, color: "var(--color-flytrap-red-deep)", transform: "rotate(-2deg)", display: "inline-block", marginBottom: 4 }}>
@@ -299,8 +347,8 @@ function DailyBuzzPage({ onBack }) {
                     <span className="chip">Available 8a — 3p, while it lasts</span>
                   </div>
                 </div>
-              </div>
-            );
+              </div>);
+
           })}
         </div>
       </section>
@@ -321,10 +369,11 @@ function DailyBuzzPage({ onBack }) {
           </div>
         </div>
       </section>
-    </main>
-  );
+    </main>);
+
 }
 
+window.Specials = Specials;
 window.BuzzBand = BuzzBand;
 window.About = About;
 window.Gallery = Gallery;

@@ -109,6 +109,60 @@ window.FT_DATA = {
     { day: "Saturday",  name: "The Lizzo",        desc: "Two thick slices of cinnamon french toast, blueberry mascarpone, lemon curd, candied bacon. About damn time.", veg: false, price: "15.95" },
     { day: "Sunday",    name: "Stevie Wonder",    desc: "Eggs in a basket of buttery sourdough, signed-sealed-delivered hollandaise, country ham, garlic spuds.", veg: false, price: "16.95" },
   ],
+  // ===========================================================================
+  // THIS WEEK'S SPECIALS — two per week, posted to Instagram, photo-forward.
+  //
+  // SOURCE OF TRUTH: the weekly Instagram post on @theflytrapferndale.
+  // Current week's post: https://www.instagram.com/p/DZPmJyujUi-/
+  //
+  // ---------------------------------------------------------------------------
+  // TODO (Claude Code) — AUTOMATE THIS. See AUTOMATION.md "Weekly specials sync".
+  //
+  // Right now this `specials` array + the two photos in /assets/retail are
+  // updated BY HAND each week from the Instagram post. We want this automated.
+  //
+  // Proposed implementation (Phase B — no live calls until handoff, per CLAUDE.md):
+  //   1. A scheduled job (Vercel Cron, weekly Mon 6am ET) hits the Instagram
+  //      Graph API (Business/Creator account + Meta app) for the latest post
+  //      tagged #flytrapspecials (or the most recent feed post).
+  //   2. Parse the caption into two specials. Convention to enforce in the
+  //      caption so parsing is deterministic:
+  //         SAVORY: <name> — <description> — $<price>
+  //         SWEET:  <name> — <description> — $<price>
+  //      (vegetarian flagged with a trailing "(v)").
+  //   3. Download the carousel images (img_index 1 = savory, 2 = sweet),
+  //      crop/resize to 1080x1080 (Instagram square — matches .special-photo),
+  //      write to /assets/specials/week-<ISO>.jpg, and update `photo` below.
+  //   4. Rewrite this `specials` array + `weekOf` + `sourcePost` and commit,
+  //      OR move specials into the Sanity CMS so non-devs can edit without a deploy.
+  //   5. Fallback: if the fetch fails or the caption can't be parsed, KEEP the
+  //      last good specials (do not blank the section) and alert via ntfy.sh.
+  //
+  // Until automation lands: paste the two specials below and drag the two
+  // photos onto the slots (they persist), or set `photo` to a committed file.
+  // ---------------------------------------------------------------------------
+  sourcePost: "https://www.instagram.com/p/DZPmJyujUi-/",
+  weekOf: "Week of June 2",
+  specials: [
+    {
+      id: "special-1",
+      eyebrow: "Savory",
+      name: "Aretha's Crab Toast",
+      desc: "Lump crab over grilled sourdough, dill aioli, tomato confit, soft-poached egg. Respect.",
+      price: "17.95",
+      veg: false,
+      // photo: "assets/specials/week-2026-06-02-savory.jpg",  // set by automation
+    },
+    {
+      id: "special-2",
+      eyebrow: "Sweet",
+      name: "The Lizzo",
+      desc: "Two thick slices of cinnamon french toast, blueberry mascarpone, lemon curd, candied bacon. About damn time.",
+      price: "15.95",
+      veg: false,
+      // photo: "assets/specials/week-2026-06-02-sweet.jpg",  // set by automation
+    },
+  ],
   soup: { name: "Cream of Roasted Tomato & Fennel", desc: "Slow-roasted Roma tomatoes, fennel bulb, basil oil swirl, parmesan crisp on the side. Cup $5 / Bowl $6." },
   pastry: { name: "Brown-Butter Sour Cherry Galette", desc: "From the Sugar Shack — flaky butter dough, Michigan sour cherries, almond frangipane, demerara crust. While they last. $5.95." },
 };
