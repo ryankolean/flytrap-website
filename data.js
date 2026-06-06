@@ -147,20 +147,18 @@ window.FT_DATA = {
     {
       id: "special-1",
       eyebrow: "Savory",
-      name: "Aretha's Crab Toast",
-      desc: "Lump crab over grilled sourdough, dill aioli, tomato confit, soft-poached egg. Respect.",
-      price: "17.95",
+      name: "The Darjeeling Limited",
+      desc: "A rumble of gunpowder curry eggs with scallions, tomato, jack cheese and greens. Hanging with house chicken tikka masala sausage and a lime pickle chutney; browns and toast.",
       veg: false,
-      // photo: "assets/specials/week-2026-06-02-savory.jpg",  // set by automation
+      photo: "assets/specials/week-2026-06-06-savory.jpg",
     },
     {
       id: "special-2",
       eyebrow: "Sweet",
-      name: "The Lizzo",
-      desc: "Two thick slices of cinnamon french toast, blueberry mascarpone, lemon curd, candied bacon. About damn time.",
-      price: "15.95",
-      veg: false,
-      // photo: "assets/specials/week-2026-06-02-sweet.jpg",  // set by automation
+      name: "The Manila Social Club",
+      desc: "It's ube, banana bread French toast! With macerated blueberries, coconut \"syrup\" and toasted almonds and coconut.",
+      veg: true,
+      photo: "assets/specials/week-2026-06-06-sweet.jpg",
     },
   ],
   soup: { name: "Cream of Roasted Tomato & Fennel", desc: "Slow-roasted Roma tomatoes, fennel bulb, basil oil swirl, parmesan crisp on the side. Cup $5 / Bowl $6." },

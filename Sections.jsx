@@ -20,6 +20,7 @@ function Specials() {
               <div className="special-photo">
                 <image-slot
                 id={s.id}
+                src={s.photo || undefined}
                 shape="rect"
                 fit="cover"
                 placeholder="Drop this week's photo">
@@ -32,9 +33,11 @@ function Specials() {
                   {s.veg ? <span className="veg-tag">Veg</span> : null}
                 </div>
                 <p className="special-desc">{s.desc}</p>
-                <div className="special-foot">
-                  <span className="special-price">${s.price}</span>
-                </div>
+                {s.price ? (
+                  <div className="special-foot">
+                    <span className="special-price">${s.price}</span>
+                  </div>
+                ) : null}
               </div>
             </article>
           )}
