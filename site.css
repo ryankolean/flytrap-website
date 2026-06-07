@@ -325,6 +325,14 @@ button { font-family: inherit; }
   flex-wrap: wrap;
   gap: 12px;
 }
+/* CTA visibility — mobile sees Order Takeout, desktop sees Today's Buzz / Visit Us.
+   Selector uses .btn.hero-cta-* to outrank the later `.btn { display: inline-flex }` rule. */
+.btn.hero-cta-desktop { display: none; }
+.btn.hero-cta-mobile { display: inline-flex; }
+@media (min-width: 768px) {
+  .btn.hero-cta-desktop { display: inline-flex; }
+  .btn.hero-cta-mobile { display: none; }
+}
 .btn {
   display: inline-flex;
   align-items: center;

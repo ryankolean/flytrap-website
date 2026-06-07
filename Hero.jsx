@@ -35,7 +35,15 @@ function Hero({ onOpenMenu }) {
           <a href="#menu" className="btn btn-primary" onClick={(e) => { e.preventDefault(); onOpenMenu && onOpenMenu(); }}>
             See the Menu
           </a>
-          <a href="#daily-buzz" className="btn btn-ghost">Today's Buzz →</a>
+          <a href="#daily-buzz" className="btn btn-ghost hero-cta-desktop">Today's Buzz →</a>
+          <a
+            href="https://order.toasttab.com/online/the-fly-trap-ferndale-22950-woodward-avenue"
+            className="btn btn-ghost hero-cta-mobile"
+            target="_blank"
+            rel="noopener"
+          >
+            Order Takeout →
+          </a>
         </div>
       </div>
 
