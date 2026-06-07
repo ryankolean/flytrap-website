@@ -20,12 +20,18 @@ function Nav({ scrolled, darkBg, onNavigate, currentPage }) {
     onNavigate(href);
   };
 
+  // While the drawer is open the nav sits on the cream drawer bg, so force
+  // the scrolled/light-bg color scheme (dark wordmark + dark burger + cream
+  // bg) regardless of whether the underlying hero is dark.
+  const navScrolled = scrolled || open;
+  const navDarkBg = darkBg && !navScrolled;
+
   return (
     <React.Fragment>
-      <nav className={"nav" + (scrolled ? " scrolled" : "") + (darkBg && !scrolled ? " dark-bg" : "")}>
+      <nav className={"nav" + (navScrolled ? " scrolled" : "") + (navDarkBg ? " dark-bg" : "")}>
         <div className="nav-inner">
           <a className="lockup" href="#top" onClick={(e) => handleClick(e, "#top")} aria-label="The Fly Trap — home">
-            <img src={darkBg && !scrolled ? "assets/flytrap-wordmark-retro-cream.png" : "assets/flytrap-wordmark-retro-dark.png"} alt="The Fly Trap" />
+            <img src={navDarkBg ? "assets/flytrap-wordmark-retro-cream.png" : "assets/flytrap-wordmark-retro-dark.png"} alt="The Fly Trap" />
           </a>
           <ul className="nav-links">
             {links.map(l => (
