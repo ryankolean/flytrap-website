@@ -167,14 +167,21 @@
     // .frame img (clipped) and .spill (unclipped ghost + handles) share the
     // same left/top/width/height in frame-%, computed by _applyView(), so the
     // inside-mask crop and the outside-mask spill stay pixel-aligned.
+    // PATCH (flytrap-website): scope touch-action:none to editor mode only so
+    // mobile page scroll passes through the photo on the deployed site.
+    // image-slot sets [data-editable] only when window.omelette is present.
+    // This change will be clobbered by the next design-sync; the design-sync
+    // skill documents the re-patch step. Original lines kept commented above.
     '.frame img{position:absolute;max-width:none;transform:translate(-50%,-50%);' +
-    '  -webkit-user-drag:none;user-select:none;touch-action:none}' +
+    '  -webkit-user-drag:none;user-select:none;touch-action:auto}' +
+    ':host([data-editable]) .frame img{touch-action:none}' +
     // Reframe mode (double-click): the full image spills past the mask. The
     // spill layer is sized to the IMAGE bounds so its corners are where the
     // resize handles belong. The ghost <img> inside is translucent; the real
     // clipped <img> underneath shows the opaque in-mask crop.
     '.spill{position:absolute;transform:translate(-50%,-50%);display:none;z-index:1;' +
-    '  cursor:grab;touch-action:none}' +
+    '  cursor:grab;touch-action:auto}' +
+    ':host([data-editable]) .spill{touch-action:none}' +
     ':host([data-panning]) .spill{cursor:grabbing}' +
     '.spill .ghost{position:absolute;inset:0;width:100%;height:100%;opacity:.35;' +
     '  pointer-events:none;-webkit-user-drag:none;user-select:none;' +

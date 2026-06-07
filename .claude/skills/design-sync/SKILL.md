@@ -187,6 +187,81 @@ rsync -av --ignore-existing "$WORK/current/fonts/" fonts/
 
 For `index.html`: do NOT cp. Diff the two HTML files. Port new `<script>` / `<link>` / `<meta>` tags into `index.html` manually. Preserve `index.html` as the entrypoint.
 
+### Stage 5b — Re-apply local-only patches (REQUIRED after every sync)
+
+The archive overwrites repo files including site-only patches. Re-apply this list after every `cp`:
+
+#### Patch P1: image-slot.js mobile scroll fix
+
+Claude Design ships `image-slot.js` with `touch-action:none` on `.frame img` and `.spill` inside the shadow stylesheet. That blocks vertical page scroll on mobile when the touch starts on a special's photo. We override only outside editor mode (`:host([data-editable])`).
+
+```bash
+python3 - <<'PY'
+import re, pathlib
+p = pathlib.Path('image-slot.js')
+src = p.read_text()
+patched = src.replace(
+    "'.frame img{position:absolute;max-width:none;transform:translate(-50%,-50%);' +\n"
+    "    '  -webkit-user-drag:none;user-select:none;touch-action:none}' +",
+    "// PATCH (flytrap-website): scope touch-action:none to editor mode only so\n"
+    "    // mobile page scroll passes through the photo on the deployed site.\n"
+    "    // image-slot sets [data-editable] only when window.omelette is present.\n"
+    "    // This change will be clobbered by the next design-sync; the design-sync\n"
+    "    // skill documents the re-patch step. Original lines kept commented above.\n"
+    "    '.frame img{position:absolute;max-width:none;transform:translate(-50%,-50%);' +\n"
+    "    '  -webkit-user-drag:none;user-select:none;touch-action:auto}' +\n"
+    "    ':host([data-editable]) .frame img{touch-action:none}' +"
+).replace(
+    "'.spill{position:absolute;transform:translate(-50%,-50%);display:none;z-index:1;' +\n"
+    "    '  cursor:grab;touch-action:none}' +",
+    "'.spill{position:absolute;transform:translate(-50%,-50%);display:none;z-index:1;' +\n"
+    "    '  cursor:grab;touch-action:auto}' +\n"
+    "    ':host([data-editable]) .spill{touch-action:none}' +"
+)
+if patched == src:
+    print('P1: no change — already patched or pattern moved (inspect manually)')
+else:
+    p.write_text(patched)
+    print('P1: applied')
+PY
+```
+
+Verify: at 375x812 in preview, dragging vertically while finger starts on a `.special-photo` must scroll the page (not freeze).
+
+#### Patch P2: mobile-only Order Takeout hero CTA
+
+**Production hero is `window.Hero = HeroWrap` defined inside `App.jsx`** (search for "Solid-color hero" comment, ~line 199). `Hero.jsx` defines the painting-rotation hero but it is shadowed at runtime because `App.jsx` loads after `Hero.jsx` in `index.html`. Patch BOTH files to keep them aligned, but `App.jsx` is the one that ships.
+
+Secondary CTA block in `App.jsx` HeroWrap has TWO anchors:
+- `.btn-ghost.hero-cta-desktop` → `#visit`, label `Visit Us →` (existing CTA)
+- `.btn-ghost.hero-cta-mobile`  → `https://order.toasttab.com/online/the-fly-trap-ferndale-22950-woodward-avenue`, `target=_blank rel=noopener`, label `Order Takeout →`
+
+`Hero.jsx` mirrors the same pattern, secondary anchors target `#daily-buzz` (desktop) and Toast (mobile).
+
+`site.css` rules:
+```css
+.hero-cta-desktop { display: none; }
+.hero-cta-mobile { display: inline-flex; }
+@media (min-width: 768px) {
+  .hero-cta-desktop { display: inline-flex; }
+  .hero-cta-mobile { display: none; }
+}
+```
+
+Toast URL canonical: `https://order.toasttab.com/online/the-fly-trap-ferndale-22950-woodward-avenue` (matches `Nav.jsx` "Order Now" CTA). If Toast URL changes, update Nav.jsx + both hero blocks together.
+
+If a sync removes either anchor or the CSS rules, re-add.
+
+#### General rule
+
+Treat anything outside the archive's file list — or with a `PATCH (flytrap-website)` marker comment — as a local patch that survives every sync. Grep before committing:
+
+```bash
+grep -rn "PATCH (flytrap-website)" --include="*.js" --include="*.jsx" --include="*.css"
+```
+
+Each result must still be present after applying a sync. If gone, restore from prior commit or this skill.
+
 Update state file:
 ```bash
 jq --arg ver "$NEXT" --arg ts "$(date -u +%Y-%m-%dT%H:%M:%SZ)" --arg sha "$(sha256sum "$ARCHIVE" | awk '{print $1}')" \
