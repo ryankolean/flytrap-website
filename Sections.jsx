@@ -25,7 +25,6 @@ function Specials() {
                 fit="cover"
                 placeholder="Drop this week's photo">
                 </image-slot>
-                <span className="special-badge">{s.eyebrow}</span>
               </div>
               <div className="special-body">
                 <div className="special-headline">

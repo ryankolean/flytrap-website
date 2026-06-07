@@ -146,7 +146,6 @@ window.FT_DATA = {
   specials: [
     {
       id: "special-1",
-      eyebrow: "Savory",
       name: "The Darjeeling Limited",
       desc: "A rumble of gunpowder curry eggs with scallions, tomato, jack cheese and greens. Hanging with house chicken tikka masala sausage and a lime pickle chutney; browns and toast.",
       veg: false,
@@ -154,7 +153,6 @@ window.FT_DATA = {
     },
     {
       id: "special-2",
-      eyebrow: "Sweet",
       name: "The Manila Social Club",
       desc: "It's ube, banana bread French toast! With macerated blueberries, coconut \"syrup\" and toasted almonds and coconut.",
       veg: true,

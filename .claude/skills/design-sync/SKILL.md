@@ -487,25 +487,25 @@ sourcePost: "https://www.instagram.com/p/<shortcode>/",
 weekOf: "Week of <Month Day>",  // human-readable week-of
 specials: [
   {
-    id: "special-1",
-    eyebrow: "Savory",
+    id: "special-1",                   // index 0 = savory by convention
     name: "<from caption>",
     desc: "<from caption>",
     veg: <bool>,
     photo: "assets/specials/week-<ISO>-savory.jpg",
-    // price: "<from caption>",   // OMIT when not present
+    // price: "<from caption>",        // OMIT when not present
   },
   {
-    id: "special-2",
-    eyebrow: "Sweet",
+    id: "special-2",                   // index 1 = sweet by convention
     name: "<from caption>",
     desc: "<from caption>",
     veg: <bool>,
     photo: "assets/specials/week-<ISO>-sweet.jpg",
-    // price: "...",  // OMIT when not present
+    // price: "...",                   // OMIT when not present
   },
 ],
 ```
+
+**Do NOT add an `eyebrow` field.** The user removed the SAVORY/SWEET pill badges from the cards (Sections.jsx no longer renders `.special-badge`, site.css no longer styles it). Savory vs sweet identity lives only in the array order — index 0 savory, index 1 sweet. If a future sync re-introduces `eyebrow` in `data.js` and `.special-badge` in `Sections.jsx`, strip both before committing.
 
 **Verification (must pass before commit):**
 
