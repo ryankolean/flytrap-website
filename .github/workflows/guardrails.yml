@@ -1,0 +1,132 @@
+name: Guardrails
+
+# Mechanical enforcement of the conventions in AGENTS.md and
+# .claude/skills/design-sync/SKILL.md. Runs on every PR to main and on
+# direct pushes to main. Fails the build when an invariant is broken so a
+# bad Claude Design sync (or any edit) cannot silently regress the site.
+#
+# Every check is grep/test based — no install, no build. Keep it that way:
+# this repo has no build step and this workflow must not introduce one.
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  guardrails:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run guardrail checks
+        shell: bash
+        run: |
+          set -uo pipefail
+          fail=0
+          err() { printf '::error::%s\n' "$1"; fail=1; }
+          note() { printf '  - %s\n' "$1"; }
+
+          echo "== 1. No-build invariants =="
+          for f in package.json package-lock.json yarn.lock pnpm-lock.yaml \
+                   tsconfig.json vite.config.js vite.config.ts \
+                   next.config.js next.config.mjs webpack.config.js \
+                   rollup.config.js tailwind.config.js tailwind.config.cjs \
+                   postcss.config.js; do
+            [ -e "$f" ] && err "Forbidden build file present: $f"
+          done
+          [ -d node_modules ] && err "node_modules/ committed"
+          if ls *.ts *.tsx 2>/dev/null | grep -q .; then
+            err "TypeScript file(s) at root — repo is .jsx only"
+          fi
+          # ESM import/export at line start in root JS/JSX (skip .claude/ docs)
+          if grep -rnE '^[[:space:]]*(import|export)[[:space:]]' \
+               --include='*.jsx' --include='*.js' \
+               --exclude-dir='.github' --exclude-dir='.claude' . 2>/dev/null \
+             | grep -qv '//'; then
+            err "ESM import/export found — components must attach to window.*"
+            grep -rnE '^[[:space:]]*(import|export)[[:space:]]' \
+              --include='*.jsx' --include='*.js' \
+              --exclude-dir='.github' --exclude-dir='.claude' . | head -5
+          fi
+          # Tailwind
+          grep -q 'cdn.tailwindcss.com' index.html 2>/dev/null \
+            && err "Tailwind CDN in index.html"
+
+          echo "== 2. index.html script load order =="
+          if [ ! -f index.html ]; then
+            err "index.html missing (entrypoint must be index.html)"
+          else
+            [ -f "The Fly Trap.html" ] && err "'The Fly Trap.html' present — entrypoint is index.html"
+            order="data.js image-slot.js tweaks-panel.jsx Nav.jsx Hero.jsx Menu.jsx Sections.jsx App.jsx"
+            prev=0
+            for tag in $order; do
+              ln=$(grep -nF "src=\"$tag\"" index.html | head -1 | cut -d: -f1)
+              if [ -z "$ln" ]; then
+                err "index.html missing <script src=\"$tag\">"
+              elif [ "$ln" -lt "$prev" ]; then
+                err "index.html script out of order: $tag at line $ln (after line $prev)"
+              else
+                prev=$ln
+              fi
+            done
+          fi
+
+          echo "== 3. Local-only patches survive sync (PATCH markers) =="
+          # P1 — image-slot.js mobile scroll fix
+          grep -q 'PATCH (flytrap-website)' image-slot.js 2>/dev/null \
+            || err "image-slot.js: PATCH (flytrap-website) marker gone"
+          grep -qF ':host([data-editable]) .frame img{touch-action:none}' image-slot.js 2>/dev/null \
+            || err "image-slot.js: editor-gated touch-action override gone (mobile scroll will break)"
+          grep -qF 'user-select:none;touch-action:auto}' image-slot.js 2>/dev/null \
+            || err "image-slot.js: base touch-action:auto on .frame img gone"
+          # P2 — mobile Order Takeout hero CTA
+          grep -q 'hero-cta-mobile' App.jsx 2>/dev/null \
+            || err "App.jsx: hero-cta-mobile anchor gone"
+          grep -q '.btn.hero-cta-mobile' site.css 2>/dev/null \
+            || err "site.css: .btn.hero-cta-mobile visibility rule gone"
+
+          echo "== 4. Canonical Toast order URL present in nav + hero =="
+          TOAST='order.toasttab.com/online/the-fly-trap-ferndale-22950-woodward-avenue'
+          for f in Nav.jsx App.jsx Hero.jsx; do
+            grep -qF "$TOAST" "$f" 2>/dev/null || err "$f: canonical Toast URL missing"
+          done
+
+          echo "== 5. Removed elements stay removed =="
+          if grep -rn 'special-badge' --include='*.jsx' --include='*.css' . 2>/dev/null; then
+            err "'special-badge' reintroduced — SAVORY/SWEET pills were removed"
+          fi
+          if grep -nE '^\s*eyebrow:' data.js 2>/dev/null; then
+            err "'eyebrow:' field reintroduced in data.js specials — badges were removed"
+          fi
+
+          echo "== 6. Specials photos referenced in data.js exist on disk =="
+          grep -oE 'photo:[[:space:]]*"[^"]+"' data.js 2>/dev/null \
+            | sed -E 's/.*"([^"]+)".*/\1/' | while read -r p; do
+              [ -f "$p" ] || echo "MISSING_PHOTO:$p"
+            done > /tmp/photo_check || true
+          if grep -q MISSING_PHOTO /tmp/photo_check 2>/dev/null; then
+            while read -r line; do err "Specials photo referenced but not committed: ${line#MISSING_PHOTO:}"; done < <(grep MISSING_PHOTO /tmp/photo_check)
+          fi
+
+          echo "== 7. Hygiene =="
+          if grep -rn 'bolt.host' --exclude-dir='.git' --exclude-dir='.github' . 2>/dev/null; then
+            err "bolt.host reference found"
+          fi
+          if git ls-files | grep -qE '(^|/)\.env($|\.)'; then
+            err ".env file committed"
+          fi
+
+          echo
+          if [ "$fail" -ne 0 ]; then
+            echo "GUARDRAILS FAILED — see ::error:: annotations above."
+            echo "If a Claude Design sync caused this, re-apply local patches per"
+            echo ".claude/skills/design-sync/SKILL.md Stage 5b before merging."
+            exit 1
+          fi
+          echo "All guardrails passed."
