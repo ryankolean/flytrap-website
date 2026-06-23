@@ -20,19 +20,25 @@ function Nav({ scrolled, darkBg, onNavigate, currentPage }) {
     onNavigate(href);
   };
 
+  // While the drawer is open the nav sits on the cream drawer bg, so force
+  // the scrolled/light-bg color scheme (dark wordmark + dark burger + cream
+  // bg) regardless of whether the underlying hero is dark.
+  const navScrolled = scrolled || open;
+  const navDarkBg = darkBg && !navScrolled;
+
   return (
     <React.Fragment>
-      <nav className={"nav" + (scrolled ? " scrolled" : "") + (darkBg && !scrolled ? " dark-bg" : "")}>
+      <nav className={"nav" + (navScrolled ? " scrolled" : "") + (navDarkBg ? " dark-bg" : "")}>
         <div className="nav-inner">
           <a className="lockup" href="#top" onClick={(e) => handleClick(e, "#top")} aria-label="The Fly Trap — home">
-            <img src={darkBg && !scrolled ? "assets/flytrap-wordmark-retro-cream.png" : "assets/flytrap-wordmark-retro-dark.png"} alt="The Fly Trap" />
+            <img src={navDarkBg ? "assets/flytrap-wordmark-retro-cream.png" : "assets/flytrap-wordmark-retro-dark.png"} alt="The Fly Trap" />
           </a>
           <ul className="nav-links">
             {links.map(l => (
               <li key={l.href}><a href={l.href} onClick={(e) => handleClick(e, l.href)}>{l.label}</a></li>
             ))}
           </ul>
-          <a href="#visit" className="nav-cta" onClick={(e) => handleClick(e, "#visit")}>Visit</a>
+          <a href="https://order.toasttab.com/online/the-fly-trap-ferndale-22950-woodward-avenue" className="nav-cta" target="_blank" rel="noopener">Order Now</a>
           <button
             className={"nav-burger" + (open ? " open" : "")}
             onClick={() => setOpen(o => !o)}
@@ -55,6 +61,10 @@ function Nav({ scrolled, darkBg, onNavigate, currentPage }) {
             </li>
           ))}
         </ul>
+        <a className="drawer-order" href="https://order.toasttab.com/online/the-fly-trap-ferndale-22950-woodward-avenue" target="_blank" rel="noopener" onClick={() => setOpen(false)}>
+          Order Now
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+        </a>
         <div className="drawer-meta">
           <div className="open-pill"><span className="dot" /> Open now · 8a — 3p</div>
           22950 Woodward Avenue<br />

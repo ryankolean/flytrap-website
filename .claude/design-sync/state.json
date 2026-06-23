@@ -1,0 +1,40 @@
+{
+  "version": 1,
+  "lastSyncedAt": "2026-06-06T21:32:00Z",
+  "claudeDesignProjectId": "019de9e7-4c3e-72d2-ab13-812e9dc9223d",
+  "claudeDesignUrl": "https://claude.ai/design/p/019de9e7-4c3e-72d2-ab13-812e9dc9223d",
+  "lastArchive": {
+    "filename": "The Fly Trap - A Finer Diner (1).zip",
+    "sizeBytes": 115284699,
+    "sha256": "e75609ffeae93341f9aa58982e4020d0ab62be94ef794898e62c268dcdee4a2c"
+  },
+  "syncedFiles": {
+    "App.jsx": "b99f636d9aeebf95d2046ab2725479c4ccd8862e095db80480c5aead73fb6eb2",
+    "Hero.jsx": "026c0688d64aaf15cb9be2abf54fb40f4b576e3c7231bcda927064b9879a54b0",
+    "Menu.jsx": "7899a5324f562efb20d82ae3dad0c777fc1f7d71327d035b3e959165a790691c",
+    "Nav.jsx": "afe6ce978f78a3281c071eba978e4814c1067bb869a578c80ca61626d285ab33",
+    "Sections.jsx": "58fe450264c628ec969da9b0047c3da45f5e79f049ec5989b26d4d552af52507",
+    "data.js": "fc9f92fd6b755189f60e26189d167aa8931e1e0452d02d57cb41f5eea539ef57",
+    "site.css": "cf03e02d30ae1fee4a5fe73f7bfba5e7a54694620174d8ebfb49c32c0a7c37d3",
+    "colors_and_type.css": "bf9414c9ac4e0ca5c3152e65cacb8ebe45bd3693f0b5d735b7739d50c5c9ba7d",
+    "image-slot.js": "9309434cb09c357def2c583652d335eb7dedfb5295c9ad66e7d4e75a796dc5f3",
+    "tweaks-panel.jsx": "ea982af775f053999f1f8841b7078ae20b37bdb3c20432fe293e3b4572c0c454"
+  },
+  "excludedFromSync": [
+    "dist/",
+    "screenshots/",
+    "uploads/",
+    ".thumbnail",
+    "AUTOMATION.md",
+    "The Fly Trap.html"
+  ],
+  "history": [
+    {
+      "version": 1,
+      "ts": "2026-06-06T21:32:00Z",
+      "branch": "design-sync-v1",
+      "pr": null,
+      "notes": "First sync from Claude Design. Brings in Specials section, tweaks-panel runtime, image-slot helper, retail assets, and significant style updates."
+    }
+  ]
+}
