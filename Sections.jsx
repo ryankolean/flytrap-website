@@ -8,12 +8,15 @@ function Specials() {
       <div className="container">
         <div className="section-head center reveal">
           <div className="eyebrow">This week only</div>
-          <h2 className="title">Two specials. Fresh every week.</h2>
+          <h2 className="title">This week's specials.</h2>
           <p className="lede">
-            What the cooks are running this week — straight off our Instagram. Here through {data.weekOf ? data.weekOf.replace(/^Week of /, "") : "Sunday"}, then gone.
+            What the cooks are running this week. Here through {data.weekOf ? data.weekOf.replace(/^Week of /, "") : "Sunday"}, then gone.
           </p>
         </div>
 
+        {specials.length === 0 ? (
+          <p className="lede center">No specials running this week — check back soon.</p>
+        ) : (
         <div className="specials-grid">
           {specials.map((s, i) =>
           <article className="special-card reveal" key={s.id}>
@@ -41,6 +44,7 @@ function Specials() {
             </article>
           )}
         </div>
+        )}
       </div>
     </section>);
 
