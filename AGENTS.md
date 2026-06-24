@@ -111,8 +111,9 @@ Current local patches (also enforced by `.github/workflows/guardrails.yml`):
 ## Specials section rules
 
 - Source of truth is the restaurant's weekly Instagram post (`FT_DATA.sourcePost`).
-  Pull images from the carousel children, not the embed DOM — see the
-  design-sync skill's "Weekly Instagram specials sync" sub-workflow.
+  Pull images from the carousel children, not the embed DOM. The full weekly
+  procedure lives in the `flytrap-specials` skill
+  (`.claude/skills/flytrap-specials/SKILL.md`).
 - **No price unless it's in the Instagram caption.** `Sections.jsx` only renders
   the price block when `s.price` is set; omit the field entirely when absent.
 - **No SAVORY / SWEET badges.** Savory vs sweet is positional only — `specials[0]`
