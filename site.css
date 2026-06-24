@@ -527,7 +527,8 @@ section { position: relative; }
 
 .specials-grid {
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 360px));
+  justify-content: center;
   gap: 20px;
   margin-top: 24px;
   max-width: 940px;
@@ -535,7 +536,7 @@ section { position: relative; }
   margin-right: auto;
 }
 @media (min-width: 768px) {
-  .specials-grid { grid-template-columns: 1fr 1fr; gap: 24px; }
+  .specials-grid { gap: 24px; }
 }
 
 .special-card {

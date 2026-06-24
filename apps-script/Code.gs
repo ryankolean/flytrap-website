@@ -1,7 +1,7 @@
 // Path B publisher. Pure string helpers live in lib/specials.js + lib/github.js
 // (pushed alongside this file by clasp); their functions are global in GAS.
 
-var REPO = 'ryankolean/flytrap-website';
+var REPO = 'ryankolean/flytrap-specials-test'; // DRY-RUN target; flip to flytrap-website after verifying
 var BRANCH = 'main';
 var API = 'https://api.github.com';
 
@@ -16,58 +16,48 @@ function doGet() {
 }
 
 // Called from Form.html via google.script.run. `payload` is:
-// { passcode, weekOf, specials:[{name,desc,veg,price,imageDataUrl}, {...}] }
+// { passcode, weekOf, specials:[{name,desc,veg,price,imageDataUrl}, ...] }
 function publishSpecials(payload) {
   if (!payload || payload.passcode !== passcode_()) {
     throw new Error('Wrong passcode.');
   }
   var s = payload.specials || [];
-  if (s.length !== 2) throw new Error('Need exactly two specials.');
-  for (var i = 0; i < 2; i++) {
+  for (var i = 0; i < s.length; i++) {
     if (!s[i].name || !s[i].desc || !s[i].imageDataUrl) {
       throw new Error('Special ' + (i + 1) + ' is missing a name, description, or photo.');
     }
   }
 
   var week = isoWeek_();
-  var photos = ['assets/specials/week-' + week + '-1.jpg',
-                'assets/specials/week-' + week + '-2.jpg'];
+  var photos = s.map(function (x, i) { return 'assets/specials/week-' + week + '-' + (i + 1) + '.jpg'; });
   var specials = s.map(function (x, i) {
     return { name: x.name, desc: x.desc, veg: !!x.veg, price: x.price || '', photo: photos[i] };
   });
 
-  // Build the new data.js text.
   var current = gh_('GET', '/repos/' + REPO + '/contents/data.js?ref=' + BRANCH);
   var dataJs = Utilities.newBlob(Utilities.base64Decode(current.content)).getDataAsString();
   var block = buildSpecialsBlock({ weekOf: payload.weekOf, specials: specials });
   var newDataJs = spliceSpecials(dataJs, block);
 
-  // Create blobs.
   var dataBlob = gh_('POST', '/repos/' + REPO + '/git/blobs',
     { content: Utilities.base64Encode(Utilities.newBlob(newDataJs).getBytes()), encoding: 'base64' });
-  var imgBlobs = s.map(function (x) {
-    return gh_('POST', '/repos/' + REPO + '/git/blobs',
-      { content: dataUrlToBase64_(x.imageDataUrl), encoding: 'base64' });
-  });
+  var files = [{ path: 'data.js', sha: dataBlob.sha }];
+  for (var j = 0; j < s.length; j++) {
+    var imgBlob = gh_('POST', '/repos/' + REPO + '/git/blobs',
+      { content: dataUrlToBase64_(s[j].imageDataUrl), encoding: 'base64' });
+    files.push({ path: photos[j], sha: imgBlob.sha });
+  }
 
-  var files = [
-    { path: 'data.js', sha: dataBlob.sha },
-    { path: photos[0], sha: imgBlobs[0].sha },
-    { path: photos[1], sha: imgBlobs[1].sha },
-  ];
-
-  // Base ref/commit -> tree -> commit -> update ref.
   var ref = gh_('GET', '/repos/' + REPO + '/git/ref/heads/' + BRANCH);
   var baseSha = ref.object.sha;
   var baseCommit = gh_('GET', '/repos/' + REPO + '/git/commits/' + baseSha);
   var tree = gh_('POST', '/repos/' + REPO + '/git/trees',
     { base_tree: baseCommit.tree.sha, tree: buildTreeEntries(files) });
   var commit = gh_('POST', '/repos/' + REPO + '/git/commits',
-    { message: 'feat(specials): publish ' + payload.weekOf + ' via direct submit',
-      tree: tree.sha, parents: [baseSha] });
+    { message: 'feat(specials): publish ' + payload.weekOf + ' via direct submit', tree: tree.sha, parents: [baseSha] });
   gh_('PATCH', '/repos/' + REPO + '/git/refs/heads/' + BRANCH, { sha: commit.sha });
 
-  return { ok: true, weekOf: payload.weekOf, photos: photos };
+  return { ok: true, weekOf: payload.weekOf, count: s.length };
 }
 
 function isoWeek_() {

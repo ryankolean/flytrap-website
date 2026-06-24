@@ -13,7 +13,7 @@ function jsStr(s) {
 function buildSpecialsBlock(input) {
   var weekOf = input.weekOf;
   var specials = input.specials || [];
-  var lines = specials.slice(0, 2).map(function (s, i) {
+  var lines = specials.map(function (s, i) {
     var parts = [
       'id: "special-' + (i + 1) + '"',
       'name: "' + jsStr(s.name) + '"',
@@ -27,15 +27,15 @@ function buildSpecialsBlock(input) {
     if (price) parts.push('price: "' + jsStr(price) + '"');
     return '    { ' + parts.join(', ') + ' },';
   });
-  return [
+  var head = [
     '  /* SPECIALS:START */',
     '  sourcePost: "",',
     '  weekOf: "' + jsStr(weekOf) + '",',
-    '  specials: [',
-  ].concat(lines).concat([
-    '  ],',
-    '  /* SPECIALS:END */',
-  ]).join('\n');
+  ];
+  var body = lines.length
+    ? ['  specials: ['].concat(lines).concat(['  ],'])
+    : ['  specials: [],'];
+  return head.concat(body).concat(['  /* SPECIALS:END */']).join('\n');
 }
 
 function spliceSpecials(dataJsText, newBlock) {

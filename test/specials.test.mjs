@@ -70,3 +70,35 @@ test('spliceSpecials replaces only the marked region', () => {
 test('spliceSpecials throws when markers are missing', () => {
   assert.throws(() => spliceSpecials('no markers here', 'X'), /markers/i);
 });
+
+test('buildSpecialsBlock renders a single special', () => {
+  const out = buildSpecialsBlock({
+    weekOf: 'Week of X',
+    specials: [{ name: 'Solo', desc: 'd', veg: false, photo: 'assets/specials/week-x-1.jpg' }],
+  });
+  assert.match(out, /id: "special-1"/);
+  assert.doesNotMatch(out, /id: "special-2"/);
+  assert.match(out, /specials: \[/);
+});
+
+test('buildSpecialsBlock renders three specials', () => {
+  const out = buildSpecialsBlock({
+    weekOf: 'Week of X',
+    specials: [
+      { name: 'A', desc: 'd', veg: false, photo: 'p1.jpg' },
+      { name: 'B', desc: 'd', veg: false, photo: 'p2.jpg' },
+      { name: 'C', desc: 'd', veg: false, photo: 'p3.jpg' },
+    ],
+  });
+  assert.match(out, /id: "special-1"/);
+  assert.match(out, /id: "special-2"/);
+  assert.match(out, /id: "special-3"/);
+});
+
+test('buildSpecialsBlock renders empty specials as []', () => {
+  const out = buildSpecialsBlock({ weekOf: 'Week of X', specials: [] });
+  assert.match(out, /specials: \[\],/);
+  assert.doesNotMatch(out, /id: "special-1"/);
+  assert.match(out, /\/\* SPECIALS:START \*\//);
+  assert.match(out, /\/\* SPECIALS:END \*\//);
+});
