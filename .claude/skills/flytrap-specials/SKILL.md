@@ -1,43 +1,59 @@
 ---
 name: flytrap-specials
-description: Use when updating The Fly Trap website's weekly specials in ~/flytrap-website — triggers include "update flytrap specials", "new flytrap specials", "pull this week's specials", or a fresh @theflytrapferndale instagram.com/p/ link to swap in. Specials section only; menu/retail/press stay hand-edited.
+description: Use when updating The Fly Trap website's weekly specials in ~/flytrap-website — triggers include "update flytrap specials", "new flytrap specials", "pull this week's specials", or a fresh @theflytrapferndale instagram.com/p/ link to swap in. Pulls 1, 2, or 3+ specials (single-image post or carousel) from Instagram into the Specials section. Menu/retail/press stay hand-edited.
 ---
 
 # Fly Trap weekly specials
 
-Pull the two weekly specials from a Fly Trap Instagram post, swap them into the
-site, verify, and open a PR. One run per week. This is the manual pull; the
-fully-automated Graph-API pipeline is a separate, unbuilt project
-(`docs/.../flytrap-specials-automation-design.md`).
+Pull this week's special(s) from a Fly Trap Instagram post, swap them into the
+site between the `SPECIALS` markers, verify, and open a PR. The number of
+specials is whatever the post has — **one, two, or more.**
+
+There are now **two ways** specials reach the site, both writing the same
+`data.js` block between the same markers:
+
+1. **This skill** — the manual Instagram pull (you, on demand).
+2. **The direct-submit form** — a deployed Google Apps Script web app the Fly
+   Trap team fills in; its publisher splices the same marker region. (Path B of
+   `docs/superpowers/specs/2026-06-23-flytrap-specials-automation-design.md`.)
 
 ## Overview — non-negotiables
 
-- **Source of truth** is the weekly Instagram post — by default the **newest post**
-  on the @theflytrapferndale profile. The user may instead hand you a specific URL.
-- **Positional, not labeled.** `specials[0]` = first carousel slide = first dish
-  in the caption. `specials[1]` = second. There are NO savory/sweet badges and NO
-  `eyebrow` field — identity is array order only. Filenames keep the legacy
-  `-savory`/`-sweet` suffixes (slot 0 / slot 1) regardless of the actual dish.
+- **Write BETWEEN the markers.** `data.js` has `/* SPECIALS:START */` … `/*
+  SPECIALS:END */` around the specials block. Replace **only** the region
+  between (and including) those markers, and **keep the markers in the output.**
+  Stripping them silently breaks the direct-submit form's publisher
+  (`spliceSpecials` throws "missing markers"). This is the #1 rule.
+- **Any count.** A single-image post = one special. A carousel = one special per
+  slide, in order. `Sections.jsx` maps the array, so 1 / 2 / 3+ all render; an
+  empty array renders "No specials running this week." Do not force two.
+- **Positional, not labeled.** `specials[i]` = caption dish i = carousel slide i.
+  No savory/sweet, no badges, no `eyebrow` field — identity is array order. IDs
+  are `special-1`, `special-2`, … Photos are `week-<date>-<N>.jpg` (1-based).
 - **No price unless it's in the caption.** Omit the `price` field entirely — not
-  `""`, not `null`. `Sections.jsx` guards on truthy `price`.
+  `""`, not `null`. If a `$` amount is present, store it **without** the leading
+  `$` (`Sections.jsx` renders `${s.price}`, so a stored `$` doubles it).
+- **Don't hand-set the expiry date.** `Sections.jsx` computes the "Here through
+  <date>, then gone" line as the end of the current week (Sunday) at render time
+  — always current, no manual entry. `weekOf` in `data.js` is optional /
+  informational only; it no longer drives the displayed date.
 - **Never blank the section.** If any step fails, leave last week's specials live
   and stop — a half-update must never ship.
-- **Branch → PR. Never commit to `main`** (it auto-deploys). Read `AGENTS.md` first.
+- **Branch → PR. Never commit to `main`** (it auto-deploys). Read `AGENTS.md`.
 
 ## Prerequisites
 
-- Claude in Chrome connected (`list_connected_browsers` non-empty). If empty, ask
-  the user to open Chrome + enable the extension — do NOT fall back to screenshots.
 - `cwd` = `~/flytrap-website`, working tree clean.
+- For a **carousel** (2+ images) you need Claude in Chrome connected
+  (`list_connected_browsers` non-empty) to read slides 2+. For a **single-image
+  post** (one special) no browser is needed — the caption + image come from
+  public endpoints (Stages 2 & 4).
 
 ## Input
 
-Optional: a specific post URL/shortcode (`/p/<CODE>/`). If the user gives one, skip
-Stage 1 and use it.
-
-Default (no URL): **auto-discover** the newest post from the profile in Stage 1.
-Either way, confirm the chosen post is *this week's specials* — newer than
-`FT_DATA.sourcePost` in `data.js` — before editing.
+Optional: a specific post URL/shortcode (`/p/<CODE>/`). If the user gives one,
+skip Stage 1. Either way confirm the post is *this week's specials* — newer than
+`FT_DATA.sourcePost` — before editing.
 
 ## Procedure
 
@@ -50,138 +66,117 @@ git checkout -b chore/specials-$(date +%F)
 ```
 
 ### Stage 1 — Find this week's post (skip if given a URL)
-Specials are the restaurant's newest post. In Claude in Chrome:
+Specials are the restaurant's newest specials post. Prefer asking the user for
+the post URL (fastest, reliable). If auto-discovering and Claude in Chrome is
+connected, navigate the logged-in session to
+`https://www.instagram.com/theflytrapferndale/?hl=en`, pull recent `/p/<code>/`
+links in grid order, and take the first **non-pinned** post; validate via
+Stage 2 (caption reads as specials — `#flytrapspecials`, opens with "Specials",
+or names dishes). After ~3 misses, ask the user for the URL.
 
-1. `select_browser`, `tabs_context_mcp{createIfEmpty:true}`.
-2. `navigate` a tab to `https://www.instagram.com/theflytrapferndale/?hl=en` (your
-   logged-in session). Wait ~2–3s for the grid to render.
-3. Pull recent post shortcodes in grid order (synchronous — no top-level await):
-```js
-(function(){
-  const seen=new Set(), out=[];
-  document.querySelectorAll('a[href*="/p/"]').forEach(a=>{
-    const m=(a.getAttribute('href')||'').match(/\/p\/([^/]+)\//);
-    if(!m || seen.has(m[1])) return; seen.add(m[1]);
-    const pinned = !!a.closest('div')?.querySelector('svg[aria-label*="Pinned" i]');
-    out.push({code:m[1], pinned});
-  });
-  return {count:out.length, posts: out.slice(0,9)};
-})();
+### Stage 2 — Fetch the caption (no browser needed)
+The public embed page exposes the caption. WebFetch:
 ```
-4. Candidate = the first **non-pinned** post (pinned posts can sit above the newest;
-   the flag is best-effort). Take its `code` as `<CODE>`.
-5. Validate it's specials: run Stage 2's caption pull on `<CODE>` and check the
-   caption reads as specials (contains `#flytrapspecials`, opens with "Specials",
-   or has two dish blocks). If not, try the next post; after ~3 misses, STOP and ask
-   the user for the URL.
-6. Confirm the chosen post with the user (shortcode + first caption line) before
-   editing anything. If the profile is login-walled or the grid is empty, ask for
-   the URL instead.
-
-### Stage 2 — Fetch caption + carousel (Claude in Chrome)
-Read the embed page's **data store**, never the `<img>` tags (logged-out DOM only
-holds slide 1 + sibling-post thumbnails — that bug shipped once).
-
-1. `select_browser`, `tabs_context_mcp{createIfEmpty:true}`.
-2. `navigate` a tab to `https://www.instagram.com/p/<CODE>/embed/captioned`.
-3. Give it ~2–3s to hydrate, then run (the eval sandbox has **no top-level await** —
-   keep it synchronous):
-```js
-(function(){
-  const ad = window.__additionalData;
-  let m = ad?.extra?.data?.shortcode_media;
-  if(!m && ad){ for(const k in ad){ if(ad[k]?.data?.shortcode_media){ m = ad[k].data.shortcode_media; break; } } }
-  if(!m) return {ok:false, hint:'not hydrated yet — wait and retry'};
-  const kids = (m.edge_sidecar_to_children?.edges||[]).map(e=>e.node);
-  return {
-    ok:true,
-    shortcode: m.shortcode,
-    parentId: m.id,
-    childCount: kids.length,
-    children: kids.map(n=>({ id:n.id, is_video:n.is_video, w:n.dimensions?.width, h:n.dimensions?.height })),
-    caption: m.edge_media_to_caption?.edges?.[0]?.node?.text || null
-  };
-})();
+https://www.instagram.com/p/<CODE>/embed/captioned
 ```
-**Assert before continuing:** `childCount >= 2`; every child `is_video === false`;
-each child `id` shares the leading digits of `parentId` (sibling-post leak guard).
-If a child is a video or `childCount < 2`, STOP and ask the user.
+Ask for the caption verbatim, the dish count, whether it's a single image or a
+carousel, and any price / vegetarian markers. Confirm it's specials and newer
+than the current `sourcePost`.
 
-### Stage 3 — Parse the caption into two specials
-Judgment calls — do them from the caption text:
-- **name / desc**: first line of each block is the name, the rest is the
-  description. Strip trailing hashtags. Keep the restaurant's curly apostrophes.
-- **veg**: `true` if no meat/fish (eggs/dairy are fine). Pork, brisket, chicken,
-  sausage, bacon, crab, shrimp, salmon → `false`. Ambiguous → ask.
-- **price**: only if a `$` amount is in the caption; otherwise omit.
+### Stage 3 — Parse the caption into N specials
+Judgment calls from the caption text:
+- **count `N`** = number of named dishes (= number of carousel slides; 1 for a
+  single-image post).
+- **name / desc**: the dish name line, then its description. Strip trailing
+  hashtags (`#flytrapspecials` etc.). Keep curly apostrophes; sentence-case the
+  name if needed.
+- **veg**: `true` if no meat/fish (eggs/dairy fine). Sausage, bacon, pork,
+  brisket, chicken, crab, shrimp, salmon → `false`. Ambiguous → ask.
+- **price**: only if a `$` amount is in the caption; store without the `$`.
 
-### Stage 4 — Download both slides at full res
-Chrome blocks back-to-back downloads from one tab → **one fresh tab per image**.
-In each tab (navigated to the embed), pick the **max-area** URL — NOT
-`display_resources[length-1]` (that's the 150px thumb; the array is unsorted):
-```js
-(function(){
-  const i = 0;  // 0 for slide 1, 1 for slide 2
-  const ad = window.__additionalData;
-  let m = ad?.extra?.data?.shortcode_media;
-  if(!m && ad){ for(const k in ad){ if(ad[k]?.data?.shortcode_media){ m = ad[k].data.shortcode_media; break; } } }
-  const n = m.edge_sidecar_to_children.edges[i].node;
-  let url = n.display_url;                                  // full image, ~810x1014
-  if(n.display_resources?.length){
-    const best = n.display_resources.slice()
-      .sort((a,b)=>(b.config_width*b.config_height)-(a.config_width*a.config_height))[0];
-    if(best && best.config_width >= (n.dimensions?.width||0)) url = best.src;
-  }
-  window.__dl = 'starting';
-  fetch(url).then(r=>{ if(!r.ok) throw new Error('http '+r.status); return r.blob(); })
-    .then(b=>{ const a=document.createElement('a'); a.href=URL.createObjectURL(b);
-      a.download='ft-special-'+i+'.jpg'; document.body.appendChild(a); a.click();
-      window.__dl='clicked size='+b.size; })
-    .catch(e=>{ window.__dl='error:'+e.message; });
-  return {kicked:i, usingDisplayUrl:url===n.display_url};
-})();
+### Stage 3.5 — (optional) cross-check against Toast
+The Fly Trap keeps specials current on its Toast online-ordering menu. Use it to
+sanity-check the dish name + description you parsed:
 ```
-Read `window.__dl` after a beat — `size` should be ~100KB+, not ~7KB. Files land
-in `~/Downloads/ft-special-0.jpg` and `-1.jpg`.
+https://order.toasttab.com/online/the-fly-trap-ferndale-22950-woodward-avenue
+```
+If Toast and Instagram disagree on a name/description, prefer Toast for the menu
+copy (it's the kitchen's system of record) and flag the difference to the user.
 
-### Stage 5 — Process + guards (deterministic)
+### Stage 4 — Get the image(s), one per special, in order
+- **Single special / single-image post:** the post's own media redirect returns
+  the photo (no browser):
+  ```bash
+  curl -sL -A "Mozilla/5.0" "https://www.instagram.com/p/<CODE>/media/?size=l" -o ~/Downloads/ft-special-1.jpg
+  file ~/Downloads/ft-special-1.jpg     # must be JPEG, ~1080px
+  ```
+  Then **view it** to confirm it's the dish the caption describes.
+- **Carousel (2+):** read the embed page's data store in Claude in Chrome — never
+  the `<img>` tags (logged-out DOM holds only slide 1 + *other posts'* thumbs;
+  that bug shipped once). For each slide `i` (0-based), open a fresh tab on
+  `https://www.instagram.com/p/<CODE>/embed/captioned`, wait ~3s to hydrate, and:
+  ```js
+  (function(){
+    const ad = window.__additionalData;
+    let m = ad?.extra?.data?.shortcode_media;
+    if(!m && ad){ for(const k in ad){ if(ad[k]?.data?.shortcode_media){ m = ad[k].data.shortcode_media; break; } } }
+    const i = 0;  // slide index: 0,1,2,…
+    const n = m.edge_sidecar_to_children.edges[i].node;
+    let url = n.display_url;                                   // full image
+    if(n.display_resources?.length){
+      const best = n.display_resources.slice()
+        .sort((a,b)=>(b.config_width*b.config_height)-(a.config_width*a.config_height))[0];
+      if(best && best.config_width >= (n.dimensions?.width||0)) url = best.src;
+    }
+    fetch(url).then(r=>r.blob()).then(b=>{ const a=document.createElement('a');
+      a.href=URL.createObjectURL(b); a.download='ft-special-'+(i+1)+'.jpg';
+      document.body.appendChild(a); a.click(); window.__dl='size='+b.size; });
+    return {kicked:i};
+  })();
+  ```
+  Assert: each child `is_video === false`; child `id`s share the leading digits of
+  the parent `id` (sibling-post leak guard). `display_resources[length-1]` is the
+  150px thumb — the array is unsorted; use max-area / `display_url`.
+
+### Stage 5 — Process + guards (deterministic, any count)
+Pass the week date then one source image per special, **in order**:
 ```bash
-.claude/skills/flytrap-specials/scripts/process-specials.sh \
-  ~/Downloads/ft-special-0.jpg ~/Downloads/ft-special-1.jpg $(date +%F)
+.claude/skills/flytrap-specials/scripts/process-specials.sh $(date +%F) \
+  ~/Downloads/ft-special-1.jpg [~/Downloads/ft-special-2.jpg ...]
 ```
-The script enforces the guards mechanically (≥800px so a thumbnail can't slip
-through, the two slides differ, neither matches last week), crops to 1080² and
-writes `assets/specials/week-<date>-savory.jpg` / `-sweet.jpg`. It prints the
-`photo:` paths and the `sha256:` commit trailer. If it exits non-zero, fix the
-cause — do not edit `data.js`.
+The script enforces the guards (each ≥800px so a thumbnail can't slip through,
+no two sources identical, none matches an image from a different week), crops to
+1080² and writes `assets/specials/week-<date>-<N>.jpg`. It prints the `photo:`
+paths and the `sha256` commit trailer. Non-zero exit → fix the cause, don't edit
+`data.js`.
 
-### Stage 6 — Edit `data.js`
-In the `FT_DATA` specials block update `sourcePost`, `weekOf`, the
-`// Current week's post:` comment, and both entries:
+### Stage 6 — Edit `data.js` (between the markers)
+Replace the whole `/* SPECIALS:START */ … /* SPECIALS:END */` region. Keep the
+markers. One `{ … }` per special, `special-1`-indexed, photo paths from Stage 5:
 ```js
-sourcePost: "https://www.instagram.com/p/<CODE>/",
-weekOf: "Week of <Month Day>",
-specials: [
-  { id: "special-1", name: "<dish 1>", desc: "<...>", veg: <bool>,
-    photo: "assets/specials/week-<date>-savory.jpg" },          // add price ONLY if in caption
-  { id: "special-2", name: "<dish 2>", desc: "<...>", veg: <bool>,
-    photo: "assets/specials/week-<date>-sweet.jpg" },
-],
+  /* SPECIALS:START */
+  sourcePost: "https://www.instagram.com/p/<CODE>/",
+  weekOf: "Week of <Month Day>",
+  specials: [
+    { id: "special-1", name: "<dish 1>", desc: "<…>", veg: <bool>, photo: "assets/specials/week-<date>-1.jpg" },
+    // …one line per special; add `price: "NN.NN"` (no $) ONLY if in the caption
+  ],
+  /* SPECIALS:END */
 ```
-Leave `soup` / `pastry` alone — they're not part of the IG specials.
+For a single special, the array has one entry. Leave `soup` / `pastry` alone.
 
 ### Stage 7 — Verify (REQUIRED before PR)
-`preview_start` the `flytrap` launch config (port 5178), load `#specials`, then at
-**375 / 768 / 1280**:
-- DOM-probe each `<image-slot>`: `shadowRoot.querySelector('img')` `src` ends with
-  this week's filename, `naturalWidth >= 800`, `complete === true`.
-- `scrollWidth === clientWidth` at 375 (no horizontal overflow).
+`preview_start` the `flytrap` launch config, load `#specials`, then at **375 /
+768 / 1280**:
+- Each `<image-slot>` shows this week's filename, `naturalWidth >= 800`,
+  `complete === true`.
+- The lede reads "Here through <upcoming Sunday>, then gone" — a **future**
+  date, computed automatically (not a stale `weekOf`).
 - `preview_console_logs` level error EMPTY (Babel-in-browser warning is expected).
-- **Eyeball the pairing**: slide-1 photo matches dish 1, slide-2 matches dish 2
-  (reversed-carousel is the one failure the guards can't catch). If wrong, you
-  swapped the slides — redo Stage 4 with indices flipped.
+- `scrollWidth === clientWidth` at 375 (no horizontal overflow).
+- **Eyeball the pairing**: each photo matches its dish (reversed-carousel is the
+  one failure the guards can't catch). If wrong, re-fetch with slide indices fixed.
 
-Probe:
 ```js
 [...document.querySelector('#specials').querySelectorAll('image-slot')].map(s=>{
   const img=s.shadowRoot?.querySelector('img');
@@ -191,46 +186,51 @@ Probe:
 
 ### Stage 8 — Commit + push + PR
 ```bash
-git add data.js assets/specials/week-$(date +%F)-savory.jpg assets/specials/week-$(date +%F)-sweet.jpg
+git add data.js assets/specials/week-$(date +%F)-*.jpg
 git commit -F - <<'MSG'
 feat(specials): pull <Week of …> Instagram specials
 
 Source: https://www.instagram.com/p/<CODE>/
-- Special 1: <dish 1>
-- Special 2: <dish 2>
-
-sha256: savory=<…> sweet=<…>
+- special-1: <dish 1>
+- special-2: <dish 2>   # list however many
 
 Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>
 MSG
 git push -u origin HEAD
 gh pr create --base main --title "feat(specials): Week of <Month Day>" --body-file <body>
 ```
-`main` auto-deploys on merge. The `guardrails` CI checks photo existence, no
-`special-badge` / `eyebrow`, and the canonical Toast URL — all satisfied if you
-followed the steps.
+`main` auto-deploys on merge.
 
 ## Conventions
 
 | Thing | Value |
 |---|---|
-| Specials data | `data.js` → `FT_DATA.specials` (+ `sourcePost`, `weekOf`) |
-| Photos | `assets/specials/week-<YYYY-MM-DD>-savory.jpg` / `-sweet.jpg`, 1080² |
-| Order | `[0]` = slide 1 = caption dish 1; `[1]` = slide 2 |
+| Specials data | `data.js` → between `/* SPECIALS:START */` … `/* SPECIALS:END */` |
+| Block fields | `sourcePost`, `weekOf` (informational), `specials: [ … ]` |
+| Per special | `{ id: "special-N", name, desc, veg:<bool>, photo, price?:"NN.NN" (no $) }` |
+| Count | Any — 1, 2, 3+ (or 0 → "no specials" message) |
+| Photos | `assets/specials/week-<YYYY-MM-DD>-<N>.jpg`, 1080², 1-based |
+| Order | `specials[i]` = caption dish i = carousel slide i |
+| Expiry date | Auto-computed (end of current week) in `Sections.jsx` — never hand-set |
 | IG handle | `@theflytrapferndale` |
-| Profile (find latest) | `https://www.instagram.com/theflytrapferndale/?hl=en` |
-| Specials hashtag | `#flytrapspecials` (the future auto-pull's trigger) |
+| Caption | `…/p/<CODE>/embed/captioned` (WebFetch, no browser) |
+| Single image | `…/p/<CODE>/media/?size=l` (curl, no browser) |
+| Toast menu | `order.toasttab.com/online/the-fly-trap-ferndale-22950-woodward-avenue` |
+| Specials hashtag | `#flytrapspecials` (the form's + the future auto-pull's trigger) |
 | Branch | `chore/specials-<date>` → PR to `main` |
 
 ## Gotchas
 
 | Trap | Reality |
 |---|---|
-| `display_resources[length-1]` | That's the **150×150 thumb** — the array is unsorted. Use `display_url` / max-area. |
-| Reading `<img>` tags | Logged-out DOM has only slide 1 + *other posts'* thumbnails. Read the data store. |
-| Reversed carousel | Clean parse, passes every guard — only the Stage 7 eyeball catches a swapped photo↔dish. |
-| Adding a price | Only if it's literally in the caption. Otherwise omit the field. |
-| Re-adding badges | No `eyebrow` in `data.js`, no `.special-badge` in `Sections.jsx` — CI fails the PR. |
+| **Stripping the markers** | Breaks the direct-submit form's publisher. Always write *between* `SPECIALS:START`/`END` and keep them. |
+| Forcing two specials | The post may have 1 (single image) or 3+. Use the caption's actual count. |
+| Single-image post | Valid — one special. Don't assert a carousel; pull the image via `/media/?size=l`. |
+| `-savory`/`-sweet` filenames | Legacy. New scheme is `week-<date>-<N>.jpg`, 1-based. |
+| Hand-setting the "through" date | It's computed in `Sections.jsx`. `weekOf` is informational only now. |
+| Price with a `$` | Store without the `$` — the site adds one. |
+| `display_resources[length-1]` | The 150×150 thumb (unsorted array). Use `display_url` / max-area. |
+| Reading `<img>` tags | Logged-out DOM has only slide 1 + other posts' thumbnails. Read the data store. |
+| Reversed carousel | Passes every guard — only the Stage 7 eyeball catches a swapped photo↔dish. |
 | Committing to `main` | Auto-deploys live. Always branch + PR. |
 | Eval `await` | The Chrome eval sandbox rejects top-level `await` — keep snippets synchronous. |
-| Pinned posts | A pinned post can sit above the newest in the grid — prefer the first non-pinned, then validate the caption. |
