@@ -61,7 +61,7 @@
     <label>Price (optional)</label><input type="text" class="s-price" placeholder="14.95">
     <div class="row"><label><input type="checkbox" class="s-veg"> Vegetarian</label></div>
     <label>Photo</label>
-    <div class="row"><input type="file" class="s-photo" accept="image/*"><img class="thumb"></div>
+    <div class="row"><input type="file" class="s-photo" accept="image/*"><img class="thumb" alt="" style="display:none"></div>
     <div class="row" style="margin-top:10px"><button type="button" class="remove">Remove this special</button></div>
   </fieldset>
 </template>
@@ -93,7 +93,8 @@
           var sx = (img.width - side) / 2, sy = (img.height - side) / 2;
           c.getContext('2d').drawImage(img, sx, sy, side, side, 0, 0, S, S);
           node._photo = c.toDataURL('image/jpeg', 0.85);
-          node.querySelector('.thumb').src = node._photo;
+          var th = node.querySelector('.thumb');
+          th.src = node._photo; th.style.display = 'block';
         };
         img.src = reader.result;
       };
