@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+<head>
+<base target="_top">
+<style>
+  body { font: 16px/1.5 system-ui, sans-serif; max-width: 560px; margin: 24px auto; padding: 0 16px; color: #1A1A1A; }
+  h1 { color: #992F1E; font-size: 22px; }
+  fieldset { border: 1px solid #ddd; border-radius: 10px; margin: 16px 0; padding: 12px 16px; }
+  legend { color: #992F1E; font-weight: 600; padding: 0 6px; }
+  label { display: block; margin: 10px 0 4px; font-weight: 500; font-size: 14px; }
+  input[type=text], textarea { width: 100%; box-sizing: border-box; padding: 8px; border: 1px solid #ccc; border-radius: 6px; font: inherit; }
+  textarea { min-height: 70px; }
+  .row { display: flex; gap: 12px; align-items: center; }
+  button { background: #992F1E; color: #fff; border: 0; border-radius: 8px; padding: 12px 20px; font: inherit; font-weight: 600; cursor: pointer; }
+  button:disabled { opacity: .5; cursor: default; }
+  .thumb { width: 88px; height: 88px; object-fit: cover; border-radius: 8px; background: #eee; }
+  #status, #status2 { margin: 12px 0; min-height: 22px; }
+  .err { color: #b3261e; } .ok { color: #1a7f37; }
+  .card { border: 1px solid #eee; border-radius: 10px; padding: 12px; margin: 8px 0; }
+  .card img { width: 100%; border-radius: 8px; }
+  .hidden { display: none; }
+</style>
+</head>
+<body>
+<h1>Submit this week's specials</h1>
+
+<div id="formView">
+  <label>Passcode</label>
+  <input type="text" id="passcode" autocomplete="off">
+  <label>Week of (shown on the site)</label>
+  <input type="text" id="weekOf" placeholder="June 23">
+
+  <fieldset><legend>Special 1</legend>
+    <label>Name</label><input type="text" class="s-name">
+    <label>Description</label><textarea class="s-desc"></textarea>
+    <label>Price (optional)</label><input type="text" class="s-price" placeholder="14.95">
+    <div class="row"><label><input type="checkbox" class="s-veg"> Vegetarian</label></div>
+    <label>Photo</label>
+    <div class="row"><input type="file" class="s-photo" accept="image/*"><img class="thumb"></div>
+  </fieldset>
+
+  <fieldset><legend>Special 2</legend>
+    <label>Name</label><input type="text" class="s-name">
+    <label>Description</label><textarea class="s-desc"></textarea>
+    <label>Price (optional)</label><input type="text" class="s-price" placeholder="13.95">
+    <div class="row"><label><input type="checkbox" class="s-veg"> Vegetarian</label></div>
+    <label>Photo</label>
+    <div class="row"><input type="file" class="s-photo" accept="image/*"><img class="thumb"></div>
+  </fieldset>
+
+  <button id="previewBtn">Preview &rarr;</button>
+  <div id="status"></div>
+</div>
+
+<div id="previewView" class="hidden">
+  <h1>Looks right?</h1>
+  <div id="cards"></div>
+  <button id="publishBtn">Publish to website</button>
+  <button id="backBtn" style="background:#666">Back</button>
+  <div id="status2"></div>
+</div>
+
+<script>
+  var photos = [null, null];
+
+  function fieldsets() { return document.querySelectorAll('fieldset'); }
+  function setStatus(id, msg, cls) { var e = document.getElementById(id); e.textContent = msg || ''; e.className = cls || ''; }
+
+  function resizeSquare(file, idx) {
+    var reader = new FileReader();
+    reader.onload = function () {
+      var img = new Image();
+      img.onload = function () {
+        var S = 1080, c = document.createElement('canvas'); c.width = S; c.height = S;
+        var side = Math.min(img.width, img.height);
+        var sx = (img.width - side) / 2, sy = (img.height - side) / 2;
+        c.getContext('2d').drawImage(img, sx, sy, side, side, 0, 0, S, S);
+        photos[idx] = c.toDataURL('image/jpeg', 0.85);
+        fieldsets()[idx].querySelector('.thumb').src = photos[idx];
+      };
+      img.src = reader.result;
+    };
+    reader.readAsDataURL(file);
+  }
+
+  document.querySelectorAll('.s-photo').forEach(function (inp, idx) {
+    inp.addEventListener('change', function () { if (inp.files[0]) resizeSquare(inp.files[0], idx); });
+  });
+
+  function collect() {
+    var fs = fieldsets();
+    var specials = [];
+    for (var i = 0; i < 2; i++) {
+      specials.push({
+        name: fs[i].querySelector('.s-name').value.trim(),
+        desc: fs[i].querySelector('.s-desc').value.trim(),
+        price: fs[i].querySelector('.s-price').value.trim(),
+        veg: fs[i].querySelector('.s-veg').checked,
+        imageDataUrl: photos[i],
+      });
+    }
+    return {
+      passcode: document.getElementById('passcode').value,
+      weekOf: 'Week of ' + document.getElementById('weekOf').value.trim(),
+      specials: specials,
+    };
+  }
+
+  document.getElementById('previewBtn').onclick = function () {
+    var p = collect();
+    for (var i = 0; i < 2; i++) {
+      if (!p.specials[i].name || !p.specials[i].desc || !p.specials[i].imageDataUrl) {
+        return setStatus('status', 'Special ' + (i + 1) + ' needs a name, description, and photo.', 'err');
+      }
+    }
+    var html = p.specials.map(function (s) {
+      return '<div class="card"><img src="' + s.imageDataUrl + '"><h3>' + escapeHtml(s.name) +
+        (s.veg ? ' (veg)' : '') + '</h3><p>' + escapeHtml(s.desc) + '</p>' +
+        (s.price ? '<p>$' + escapeHtml(s.price) + '</p>' : '') + '</div>';
+    }).join('');
+    document.getElementById('cards').innerHTML = html;
+    document.getElementById('formView').className = 'hidden';
+    document.getElementById('previewView').className = '';
+  };
+
+  document.getElementById('backBtn').onclick = function () {
+    document.getElementById('previewView').className = 'hidden';
+    document.getElementById('formView').className = '';
+  };
+
+  document.getElementById('publishBtn').onclick = function () {
+    var btn = this; btn.disabled = true;
+    setStatus('status2', 'Publishing…', '');
+    google.script.run
+      .withSuccessHandler(function (r) { setStatus('status2', 'Published ' + r.weekOf + ' — live in about a minute.', 'ok'); })
+      .withFailureHandler(function (e) { btn.disabled = false; setStatus('status2', e.message, 'err'); })
+      .publishSpecials(collect());
+  };
+
+  function escapeHtml(s) { return s.replace(/[&<>"]/g, function (c) { return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]; }); }
+</script>
+</body>
+</html>
