@@ -10,7 +10,7 @@ function Specials() {
           <div className="eyebrow">This week only</div>
           <h2 className="title">This week's specials.</h2>
           <p className="lede">
-            What the cooks are running this week. Get it before it's then gone!
+            What the cooks are running this week. Get it before it's gone!
           </p>
         </div>
 
