@@ -21,7 +21,10 @@ function buildSpecialsBlock(input) {
       'veg: ' + (s.veg ? 'true' : 'false'),
       'photo: "' + jsStr(s.photo) + '"',
     ];
-    if (s.price) parts.push('price: "' + jsStr(s.price) + '"');
+    // Strip a leading "$" — Sections.jsx renders `${s.price}`, so a stored
+    // "$15.95" would show as "$$15.95".
+    var price = String(s.price == null ? '' : s.price).trim().replace(/^\$+/, '').trim();
+    if (price) parts.push('price: "' + jsStr(price) + '"');
     return '    { ' + parts.join(', ') + ' },';
   });
   return [

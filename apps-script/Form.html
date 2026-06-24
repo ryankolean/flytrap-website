@@ -94,7 +94,7 @@
       specials.push({
         name: fs[i].querySelector('.s-name').value.trim(),
         desc: fs[i].querySelector('.s-desc').value.trim(),
-        price: fs[i].querySelector('.s-price').value.trim(),
+        price: fs[i].querySelector('.s-price').value.trim().replace(/^\$+/, '').trim(),
         veg: fs[i].querySelector('.s-veg').checked,
         imageDataUrl: photos[i],
       });

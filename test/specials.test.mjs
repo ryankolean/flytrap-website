@@ -22,6 +22,19 @@ test('buildSpecialsBlock renders two specials with photo paths', () => {
   assert.doesNotMatch(out.split('special-2')[0], /price:/);
 });
 
+test('buildSpecialsBlock strips a leading $ from price', () => {
+  const out = buildSpecialsBlock({
+    weekOf: 'Week of X',
+    specials: [
+      { name: 'A', desc: 'd', veg: false, photo: 'p1.jpg', price: '$15.95' },
+      { name: 'B', desc: 'd', veg: false, photo: 'p2.jpg', price: '  $9 ' },
+    ],
+  });
+  assert.match(out, /price: "15\.95"/);
+  assert.match(out, /price: "9"/);
+  assert.doesNotMatch(out, /price: "\$/);
+});
+
 test('buildSpecialsBlock escapes quotes and backslashes', () => {
   const out = buildSpecialsBlock({
     weekOf: 'Week of X',
