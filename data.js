@@ -142,23 +142,10 @@ window.FT_DATA = {
   // photos onto the slots (they persist), or set `photo` to a committed file.
   // ---------------------------------------------------------------------------
   /* SPECIALS:START */
-  sourcePost: "https://www.instagram.com/p/DZzyepcE7cT/",
+  sourcePost: "https://www.instagram.com/p/DZ-U91bk9uF/",
   weekOf: "Week of June 23",
   specials: [
-    {
-      id: "special-1",
-      name: "The Jack Soo",
-      desc: "A miso buttered rumble of eggs with Rob’s homegrown garlic scapes, shiitakes ‘n’ such and greens topped with Japones chili crisp. Toast!",
-      veg: true,
-      photo: "assets/specials/week-2026-06-23-savory.jpg",
-    },
-    {
-      id: "special-2",
-      name: "The Delroy Lindo",
-      desc: "Two eggs how you like ‘em with a Caribbean spice marinated pork chop atop saucy coconut red beans and field greens topped with a stonefruit habanero relish; yup, toast!!",
-      veg: false,
-      photo: "assets/specials/week-2026-06-23-sweet.jpg",
-    },
+    { id: "special-1", name: "The Transcontinental Tango", desc: "A rumble of eggs with house made merguez sausage, feta cheese, Kalamata olives, red onion and greens; comes with spuds and toast!", veg: false, photo: "assets/specials/week-2026-06-24-1.jpg" },
   ],
   /* SPECIALS:END */
   soup: { name: "Cream of Roasted Tomato & Fennel", desc: "Slow-roasted Roma tomatoes, fennel bulb, basil oil swirl, parmesan crisp on the side. Cup $5 / Bowl $6." },
