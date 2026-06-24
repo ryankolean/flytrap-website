@@ -1,14 +1,5 @@
 // About + Gallery + Retail + Press + Buzz band + Visit + Footer + DailyBuzz page
 
-// Specials run through the end of the current week (Sunday). Computed at render
-// time from today's date so the "Here through <date>" line is always current
-// and never goes stale — no manual date entry on publish.
-function specialsThrough() {
-  const d = new Date();
-  d.setDate(d.getDate() + ((7 - d.getDay()) % 7));
-  return d.toLocaleDateString("en-US", { month: "long", day: "numeric" });
-}
-
 function Specials() {
   const data = window.FT_DATA;
   const specials = data.specials || [];
@@ -19,7 +10,7 @@ function Specials() {
           <div className="eyebrow">This week only</div>
           <h2 className="title">This week's specials.</h2>
           <p className="lede">
-            What the cooks are running this week. Here through {specialsThrough()}, then gone.
+            What the cooks are running this week. Get it before it's then gone!
           </p>
         </div>
 
