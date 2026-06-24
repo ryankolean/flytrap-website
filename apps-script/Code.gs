@@ -1,7 +1,7 @@
 // Path B publisher. Pure string helpers live in lib/specials.js + lib/github.js
 // (pushed alongside this file by clasp); their functions are global in GAS.
 
-var REPO = 'ryankolean/flytrap-specials-test'; // DRY-RUN target; flip to flytrap-website after verifying
+var REPO = 'ryankolean/flytrap-website';
 var BRANCH = 'main';
 var API = 'https://api.github.com';
 
