@@ -29,7 +29,7 @@ function Hero({ onOpenMenu }) {
         <div className="hero-kicker">a finer diner</div>
         <img className="hero-wordmark" src="assets/flytrap-wordmark.png" alt="The Fly Trap" />
         <p className="hero-lead">
-          A neighborhood diner on Woodward, Buzzin' since 2004. American comfort food with a global cooks' table — pho, Thai peanut, Italian, breakfast all day.
+          A neighborhood diner on Woodward, Buzzin' since 2004.
         </p>
         <div className="hero-actions">
           <a href="#menu" className="btn btn-primary" onClick={(e) => { e.preventDefault(); onOpenMenu && onOpenMenu(); }}>
