@@ -6,7 +6,7 @@ const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
   "heroColor": "flytrap-red-deep",
   "aboutZone": "terracotta",
   "pressZone": "plum",
-  "showGallery": true,
+  "showGallery": false,
   "showRetail": true,
   "showPress": true,
   "rotationSeconds": 6
