@@ -5,6 +5,7 @@ function Hero({ onOpenMenu }) {
   const paintings = window.FT_DATA.paintings;
   const [idx, setIdx] = useState(0);
   const [paused, setPaused] = useState(false);
+  const isOpen = window.useOpenNow();
 
   useEffect(() => {
     if (paused) return;
@@ -65,7 +66,7 @@ function Hero({ onOpenMenu }) {
 
       <div className="hero-strip">
         <div className="grp">
-          <span className="open-now"><span className="dot" /> Open now</span>
+          <span className={"open-now" + (isOpen ? "" : " closed")}><span className="dot" /> {isOpen ? "Open now" : "Closed"}</span>
           <span>Mon–Sun · 8a — 3p</span>
         </div>
         <div className="grp">

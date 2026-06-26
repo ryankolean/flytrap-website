@@ -210,6 +210,7 @@ window.Hero = function HeroWrap(props) {
   };
   const bg = colorMap[props.heroColor] || "var(--color-flytrap-red-deep)";
   const lightOnDark = !["butter", "chartreuse"].includes(props.heroColor);
+  const isOpen = window.useOpenNow();
 
   return (
     <header className="hero hero-solid" id="top" style={{ background: bg, color: lightOnDark ? "var(--color-cream-paper)" : "var(--color-checker-black)" }}>
@@ -239,7 +240,7 @@ window.Hero = function HeroWrap(props) {
 
       <div className="hero-strip" style={{ color: "inherit" }}>
         <div className="grp">
-          <span className="open-now"><span className="dot" /> Open now</span>
+          <span className={"open-now" + (isOpen ? "" : " closed")}><span className="dot" /> {isOpen ? "Open now" : "Closed"}</span>
           <span>Mon–Sun · 8a — 3p</span>
         </div>
         <div className="grp">
