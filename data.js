@@ -151,3 +151,32 @@ window.FT_DATA = {
   soup: { name: "Cream of Roasted Tomato & Fennel", desc: "Slow-roasted Roma tomatoes, fennel bulb, basil oil swirl, parmesan crisp on the side. Cup $5 / Bowl $6." },
   pastry: { name: "Brown-Butter Sour Cherry Galette", desc: "From the Sugar Shack — flaky butter dough, Michigan sour cherries, almond frangipane, demerara crust. While they last. $5.95." },
 };
+
+// --- Live open/closed status -------------------------------------------------
+// Restaurant hours are Mon–Sun 8:00a–3:00p (America/Detroit). The "Open now"
+// badge used to be hard-coded; this computes it from the restaurant's local time
+// so it reads "Closed" after hours (Sean/Kara feedback item 3).
+window.ftOpenNow = function () {
+  try {
+    const parts = new Intl.DateTimeFormat("en-US", {
+      timeZone: "America/Detroit", hour12: false, hour: "2-digit", minute: "2-digit"
+    }).formatToParts(new Date());
+    let h = +parts.find((p) => p.type === "hour").value;
+    if (h === 24) h = 0; // some engines report midnight as 24
+    const mins = h * 60 + +parts.find((p) => p.type === "minute").value;
+    return mins >= 480 && mins < 900; // 8:00a (480) – 3:00p (900)
+  } catch (e) {
+    return true; // Intl/timeZone unavailable — fall back to prior behavior
+  }
+};
+
+// React hook: open state that re-checks each minute so the badge flips at 3:00p
+// without needing a page reload.
+window.useOpenNow = function () {
+  const [open, setOpen] = React.useState(window.ftOpenNow());
+  React.useEffect(() => {
+    const id = setInterval(() => setOpen(window.ftOpenNow()), 60000);
+    return () => clearInterval(id);
+  }, []);
+  return open;
+};
