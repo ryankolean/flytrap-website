@@ -138,18 +138,19 @@ function Gallery() {
 
 function Retail() {
   const cards = [
-  { cls: "swat", label: "SWAT", photo: "assets/retail/swat-hot-sauce.png", title: "SWAT Hot Sauces", desc: "Three heat levels, named like a tactical unit. Smoky and slow, sharp and green, or the one that goes on the eggs whether you like it or not. Bottled at the diner.", price: "$8 / bottle", ask: "Ask at the counter" },
-  { cls: "jam", label: "Seasonal Jam", photo: "assets/retail/wham-jam.png", title: "Seasonal Jam", desc: "Whatever's in season, cooked down in the same pan as the gingerbread waffle topping. Cherry in summer, plum in fall, marmalade in February.", price: "$10 / jar", ask: "Limited supply" },
-  { cls: "tees", label: "the fly trap", title: "T-Shirts", desc: "Black tee, the wordmark on the chest, the fly on the sleeve. Soft after one wash, softer after twenty.", price: "$25", ask: "S · M · L · XL · XXL" },
-  { cls: "gift", label: "Gift Cards", title: "Gift Cards", desc: "Any amount you like. Hand-written on a card with the wordmark, sealed in an envelope. Use it on breakfast, on a burger, on the bar tab.", price: "$25 / $50 / $100", ask: "In person or by phone" }];
+  { cls: "swat", label: "SWAT", photo: "assets/retail/swat-hot-sauce.png", title: "SWAT! Sauces", price: "$7 / bottle", ask: "", variants: [
+    { name: "THE O.G. - HABANERO HOT SAUCE", desc: "YA MON! JAMAICAN-ISH IN STYLE WITH VIBRANT HABANERO, SMOKY CHIPOTLE AND WARM CARIBBEAN SPICES" },
+    { name: "LA PICA – JALAPEÑO HOT SAUCE", desc: "¡OYE! MEXICAN-ISH IN STYLE WITH HERBACEOUS SPICES, EARTHLY JALAPEÑO & A GARLICKY ZING" },
+    { name: "LIL' PRIK – THAI CHILI HOT SAUCE", desc: "THE SWEETEST OF THE BUNCH. THAI-ISH IN STYLE KICKED UP WITH CHILIES, TAMARI & CHARRED ONION" }] },
+  { cls: "jam", label: "Wham! Jam", photo: "assets/retail/wham-jam.png", title: "Wham! Jam", desc: "These three flavors are always in stock: Strawberry Basil, Blackberry Ginger & Mango Tamarindo. Funky fun flavors are offered at the restaurant and bottled in limited quantities at the restaurant.", price: "$8 / jar", ask: "" },
+  { cls: "tees", label: "the fly trap", title: "Other Fly Trap Swag", desc: "Sometimes there are T-Shirts, sometimes sweatshirts, maybe pins, maybe patches, come see us to find out!", price: "", ask: "" },
+  { cls: "gift", label: "Gift Cards", title: "Gift Cards", desc: "Great gifts available in any denomination.", price: "", ask: "" }];
 
   return (
     <section id="retail" className="section retail" data-screen-label="Retail">
       <div className="container">
         <div className="section-head center reveal">
-          <div className="eyebrow">Take a piece home</div>
-          <h2 className="title">The Fly Trap, but for your kitchen.</h2>
-          <p className="lede">Hot sauces made in-house, jam from the back of the back of the kitchen, t-shirts that have outlasted three managers, gift cards in any amount. Available at the front counter — ask Kara.</p>
+          <h2 className="title">Retail</h2>
         </div>
         <div className="retail-grid">
           {cards.map((c) =>
@@ -161,11 +162,17 @@ function Retail() {
               </div>
               <div className="body">
                 <h3>{c.title}</h3>
-                <p className="desc">{c.desc}</p>
-                <div className="meta-row">
-                  <span className="price">{c.price}</span>
-                  <span className="ask">{c.ask}</span>
-                </div>
+                {c.variants ?
+              c.variants.map((v, i) =>
+              <p className="desc" key={i}><strong>{v.name}</strong><br />{v.desc}</p>) :
+
+              <p className="desc">{c.desc}</p>}
+                {c.price || c.ask ?
+              <div className="meta-row">
+                    {c.price ? <span className="price">{c.price}</span> : null}
+                    {c.ask ? <span className="ask">{c.ask}</span> : null}
+                  </div> :
+              null}
               </div>
             </article>
           )}
