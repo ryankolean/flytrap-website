@@ -218,7 +218,7 @@ function Visit() {
         <div className="section-head reveal">
           <div className="eyebrow">Find us</div>
           <h2 className="title">22950 Woodward Ave, Ferndale.</h2>
-          <p className="lede">Walk-in only — no reservations. Lot beside the building, plus street parking on Woodward.</p>
+          <p className="lede">Walk-in only — no reservations. Municipal lot behind the building, plus street parking on Woodward. You can enter from the front or the rear.</p>
         </div>
 
         <div className="visit-grid">
@@ -233,6 +233,7 @@ function Visit() {
             </a>
             <div className="visit-contact">
               <a href="tel:2483995150">(248) 399-5150</a>
+              <a href="mailto:dine@theflytrapferndale.com">dine@theflytrapferndale.com</a>
               <a href="https://www.instagram.com/theflytrapferndale/" target="_blank" rel="noopener">@theflytrapferndale</a>
             </div>
             <p className="visit-note">Toast online ordering is coming. Until then — walk in, sit down, the cooks know you.</p>
