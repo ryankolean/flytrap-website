@@ -995,6 +995,7 @@ section { position: relative; }
   font-size: 17px;
   color: var(--color-checker-black);
 }
+.menu-item .veg-leaf { color: #4A7A2A; flex: 0 0 auto; align-self: center; }
 .menu-item .veg-tag {
   display: inline-flex;
   align-items: center;
