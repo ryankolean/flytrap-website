@@ -88,11 +88,12 @@ function About() {
           </div>
           <div className="reveal">
             <div className="eyebrow">Buzzin' since 2004</div>
-            <h2 className="title">Under old management.</h2>
-            <p className="lede">Twenty years on Woodward, then a quiet handoff, then home again. Kara &amp; Gavin McMillian came back in October 2024. The eggs are still magnificent, the marbles are still in the bar, and the seventeen flies are still painting flies.</p>
+            <h2 className="title">Why 'The Fly Trap'?</h2>
+            <p className="lede">The doors of The Fly Trap: a finer diner were eagerly thrown open for the first time on December 28th 2004. We welcomed our first customers and started our magnificent life as a business that continues on through today.</p>
 
-            <p className="about-pull">"Come in, sit down, catch a buzz."</p>
-            <p className="about-attr">— Kara McMillian, owner</p>
+            <p className="lede">Along with our beloved and inquisitive customers came the many questions of our origin. The most important of which we will address right here and now… "Why?" they asked. "Why did you name your restaurant The Fly Trap?"</p>
+
+            <p className="about-pull">We always swore we would make up some exciting folklore tale of the origin of our now-venerated name, but we never quite came up with a story glorious enough to do justice to the wonderment.</p>
 
             <div className="about-stats">
               <div>
