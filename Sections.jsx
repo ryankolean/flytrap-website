@@ -32,7 +32,7 @@ function Specials() {
               <div className="special-body">
                 <div className="special-headline">
                   <h3>{s.name}</h3>
-                  {s.veg ? <span className="veg-tag">Veg</span> : null}
+                  {s.veg ? <VegLeaf /> : null}
                 </div>
                 <p className="special-desc">{s.desc}</p>
                 {s.price ? (
@@ -358,7 +358,7 @@ function DailyBuzzPage({ onBack }) {
                   <p className="desc">{b.desc}</p>
                   <div className="meta">
                     <span className="chip price">${b.price}</span>
-                    {b.veg ? <span className="chip veg">Vegetarian</span> : null}
+                    {b.veg ? <VegLeaf /> : null}
                     <span className="chip">Available 8a — 3p, while it lasts</span>
                   </div>
                 </div>
