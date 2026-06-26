@@ -243,7 +243,7 @@ function Visit() {
               <a href="mailto:dine@theflytrapferndale.com">dine@theflytrapferndale.com</a>
               <a href="https://www.instagram.com/theflytrapferndale/" target="_blank" rel="noopener">@theflytrapferndale</a>
             </div>
-            <p className="visit-note">Toast online ordering is coming. Until then — walk in, sit down, the cooks know you.</p>
+            <p className="visit-note">Walk in, sit down — the cooks know you.</p>
           </div>
 
           <div className="visit-card reveal">
