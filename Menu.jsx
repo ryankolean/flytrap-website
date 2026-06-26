@@ -23,12 +23,6 @@ function Menu() {
   return (
     <section id="menu" className="section menu-section-bg" data-screen-label="Menu">
       <div className="container">
-        <div className="section-head center reveal">
-          <div className="eyebrow">What's cooking</div>
-          <h2 className="title">The whole menu, right here.</h2>
-          <p className="lede">Breakfast all day. Lunch all day. Twenty years of recipes the cooks won't quit. Vegetarian dishes are tagged — most can also go vegan with a small ask.</p>
-        </div>
-
         <div className="menu-frame reveal">
           <span className="edge-l" /><span className="edge-r" />
           <div className="menu-inner">
