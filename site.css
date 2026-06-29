@@ -1105,6 +1105,67 @@ section { position: relative; }
   border-radius: 4px;
 }
 
+/* Dish scroll — key dishes carousel that replaces the old paintings gallery */
+.dishes {
+  background: var(--color-checker-black);
+  border-top: 1px solid rgba(245,238,220,.12);
+  padding: 56px 0 60px;
+}
+.dishes .eyebrow { color: var(--color-flytrap-red-bright); }
+.dishes .title { color: var(--color-cream-paper); }
+.dish-scroll { position: relative; }
+.dish-track {
+  display: flex; gap: 14px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  padding: 4px 20px 8px;
+}
+.dish-track::-webkit-scrollbar { display: none; }
+@media (min-width: 768px) { .dish-track { gap: 18px; padding: 4px 56px 8px; } }
+.dish-card {
+  flex: 0 0 78%; max-width: 340px;
+  margin: 0;
+  scroll-snap-align: start;
+  position: relative;
+  border-radius: 6px;
+  overflow: hidden;
+  background: var(--color-checker-black);
+  box-shadow: 0 8px 22px rgba(0,0,0,.35);
+}
+@media (min-width: 768px) { .dish-card { flex-basis: 320px; } }
+.dish-card img { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; display: block; }
+.dish-card .label {
+  position: absolute;
+  bottom: 8px; left: 8px; right: 8px;
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 14px;
+  color: var(--color-cream-paper);
+  background: rgba(26,26,26,.62);
+  backdrop-filter: blur(4px);
+  padding: 6px 10px;
+  border-radius: 4px;
+}
+.dish-nav {
+  position: absolute; top: 46%;
+  transform: translateY(-50%);
+  width: 40px; height: 40px;
+  border: 0; border-radius: 50%;
+  cursor: pointer; z-index: 2;
+  background: var(--color-flytrap-red-deep);
+  color: var(--color-cream-paper);
+  font-size: 24px; line-height: 1;
+  display: none; align-items: center; justify-content: center;
+  box-shadow: 0 4px 12px rgba(0,0,0,.45);
+  transition: background 150ms, transform 80ms;
+}
+.dish-nav:hover { background: var(--color-flytrap-red-bright); }
+.dish-nav:active { transform: translateY(-50%) scale(.94); }
+.dish-nav.prev { left: 12px; }
+.dish-nav.next { right: 12px; }
+@media (min-width: 768px) { .dish-nav { display: inline-flex; } }
+
 /* ============================================================
    RETAIL
    ============================================================ */

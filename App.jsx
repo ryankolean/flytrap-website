@@ -122,6 +122,7 @@ function App() {
           <Menu />
           <About />
           {tweaks.showGallery ? <Gallery /> : null}
+          <DishScroll />
           {tweaks.showRetail ? <Retail /> : null}
           {tweaks.showPress ? <Press /> : null}
           <Visit />
@@ -134,6 +135,7 @@ function App() {
           <Menu />
           <About />
           {tweaks.showGallery ? <Gallery /> : null}
+          <DishScroll />
           {tweaks.showRetail ? <Retail /> : null}
           {tweaks.showPress ? <Press /> : null}
           <Visit />
