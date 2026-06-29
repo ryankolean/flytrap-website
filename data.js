@@ -150,6 +150,13 @@ window.FT_DATA = {
   /* SPECIALS:END */
   soup: { name: "Cream of Roasted Tomato & Fennel", desc: "Slow-roasted Roma tomatoes, fennel bulb, basil oil swirl, parmesan crisp on the side. Cup $5 / Bowl $6." },
   pastry: { name: "Brown-Butter Sour Cherry Galette", desc: "From the Sugar Shack — flaky butter dough, Michigan sour cherries, almond frangipane, demerara crust. While they last. $5.95." },
+  dishes: [
+    { src: "assets/dishes/green-eggs-ham.jpg", label: "Green Eggs & Ham" },
+    { src: "assets/dishes/huevos-rancheros.jpg", label: "Huevos Rancheros" },
+    { src: "assets/dishes/the-rumble.jpg", label: "The Rumble" },
+    { src: "assets/dishes/fried-rice.jpg", label: "Fried Rice" },
+    { src: "assets/dishes/catch-a-buzz.jpg", label: "Catch a Buzz" }
+  ],
 };
 
 // --- Live open/closed status -------------------------------------------------

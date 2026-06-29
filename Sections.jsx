@@ -137,6 +137,41 @@ function Gallery() {
 
 }
 
+function DishScroll() {
+  const dishes = window.FT_DATA.dishes || [];
+  const trackRef = useRef(null);
+  if (!dishes.length) return null;
+  const nudge = (dir) => {
+    const t = trackRef.current;
+    if (!t) return;
+    const card = t.querySelector(".dish-card");
+    const step = card ? card.getBoundingClientRect().width + 18 : t.clientWidth * 0.8;
+    t.scrollBy({ left: dir * step, behavior: "smooth" });
+  };
+  return (
+    <section className="dishes" data-screen-label="Dishes">
+      <div className="container">
+        <div className="section-head center reveal" style={{ marginBottom: 24 }}>
+          <div className="eyebrow">From the griddle</div>
+          <h2 className="title" style={{ fontSize: 32 }}>A few of our favorites.</h2>
+        </div>
+      </div>
+      <div className="dish-scroll">
+        <button className="dish-nav prev" aria-label="Scroll to previous dishes" onClick={() => nudge(-1)}>‹</button>
+        <div className="dish-track" ref={trackRef}>
+          {dishes.map((d, i) =>
+          <figure className="dish-card" key={i}>
+              <img src={d.src} alt={d.label} loading="lazy" />
+              <figcaption className="label">{d.label}</figcaption>
+            </figure>
+          )}
+        </div>
+        <button className="dish-nav next" aria-label="Scroll to more dishes" onClick={() => nudge(1)}>›</button>
+      </div>
+    </section>);
+
+}
+
 function Retail() {
   const cards = [
   { cls: "swat", label: "SWAT", photo: "assets/retail/swat-hot-sauce.png", title: "SWAT! Sauces", price: "$7 / bottle", ask: "", variants: [
