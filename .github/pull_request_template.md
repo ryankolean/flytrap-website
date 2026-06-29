@@ -38,8 +38,8 @@ Ran the site locally and checked at **375 / 768 / 1280**:
 
 - [ ] `grep -rn "PATCH (flytrap-website)"` — all markers still present
 - [ ] image-slot.js editor-gated `touch-action` intact (mobile scroll)
-- [ ] Hero "Order Takeout" mobile CTA intact in **both** `App.jsx` and `Hero.jsx`
-- [ ] Canonical Toast URL unchanged in `Nav.jsx`, `App.jsx`, `Hero.jsx`
+- [ ] Hero "Order Takeout" mobile CTA intact in `App.jsx`
+- [ ] Canonical Toast URL unchanged in `Nav.jsx` and `App.jsx`
 
 ## Specials (only if this touches the specials section)
 

@@ -34,7 +34,6 @@ Tracked in git. Schema:
   },
   "syncedFiles": {
     "App.jsx": "sha256",
-    "Hero.jsx": "sha256",
     "Menu.jsx": "sha256",
     "Nav.jsx": "sha256",
     "Sections.jsx": "sha256",
@@ -55,7 +54,7 @@ Version increments by 1 every successful sync. New version = new branch `design-
 ## Files to sync FROM the archive
 
 **Sync (overwrite repo copy):**
-- `App.jsx`, `Hero.jsx`, `Menu.jsx`, `Nav.jsx`, `Sections.jsx`
+- `App.jsx`, `Menu.jsx`, `Nav.jsx`, `Sections.jsx`
 - `data.js`
 - `site.css`, `colors_and_type.css`
 - `image-slot.js` (referenced by HTML)
@@ -127,7 +126,7 @@ sha256sum "$ARCHIVE" > "$WORK/archive.sha256"
 
 Verify expected files present:
 ```bash
-for f in App.jsx Hero.jsx Menu.jsx Nav.jsx Sections.jsx data.js site.css colors_and_type.css; do
+for f in App.jsx Menu.jsx Nav.jsx Sections.jsx data.js site.css colors_and_type.css; do
   [ -f "$WORK/current/$f" ] || { echo "MISSING: $f"; exit 1; }
 done
 ```
@@ -147,7 +146,7 @@ git checkout -b "$BRANCH" main
 For each file in the sync list:
 
 ```bash
-for f in App.jsx Hero.jsx Menu.jsx Nav.jsx Sections.jsx data.js site.css colors_and_type.css image-slot.js tweaks-panel.jsx; do
+for f in App.jsx Menu.jsx Nav.jsx Sections.jsx data.js site.css colors_and_type.css image-slot.js tweaks-panel.jsx; do
   if [ -f "$f" ]; then
     diff -u "$f" "$WORK/current/$f" > "$WORK/diff-$f.patch" || true
     echo "$f: $(wc -l < "$WORK/diff-$f.patch") diff lines"
@@ -176,7 +175,7 @@ If ANY change touches:
 
 ```bash
 # overwrite each file from the archive
-for f in App.jsx Hero.jsx Menu.jsx Nav.jsx Sections.jsx data.js site.css colors_and_type.css image-slot.js tweaks-panel.jsx; do
+for f in App.jsx Menu.jsx Nav.jsx Sections.jsx data.js site.css colors_and_type.css image-slot.js tweaks-panel.jsx; do
   cp "$WORK/current/$f" "$f"
 done
 
@@ -230,13 +229,11 @@ Verify: at 375x812 in preview, dragging vertically while finger starts on a `.sp
 
 #### Patch P2: mobile-only Order Takeout hero CTA
 
-**Production hero is `window.Hero = HeroWrap` defined inside `App.jsx`** (search for "Solid-color hero" comment, ~line 199). `Hero.jsx` defines the painting-rotation hero but it is shadowed at runtime because `App.jsx` loads after `Hero.jsx` in `index.html`. Patch BOTH files to keep them aligned, but `App.jsx` is the one that ships.
+**The hero is `window.Hero = HeroWrap` defined inside `App.jsx`** (search for "Solid-color hero" comment, ~line 199) — the single source for the hero markup.
 
 Secondary CTA block in `App.jsx` HeroWrap has TWO anchors:
 - `.btn-ghost.hero-cta-desktop` → `#visit`, label `Visit Us →` (existing CTA)
 - `.btn-ghost.hero-cta-mobile`  → `https://order.toasttab.com/online/the-fly-trap-ferndale-22950-woodward-avenue`, `target=_blank rel=noopener`, label `Order Takeout →`
-
-`Hero.jsx` mirrors the same pattern, secondary anchors target `#daily-buzz` (desktop) and Toast (mobile).
 
 `site.css` rules:
 ```css
@@ -305,11 +302,11 @@ If ANY check fails: do not proceed. Either fix the issue (likely a missing port 
 
 Spot-check sections that didn't change in the archive — they must still render. Sections to manually verify in the browser:
 
-- Hero (image rotation, open/closed badge based on America/Detroit 8a–3p)
+- Hero (solid-color `window.Hero = HeroWrap` in `App.jsx`, open/closed badge based on America/Detroit 8a–3p)
 - Nav (sticky behavior past hero)
 - Menu tabs + vegetarian filter
 - Specials (NEW — verify both cards render with images)
-- About, Gallery, Retail, Press, Visit
+- About, Retail, Press, Visit
 - Footer
 - `#daily-buzz` route
 

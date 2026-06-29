@@ -90,15 +90,6 @@ window.FT_DATA = {
     { year: "2011", outlet: "Diners, Drive-Ins and Dives", title: "Guy Fieri orders the Cowboy Curtis. He says it's nuts." },
     { year: "2009", outlet: "NBC Nightly News", title: "A short segment on the Ferndale revival, filmed at Table 4." },
   ],
-  paintings: [
-    { src: "assets/paintings/fly-cowboy.jpg", label: "Fly Cowboy" },
-    { src: "assets/paintings/fly-band.jpg", label: "Fly Band" },
-    { src: "assets/paintings/fly-fly-fishing.jpg", label: "Fly Fly-Fishing" },
-    { src: "assets/paintings/flies-dinner-date.jpg", label: "Flies on a Dinner Date" },
-    { src: "assets/paintings/flies-kissing.jpg", label: "Flies Kissing" },
-    { src: "assets/paintings/fly-art-class.jpg", label: "Fly Art Class" },
-    { src: "assets/paintings/fly-eye-doctor.jpg", label: "Fly at the Eye Doctor" },
-  ],
   // Daily buzz — rotating weekly schedule
   buzz: [
     { day: "Monday",    name: "The Bill Murray",  desc: "Slow-roasted brisket hash with cream-cheese chive scramble, crackly potatoes, jalapeño jam.", veg: false, price: "16.95" },
