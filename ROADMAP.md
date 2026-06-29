@@ -10,6 +10,8 @@ lands as atomic single-purpose PRs → `main` auto-deploys to GitHub Pages.
 
 ## Shipped
 
+_Audited 2026-06-29 against Sean's 2026-06-25 change list — every item below is live on `main`._
+
 - **Hero** — removed the "American comfort food with a global cooks' table" tagline.
 - **Menu** — removed the "What's cooking" intro; veg toggle → green-**leaf** indicator
   (site-wide: menu, specials, daily-buzz board).
@@ -73,6 +75,9 @@ Once Toast is the source of truth, do the coupled UI work:
 ## Backlog / chores
 
 - Delete the now-unused `assets/flytrap-wordmark-*.png` (superseded by `assets/brand/flytrap-logo*.png`).
+- Remove the dead `Gallery` component + `showGallery` toggle (`Sections.jsx` / `App.jsx`) — the old
+  "On the walls" paintings scroll. Hidden (`showGallery: false`) so it's **not on the live site**,
+  but the code lingers; the dish-scroll superseded it.
 - Brand fonts **Casmira** / **Lounge Bait** are **not** web-embeddable — personal-use /
   foundry-restricted licenses. Logo *images* are fine; revisit web fonts only if a
   commercial license is purchased.
