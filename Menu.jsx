@@ -3,8 +3,8 @@ function VegLeaf() {
   return (
     <svg className="veg-leaf" viewBox="0 0 24 24" width="15" height="15" role="img" aria-label="Vegetarian" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
       <title>Vegetarian</title>
-      <path d="M11 20A7 7 0 0 1 4 13C4 8 8 4 18 4c0 8-4 12-7 13z" />
-      <path d="M9 16c1-3 3-5 6-6" />
+      <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.52-4.48 10-10 10Z" />
+      <path d="M2 21c0-3 1.85-5.36 5.08-6" />
     </svg>
   );
 }
