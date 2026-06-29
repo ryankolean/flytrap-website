@@ -12,10 +12,14 @@ function VegLeaf() {
 function Menu() {
   const cats = window.FT_DATA.menuCategories;
   const items = window.FT_DATA.menuItems;
-  const [active, setActive] = useState(cats[0].id);
+  const specials = window.FT_DATA.specials || [];
+  const SPECIALS_TAB = "specials";
+  const [active, setActive] = useState(SPECIALS_TAB);
   const [query, setQuery] = useState("");
+  const showingSpecials = active === SPECIALS_TAB;
 
   const visibleItems = useMemo(() => {
+    if (showingSpecials) return [];
     return items.filter(it => {
       if (it.cat !== active) return false;
       if (query.trim()) {
@@ -37,6 +41,15 @@ function Menu() {
 
             <div className="menu-toolbar">
               <div className="menu-tabs" role="tablist">
+                <button
+                  key={SPECIALS_TAB}
+                  className={showingSpecials ? "on" : ""}
+                  onClick={() => setActive(SPECIALS_TAB)}
+                  role="tab"
+                  aria-selected={showingSpecials}
+                >
+                  Specials
+                </button>
                 {cats.map(c => (
                   <button
                     key={c.id}
@@ -51,27 +64,57 @@ function Menu() {
               </div>
             </div>
 
-            <div className="menu-cat" key={cat.id}>
-              <h3>{cat.title}</h3>
-              {cat.sub ? <p className="sub">{cat.sub}</p> : null}
-              <div className="menu-items">
-                {visibleItems.map((it, i) => (
-                  <div className="menu-item" key={cat.id + i}>
-                    <div className="nm-row">
-                      <span className="nm">{it.nm}</span>
-                      {it.veg ? <VegLeaf /> : null}
-                    </div>
-                    <span className="pr">${it.price}</span>
-                    {it.desc ? <p className="desc">{it.desc}</p> : null}
-                  </div>
-                ))}
-                {visibleItems.length === 0 ? (
-                  <p style={{ gridColumn: "1 / -1", textAlign: "center", color: "var(--color-text-charcoal)", fontStyle: "italic", padding: "24px 0" }}>
-                    Nothing on this page matches.
-                  </p>
-                ) : null}
+            {showingSpecials ? (
+              <div className="menu-specials" key="specials">
+                <div className="menu-cat">
+                  <h3>This week's specials</h3>
+                  <p className="sub">What the cooks are running this week. Get it before it's gone.</p>
+                </div>
+                <div className="specials-grid">
+                  {specials.map((s) => (
+                    <article className="special-card" key={s.id}>
+                      <div className="special-photo">
+                        <img src={s.photo} alt={s.name} loading="lazy" />
+                      </div>
+                      <div className="special-body">
+                        <div className="special-headline">
+                          <h3>{s.name}</h3>
+                          {s.veg ? <VegLeaf /> : null}
+                        </div>
+                        <p className="special-desc">{s.desc}</p>
+                      </div>
+                    </article>
+                  ))}
+                  {specials.length === 0 ? (
+                    <p style={{ gridColumn: "1 / -1", textAlign: "center", color: "var(--color-text-charcoal)", fontStyle: "italic", padding: "24px 0" }}>
+                      No specials running this week — check back soon.
+                    </p>
+                  ) : null}
+                </div>
               </div>
-            </div>
+            ) : (
+              <div className="menu-cat" key={cat.id}>
+                <h3>{cat.title}</h3>
+                {cat.sub ? <p className="sub">{cat.sub}</p> : null}
+                <div className="menu-items">
+                  {visibleItems.map((it, i) => (
+                    <div className="menu-item" key={cat.id + i}>
+                      <div className="nm-row">
+                        <span className="nm">{it.nm}</span>
+                        {it.veg ? <VegLeaf /> : null}
+                      </div>
+                      <span className="pr">${it.price}</span>
+                      {it.desc ? <p className="desc">{it.desc}</p> : null}
+                    </div>
+                  ))}
+                  {visibleItems.length === 0 ? (
+                    <p style={{ gridColumn: "1 / -1", textAlign: "center", color: "var(--color-text-charcoal)", fontStyle: "italic", padding: "24px 0" }}>
+                      Nothing on this page matches.
+                    </p>
+                  ) : null}
+                </div>
+              </div>
+            )}
 
             <p className="menu-callout">
               <span className="stars">∗∗∗</span> Full Bar — Beer, Wine & Booze. Catch a Buzz! <span className="stars">∗∗∗</span>
