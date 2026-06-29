@@ -27,6 +27,7 @@ function Hero({ onOpenMenu }) {
       <div className="hero-overlay" />
 
       <div className="hero-content">
+        <img className="hero-fly" src="assets/brand/fly-cream.png" alt="" aria-hidden="true" />
         <div className="hero-kicker">a finer diner</div>
         <img className="hero-wordmark" src="assets/brand/flytrap-logo-cream.png" alt="The Fly Trap" />
         <p className="hero-lead">
