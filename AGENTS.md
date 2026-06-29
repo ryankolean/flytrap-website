@@ -15,15 +15,14 @@ Stack constraints for any agent (Claude Design, Claude Code, Codex, etc.) genera
 
 ```
 index.html              # entry point, all <script> tags here
-App.jsx                 # root component, mounts to #root
+App.jsx                 # root component, mounts to #root; defines the hero (window.Hero = HeroWrap, incl. live open/closed badge)
 Nav.jsx                 # top nav
-Hero.jsx                # hero section (incl. live open/closed badge)
 Menu.jsx                # menu w/ tabs + veg filter
 Sections.jsx            # about, retail, press, visit
 data.js                 # menu + content data (plain object on window.DATA)
 colors_and_type.css     # design tokens (colors, fonts, sizes)
 site.css                # layout + component styles
-assets/                 # images, paintings, wordmarks
+assets/                 # images, wordmarks
 fonts/                  # self-hosted Fraunces + Inter (woff2)
 ```
 
@@ -105,8 +104,8 @@ Current local patches (also enforced by `.github/workflows/guardrails.yml`):
   defaults to `auto` so mobile page scroll passes through the photo.
 - **Hero CTA** — mobile shows "Order Takeout" → Toast; desktop shows the
   default secondary CTA. Toggled by `.btn.hero-cta-mobile` / `.btn.hero-cta-desktop`
-  in `site.css`. **The production hero is `window.Hero = HeroWrap` in `App.jsx`**
-  (it shadows `Hero.jsx` via script load order) — patch BOTH files.
+  in `site.css`. **The hero is `window.Hero = HeroWrap` in `App.jsx`** — the single
+  source for the hero markup.
 
 ## Specials section rules
 
@@ -123,8 +122,7 @@ Current local patches (also enforced by `.github/workflows/guardrails.yml`):
 ## Canonical external URLs
 
 - **Toast online ordering:** `https://order.toasttab.com/online/the-fly-trap-ferndale-22950-woodward-avenue`
-  Used by `Nav.jsx`, `App.jsx` (hero), and `Hero.jsx`. If it changes, update all
-  three together.
+  Used by `Nav.jsx` and `App.jsx` (hero). If it changes, update both together.
 
 ## CI enforcement
 

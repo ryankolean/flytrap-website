@@ -40,6 +40,12 @@
 //
 // ─────────────────────────────────────────────────────────────────────────────
 
+// Bare React hook aliases shared by Nav.jsx / Menu.jsx / Sections.jsx. These were
+// formerly declared in Hero.jsx; that file was removed, so they live here instead.
+// tweaks-panel.jsx is the FIRST text/babel script in index.html, so these global
+// lexical bindings are in scope for every component file that loads after it.
+const { useState, useEffect, useRef, useMemo, useCallback } = React;
+
 const __TWEAKS_STYLE = `
   .twk-panel{position:fixed;right:16px;bottom:16px;z-index:2147483646;width:280px;
     max-height:calc(100vh - 32px);display:flex;flex-direction:column;

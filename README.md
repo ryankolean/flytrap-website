@@ -23,7 +23,7 @@ Then visit http://localhost:8000 (or whatever port your server prints).
 
 - `index.html` — entry point
 - `App.jsx` — root component, navigation, hero
-- `Nav.jsx`, `Hero.jsx`, `Menu.jsx`, `Sections.jsx` — page sections
+- `Nav.jsx`, `Menu.jsx`, `Sections.jsx` — page sections (the hero lives in `App.jsx`)
 - `data.js` — menu + content data
 - `colors_and_type.css`, `site.css` — styles
 - `assets/` — images, paintings, wordmarks

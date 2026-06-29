@@ -63,7 +63,7 @@ jobs:
             err "index.html missing (entrypoint must be index.html)"
           else
             [ -f "The Fly Trap.html" ] && err "'The Fly Trap.html' present — entrypoint is index.html"
-            order="data.js image-slot.js tweaks-panel.jsx Nav.jsx Hero.jsx Menu.jsx Sections.jsx App.jsx"
+            order="data.js image-slot.js tweaks-panel.jsx Nav.jsx Menu.jsx Sections.jsx App.jsx"
             prev=0
             for tag in $order; do
               ln=$(grep -nF "src=\"$tag\"" index.html | head -1 | cut -d: -f1)
@@ -93,7 +93,7 @@ jobs:
 
           echo "== 4. Canonical Toast order URL present in nav + hero =="
           TOAST='order.toasttab.com/online/the-fly-trap-ferndale-22950-woodward-avenue'
-          for f in Nav.jsx App.jsx Hero.jsx; do
+          for f in Nav.jsx App.jsx; do
             grep -qF "$TOAST" "$f" 2>/dev/null || err "$f: canonical Toast URL missing"
           done
 
