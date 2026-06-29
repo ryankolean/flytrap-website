@@ -27,9 +27,14 @@ _Audited 2026-06-29 against Sean's 2026-06-25 change list — every item below i
 - **Official logo** — adopted across nav / hero / footer (`assets/brand/flytrap-logo*.png`,
   isolated descender-safe from Sean's logo).
 - **Bold red/black colors pass** — site-wide. Red: hero, about, retail. Black: specials,
-  menu (checkerboard card on black), press, dishes. Cream type, red accents. Currently the
-  *muted* brand values; whether to switch to the brighter `.net` palette is a pending decision —
-  see [Blocked](#blocked--waiting-on-the-client).
+  menu (checkerboard card on black), press, dishes. Cream type, red accents. Originally shipped
+  with the *muted* brand values; superseded by the retro palette (below).
+- **Retro palette — RESOLVED (retro chosen).** Kara, Gavin & Sean picked the electric
+  theflytrapferndale.net palette over the muted values. Swapped the five color tokens in
+  `colors_and_type.css` (electric red `#FD0003`, pure black `#000000`, white), updated the
+  `theme-color` meta in `index.html`, and recolored the fixed cream logo + fly images to pure
+  white preserving alpha (`assets/brand/flytrap-logo-cream.png`, `assets/brand/fly-cream.png`).
+  The temporary `retro.html` / `modern.html` / `compare.html` comparison pages are deleted.
 - **Cut-out brand fly** — buzzing accent in the hero (`assets/brand/fly*.png`).
 - **Menu leaf icon** — redesigned the `VegLeaf` SVG into a cleaner, small-size-legible
   leaf-with-stem; shared component, so menu + specials + daily-buzz board all updated (#40).
@@ -73,17 +78,6 @@ Once Toast is the source of truth, do the coupled UI work:
 
 ## Blocked — waiting on the client
 
-- **Color scheme — final palette decision** (Kara, Gavin & Sean). The colors pass shipped with the
-  *muted* brand values (brick red `#992F1E`, charcoal `#1A1A1A`, cream). Sean's brief cited
-  theflytrapferndale.net, whose **actual** palette (pulled live) is brighter: electric red
-  `#FD0003`, pure black `#000000`, white. Two labeled homepage variants are up for them to compare:
-  `/retro.html` (the electric `.net` palette), `/modern.html` (current), and `/compare.html`
-  (side by side). **Awaiting their pick.**
-  - If **retro** wins: swap the four color tokens in `colors_and_type.css` (one PR), **and**
-    generate a pure-**white** wordmark variant — the logo is a fixed cream *image*, not
-    token-driven, so it won't follow the token swap.
-  - Either way, delete the temporary `retro.html` / `modern.html` / `compare.html` review pages
-    once chosen.
 - Final **About blurb** (Kara writing) — swap into the interim copy.
 - **Retail sub-header** text (Kara).
 
