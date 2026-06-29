@@ -6,7 +6,6 @@ const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
   "heroColor": "flytrap-red-deep",
   "aboutZone": "flytrap-red-deep",
   "pressZone": "checker-black",
-  "showGallery": false,
   "showRetail": true,
   "showPress": true,
   "rotationSeconds": 6
@@ -60,7 +59,7 @@ function App() {
     }, { rootMargin: "0px 0px -10% 0px" });
     els.forEach((e) => io.observe(e));
     return () => io.disconnect();
-  }, [page, tweaks.showGallery, tweaks.showRetail, tweaks.showPress]);
+  }, [page, tweaks.showRetail, tweaks.showPress]);
 
   const navigate = (href) => {
     if (href === "#daily-buzz") {
@@ -124,7 +123,6 @@ function App() {
           <Specials />
           <Menu />
           <About />
-          {tweaks.showGallery ? <Gallery /> : null}
           <DishScroll />
           {tweaks.showRetail ? <Retail /> : null}
           {tweaks.showPress ? <Press /> : null}
@@ -137,7 +135,6 @@ function App() {
           <Specials />
           <Menu />
           <About />
-          {tweaks.showGallery ? <Gallery /> : null}
           <DishScroll />
           {tweaks.showRetail ? <Retail /> : null}
           {tweaks.showPress ? <Press /> : null}
@@ -196,7 +193,6 @@ function App() {
         </window.TweakSection>
 
         <window.TweakSection title="Sections">
-          <window.TweakToggle label="Show painting gallery" value={tweaks.showGallery} onChange={(v) => setTweak("showGallery", v)} />
           <window.TweakToggle label="Show retail" value={tweaks.showRetail} onChange={(v) => setTweak("showRetail", v)} />
           <window.TweakToggle label="Show press" value={tweaks.showPress} onChange={(v) => setTweak("showPress", v)} />
         </window.TweakSection>

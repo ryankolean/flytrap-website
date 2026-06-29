@@ -1073,55 +1073,6 @@ section { position: relative; }
   line-height: 1.5;
 }
 
-/* ============================================================
-   GALLERY — fly paintings strip
-   ============================================================ */
-.gallery {
-  background: var(--color-butter-yellow);
-  border-top: 1px solid rgba(26,26,26,.1);
-  border-bottom: 1px solid rgba(26,26,26,.1);
-  padding: 56px 0 0;
-}
-.gallery-track {
-  display: grid;
-  grid-template-columns: repeat(7, 80%);
-  gap: 12px;
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
-  scrollbar-width: none;
-  padding: 0 20px 24px;
-}
-.gallery-track::-webkit-scrollbar { display: none; }
-@media (min-width: 768px) {
-  .gallery-track { grid-template-columns: repeat(7, 360px); gap: 18px; padding: 0 32px 32px; }
-}
-.gallery-card {
-  scroll-snap-align: start;
-  aspect-ratio: 4/3;
-  background-size: cover;
-  background-position: center;
-  background-color: var(--color-checker-black);
-  border-radius: 4px;
-  position: relative;
-  overflow: hidden;
-  cursor: pointer;
-  box-shadow: 0 6px 18px rgba(0,0,0,.12);
-  transition: transform 200ms;
-}
-.gallery-card:hover { transform: translateY(-2px); }
-.gallery-card .label {
-  position: absolute;
-  bottom: 8px; left: 8px; right: 8px;
-  font-family: var(--font-serif);
-  font-style: italic;
-  font-size: 12px;
-  color: var(--color-cream-paper);
-  background: rgba(26,26,26,.6);
-  backdrop-filter: blur(4px);
-  padding: 6px 10px;
-  border-radius: 4px;
-}
-
 /* Dish scroll — key dishes carousel that replaces the old paintings gallery */
 .dishes {
   background: var(--color-checker-black);

@@ -1,4 +1,4 @@
-// About + Gallery + Retail + Press + Buzz band + Visit + Footer + DailyBuzz page
+// About + Retail + Press + Buzz band + Visit + Footer + DailyBuzz page
 
 function Specials() {
   const data = window.FT_DATA;
@@ -111,27 +111,6 @@ function About() {
             </div>
           </div>
         </div>
-      </div>
-    </section>);
-
-}
-
-function Gallery() {
-  const paintings = window.FT_DATA.paintings;
-  return (
-    <section className="gallery" data-screen-label="Gallery">
-      <div className="container">
-        <div className="section-head center" style={{ marginBottom: 24 }}>
-          <div className="eyebrow">On the walls</div>
-          <h2 className="title" style={{ fontSize: 32 }}>Seventeen flies, painted by hand.</h2>
-        </div>
-      </div>
-      <div className="gallery-track">
-        {paintings.map((p, i) =>
-        <div className="gallery-card" key={i} style={{ backgroundImage: `url(${p.src})` }}>
-            <div className="label">{p.label}</div>
-          </div>
-        )}
       </div>
     </section>);
 
@@ -426,7 +405,6 @@ function DailyBuzzPage({ onBack }) {
 window.Specials = Specials;
 window.BuzzBand = BuzzBand;
 window.About = About;
-window.Gallery = Gallery;
 window.Retail = Retail;
 window.Press = Press;
 window.Visit = Visit;
