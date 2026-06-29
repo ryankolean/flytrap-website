@@ -142,10 +142,11 @@ window.FT_DATA = {
   // photos onto the slots (they persist), or set `photo` to a committed file.
   // ---------------------------------------------------------------------------
   /* SPECIALS:START */
-  sourcePost: "https://www.instagram.com/p/DZ-U91bk9uF/",
-  weekOf: "Week of June 23",
+  sourcePost: "https://www.instagram.com/p/DaFqzUric1P/",
+  weekOf: "Week of June 29",
   specials: [
-    { id: "special-1", name: "The Transcontinental Tango", desc: "A rumble of eggs with house made merguez sausage, feta cheese, Kalamata olives, red onion and greens; comes with spuds and toast!", veg: false, photo: "assets/specials/week-2026-06-24-1.jpg" },
+    { id: "special-1", name: "The Lionel Messi", desc: "A rumble of eggs with roasted poblano peppers, red onion, greens and provoleta cheese chunks, topped with homemade Argentinian chorizo and chimichurri sauce; spuds and toast.", veg: false, photo: "assets/specials/week-2026-06-29-1.jpg" },
+    { id: "special-2", name: "The Lee Kang-In", desc: "A buldak noodle omelette — gochujang spicy ramen, house vegetarian kimchi, scallions and American cheese, topped with kewpie mayo and red chili sauce; spuds and toast.", veg: true, photo: "assets/specials/week-2026-06-29-2.jpg" },
   ],
   /* SPECIALS:END */
   soup: { name: "Cream of Roasted Tomato & Fennel", desc: "Slow-roasted Roma tomatoes, fennel bulb, basil oil swirl, parmesan crisp on the side. Cup $5 / Bowl $6." },
