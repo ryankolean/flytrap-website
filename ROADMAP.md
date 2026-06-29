@@ -87,6 +87,10 @@ Once Toast is the source of truth, do the coupled UI work:
 
 ## Backlog / chores
 
+- **Update the menu leaf icon.** Redesign the vegetarian `VegLeaf` SVG (`Menu.jsx`, also used
+  in specials + the daily-buzz board) — the current mark is a rough placeholder path. Make it a
+  cleaner, more legible leaf that reads at small sizes; keep the `aria-label="Vegetarian"` and
+  the green token. Single shared component, so one change updates all three placements.
 - Delete the now-unused `assets/flytrap-wordmark-*.png` (superseded by `assets/brand/flytrap-logo*.png`).
 - Remove the dead `Gallery` component + `showGallery` toggle (`Sections.jsx` / `App.jsx`) — the old
   "On the walls" paintings scroll. Hidden (`showGallery: false`) so it's **not on the live site**,
