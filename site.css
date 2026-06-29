@@ -513,9 +513,9 @@ section { position: relative; }
    THIS WEEK'S SPECIALS — photo-forward, Instagram 1:1, one-screen fit
    ============================================================ */
 .specials {
-  background: var(--color-butter-yellow);
-  border-top: 1px solid rgba(26,26,26,.1);
-  border-bottom: 1px solid rgba(26,26,26,.1);
+  background: var(--color-checker-black);
+  border-top: 1px solid rgba(245,238,220,.12);
+  border-bottom: 1px solid rgba(245,238,220,.12);
   padding: 44px 0;
 }
 @media (min-width: 768px) { .specials { padding: 56px 0; } }
@@ -527,6 +527,8 @@ section { position: relative; }
 @media (min-width: 1024px) { .specials h2.title { font-size: 46px; } }
 .specials .lede { font-size: 16px; }
 @media (min-width: 768px) { .specials .lede { font-size: 18px; } }
+.specials .eyebrow { color: var(--color-flytrap-red-bright); }
+.specials h2.title, .specials .lede { color: var(--color-cream-paper); }
 
 .specials-grid {
   display: grid;
@@ -821,7 +823,7 @@ section { position: relative; }
    MENU — section nav, tabbed by category
    ============================================================ */
 .menu-section-bg {
-  background: var(--color-cream-paper);
+  background: var(--color-checker-black);
 }
 
 .menu-frame {
@@ -1171,8 +1173,10 @@ section { position: relative; }
    RETAIL
    ============================================================ */
 .retail {
-  background: var(--color-cream-paper);
+  background: var(--color-flytrap-red-deep);
 }
+.retail .eyebrow { color: var(--color-cream-paper); }
+.retail h2.title { color: var(--color-cream-paper); }
 .retail-grid {
   display: grid;
   grid-template-columns: 1fr;
