@@ -58,13 +58,20 @@ button { font-family: inherit; }
 @media (min-width: 768px) { .nav-inner { padding: 18px 32px; } }
 @media (min-width: 1024px) { .nav-inner { padding: 20px 48px; } }
 
-.nav .lockup { display: flex; align-items: center; gap: 10px; line-height: 0; text-decoration: none; }
+.nav .lockup {
+  display: flex; align-items: center; gap: 8px; line-height: 0; text-decoration: none;
+  /* Header wordmark is hidden over the hero and fades in once scrolled past it. */
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 400ms var(--ease-out);
+}
+.nav .lockup.show { opacity: 1; pointer-events: auto; }
 .nav .lockup img {
   height: 30px; width: auto;
-  filter: drop-shadow(0 1px 2px rgba(0,0,0,.25));
+  filter: none;
   transition: filter 200ms;
 }
-.nav.scrolled .lockup img { filter: none; }
+.nav .lockup .lockup-fly { height: 24px; }
 
 .nav-links {
   display: none;
@@ -75,7 +82,7 @@ button { font-family: inherit; }
   font-family: var(--font-sans);
   font-size: 14px;
   font-weight: 500;
-  color: var(--color-checker-black);
+  color: var(--color-flytrap-red-deep);
   text-decoration: none;
   letter-spacing: 0.01em;
   position: relative;
@@ -134,7 +141,7 @@ button { font-family: inherit; }
 .nav-burger span {
   display: block;
   width: 100%; height: 2px;
-  background: var(--color-checker-black);
+  background: var(--color-flytrap-red-deep);
   border-radius: 2px;
   transition: transform 200ms, opacity 150ms, background 200ms;
 }

@@ -14,12 +14,15 @@ const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
 function App() {
   const [page, setPage] = uS(window.location.hash === "#daily-buzz" ? "buzz" : "home");
   const [scrolled, setScrolled] = uS(false);
+  const [pastHero, setPastHero] = uS(false);
   const [tweaks, setTweak] = window.useTweaks(TWEAK_DEFAULTS);
 
   uE(() => {
     const onScroll = () => {
       const y = window.scrollY;
       setScrolled(y > 40);
+      // Header wordmark fades in once the hero has scrolled (nearly) out of view.
+      setPastHero(y > window.innerHeight - 80);
     };
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
@@ -113,7 +116,7 @@ function App() {
 
   return (
     <React.Fragment>
-      <Nav scrolled={scrolled} darkBg={false} onNavigate={navigate} currentPage={page} />
+      <Nav scrolled={scrolled} darkBg={false} pastHero={pastHero} onNavigate={navigate} currentPage={page} />
 
       {page === "home" ?
       <main>

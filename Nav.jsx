@@ -1,5 +1,5 @@
 // Sticky navigation + mobile drawer
-function Nav({ scrolled, darkBg, onNavigate, currentPage }) {
+function Nav({ scrolled, darkBg, pastHero, onNavigate, currentPage }) {
   const [open, setOpen] = useState(false);
   const isOpen = window.useOpenNow();
 
@@ -31,8 +31,9 @@ function Nav({ scrolled, darkBg, onNavigate, currentPage }) {
     <React.Fragment>
       <nav className={"nav" + (navScrolled ? " scrolled" : "") + (navDarkBg ? " dark-bg" : "")}>
         <div className="nav-inner">
-          <a className="lockup" href="#top" onClick={(e) => handleClick(e, "#top")} aria-label="The Fly Trap — home">
-            <img src={navDarkBg ? "assets/brand/flytrap-logo-cream.png" : "assets/brand/flytrap-logo.png"} alt="The Fly Trap" />
+          <a className={"lockup" + (pastHero ? " show" : "")} href="#top" onClick={(e) => handleClick(e, "#top")} aria-label="The Fly Trap — home">
+            <img className="lockup-fly" src="assets/brand/fly-red.png" alt="" aria-hidden="true" />
+            <img className="lockup-wordmark" src="assets/brand/flytrap-logo-red.png" alt="The Fly Trap" />
           </a>
           <ul className="nav-links">
             {links.map(l => (
