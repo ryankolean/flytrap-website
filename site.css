@@ -723,7 +723,7 @@ section { position: relative; }
    ABOUT — terracotta zone, two-up grid
    ============================================================ */
 .about {
-  background: var(--color-terracotta);
+  background: var(--color-flytrap-red-deep);
   color: var(--color-cream-paper);
 }
 .about .eyebrow,
@@ -1267,7 +1267,7 @@ section { position: relative; }
    PRESS
    ============================================================ */
 .press {
-  background: var(--color-plum);
+  background: var(--color-checker-black);
   color: var(--color-cream-paper);
 }
 .press .eyebrow,

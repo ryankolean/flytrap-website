@@ -4,8 +4,8 @@ const { useState: uS, useEffect: uE, useMemo: uM, useCallback: uC, useRef: uR } 
 const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
   "heroMode": "solid",
   "heroColor": "flytrap-red-deep",
-  "aboutZone": "terracotta",
-  "pressZone": "plum",
+  "aboutZone": "flytrap-red-deep",
+  "pressZone": "checker-black",
   "showGallery": false,
   "showRetail": true,
   "showPress": true,
@@ -101,7 +101,10 @@ function App() {
     "navy-slate": "var(--color-navy-slate)",
     "back-bar-mauve": "var(--color-back-bar-mauve)",
     butter: "var(--color-butter-yellow)",
-    chartreuse: "var(--color-chartreuse)"
+    chartreuse: "var(--color-chartreuse)",
+    "flytrap-red-deep": "var(--color-flytrap-red-deep)",
+    "flytrap-red-bright": "var(--color-flytrap-red-bright)",
+    "checker-black": "var(--color-checker-black)"
   };
 
   uE(() => {
@@ -168,7 +171,9 @@ function App() {
             value={tweaks.aboutZone}
             onChange={(v) => setTweak("aboutZone", v)}
             options={[
-            { value: "terracotta", label: "Terracotta (default)" },
+            { value: "flytrap-red-deep", label: "Fly Trap red (default)" },
+            { value: "checker-black", label: "Checker black" },
+            { value: "terracotta", label: "Terracotta" },
             { value: "plum", label: "Plum" },
             { value: "butter", label: "Butter yellow" },
             { value: "back-bar-mauve", label: "Back-bar mauve" },
@@ -180,7 +185,9 @@ function App() {
             value={tweaks.pressZone}
             onChange={(v) => setTweak("pressZone", v)}
             options={[
-            { value: "plum", label: "Plum (default)" },
+            { value: "checker-black", label: "Checker black (default)" },
+            { value: "flytrap-red-deep", label: "Fly Trap red" },
+            { value: "plum", label: "Plum" },
             { value: "navy-slate", label: "Navy slate" },
             { value: "back-bar-mauve", label: "Back-bar mauve" },
             { value: "terracotta", label: "Terracotta" }]
