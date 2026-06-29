@@ -30,8 +30,11 @@ _Audited 2026-06-29 against Sean's 2026-06-25 change list — every item below i
   menu (checkerboard card on black), press, dishes. Cream type, red accents. Currently the
   *muted* brand values; whether to switch to the brighter `.net` palette is a pending decision —
   see [Blocked](#blocked--waiting-on-the-client).
-  menu (checkerboard card on black), press, dishes. Cream type, red accents.
 - **Cut-out brand fly** — buzzing accent in the hero (`assets/brand/fly*.png`).
+- **Menu leaf icon** — redesigned the `VegLeaf` SVG into a cleaner, small-size-legible
+  leaf-with-stem; shared component, so menu + specials + daily-buzz board all updated (#40).
+- **Dead-code / asset cleanup** — removed the dead `Gallery` component + `showGallery` toggle
+  (#41); deleted the six unused `assets/flytrap-wordmark-*.png` (#42).
 
 ---
 
@@ -88,15 +91,12 @@ Once Toast is the source of truth, do the coupled UI work:
 
 ## Backlog / chores
 
-- **Update the menu leaf icon.** Redesign the vegetarian `VegLeaf` SVG (`Menu.jsx`, also used
-  in specials + the daily-buzz board) — the current mark is a rough placeholder path. Make it a
-  cleaner, more legible leaf that reads at small sizes; keep the `aria-label="Vegetarian"` and
-  the green token. Single shared component, so one change updates all three placements.
-- Delete the now-unused `assets/flytrap-wordmark-*.png` (superseded by `assets/brand/flytrap-logo*.png`).
-- Remove the dead `Gallery` component + `showGallery` toggle (`Sections.jsx` / `App.jsx`) — the old
-  "On the walls" paintings scroll. Hidden (`showGallery: false`) so it's **not on the live site**,
-  but the code lingers; the dish-scroll superseded it.
-- Delete the now-unused `assets/flytrap-wordmark-*.png` (superseded by `assets/brand/flytrap-logo*.png`).
+- **Remove the dead rotating-paintings `Hero.jsx`.** It's loaded in `index.html` but never
+  renders — `App.jsx` defines `window.Hero = HeroWrap`, which shadows it via script load order.
+  It's the last consumer of `FT_DATA.paintings` + `assets/paintings/` (the Gallery that also
+  used them is gone, #41). Delete `Hero.jsx` + its `<script>` tag, then drop the `paintings`
+  array from `data.js` and the `assets/paintings/` images. Preserve the hero CTA mobile/desktop
+  patch (lives in `App.jsx`'s `HeroWrap`); check `guardrails.yml` doesn't assert `Hero.jsx`.
 - Brand fonts **Casmira** / **Lounge Bait** are **not** web-embeddable — personal-use /
   foundry-restricted licenses. Logo *images* are fine; revisit web fonts only if a
   commercial license is purchased.
