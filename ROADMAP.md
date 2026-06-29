@@ -27,7 +27,9 @@ _Audited 2026-06-29 against Sean's 2026-06-25 change list — every item below i
 - **Official logo** — adopted across nav / hero / footer (`assets/brand/flytrap-logo*.png`,
   isolated descender-safe from Sean's logo).
 - **Bold red/black colors pass** — site-wide. Red: hero, about, retail. Black: specials,
-  menu (checkerboard card on black), press, dishes. Cream type, red accents.
+  menu (checkerboard card on black), press, dishes. Cream type, red accents. Currently the
+  *muted* brand values; whether to switch to the brighter `.net` palette is a pending decision —
+  see [Blocked](#blocked--waiting-on-the-client).
 - **Cut-out brand fly** — buzzing accent in the hero (`assets/brand/fly*.png`).
 
 ---
@@ -67,6 +69,17 @@ Once Toast is the source of truth, do the coupled UI work:
 
 ## Blocked — waiting on the client
 
+- **Color scheme — final palette decision** (Kara, Gavin & Sean). The colors pass shipped with the
+  *muted* brand values (brick red `#992F1E`, charcoal `#1A1A1A`, cream). Sean's brief cited
+  theflytrapferndale.net, whose **actual** palette (pulled live) is brighter: electric red
+  `#FD0003`, pure black `#000000`, white. Two labeled homepage variants are up for them to compare:
+  `/retro.html` (the electric `.net` palette), `/modern.html` (current), and `/compare.html`
+  (side by side). **Awaiting their pick.**
+  - If **retro** wins: swap the four color tokens in `colors_and_type.css` (one PR), **and**
+    generate a pure-**white** wordmark variant — the logo is a fixed cream *image*, not
+    token-driven, so it won't follow the token swap.
+  - Either way, delete the temporary `retro.html` / `modern.html` / `compare.html` review pages
+    once chosen.
 - Final **About blurb** (Kara writing) — swap into the interim copy.
 - **Retail sub-header** text (Kara).
 
