@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Fly Trap — palette compare</title>
+<style>
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%;font-family:system-ui,-apple-system,sans-serif;background:#1d1d1d}
+  .wrap{display:flex;flex-direction:column;height:100vh}
+  .bar{display:flex;flex:0 0 auto}
+  .bar>div{flex:1;padding:10px 16px;font-weight:700;font-size:13px;letter-spacing:.05em;text-transform:uppercase;border-bottom:3px solid #1d1d1d}
+  .bar .retro{background:#FD0003;color:#fff;border-bottom-color:#FD0003}
+  .bar .modern{background:#992F1E;color:#F5EEDC;border-bottom-color:#992F1E}
+  .bar small{display:block;font-weight:500;font-size:11px;letter-spacing:.02em;text-transform:none;opacity:.85;margin-top:2px}
+  .frames{flex:1 1 auto;display:flex;min-height:0}
+  .frames iframe{flex:1 1 50%;width:50%;height:100%;border:0}
+  .frames iframe.retro{border-right:2px solid #1d1d1d}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="bar">
+      <div class="retro">Retro<small>electric red #FD0003 · stark black #000 · white — theflytrapferndale.net</small></div>
+      <div class="modern">Modern<small>current — brick red #992F1E · #1A1A1A · cream #F5EEDC</small></div>
+    </div>
+    <div class="frames">
+      <iframe class="retro" src="retro.html" title="Retro palette"></iframe>
+      <iframe class="modern" src="modern.html" title="Modern palette"></iframe>
+    </div>
+  </div>
+</body>
+</html>
