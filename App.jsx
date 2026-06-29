@@ -120,7 +120,6 @@ function App() {
       {page === "home" ?
       <main>
           <Hero onOpenMenu={() => navigate("#menu")} heroColor={tweaks.heroColor} />
-          <Specials />
           <Menu />
           <About />
           <DishScroll />
@@ -132,7 +131,6 @@ function App() {
 
       <main>
           <Hero onOpenMenu={() => navigate("#menu")} heroColor={tweaks.heroColor} />
-          <Specials />
           <Menu />
           <About />
           <DishScroll />

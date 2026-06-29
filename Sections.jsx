@@ -1,55 +1,5 @@
 // About + Retail + Press + Buzz band + Visit + Footer + DailyBuzz page
 
-function Specials() {
-  const data = window.FT_DATA;
-  const specials = data.specials || [];
-  return (
-    <section id="specials" className="section specials" data-screen-label="Specials">
-      <div className="container">
-        <div className="section-head center reveal">
-          <div className="eyebrow">This week only</div>
-          <h2 className="title">This week's specials.</h2>
-          <p className="lede">
-            What the cooks are running this week. Get it before it's gone!
-          </p>
-        </div>
-
-        {specials.length === 0 ? (
-          <p className="lede center">No specials running this week — check back soon.</p>
-        ) : (
-        <div className="specials-grid">
-          {specials.map((s, i) =>
-          <article className="special-card reveal" key={s.id}>
-              <div className="special-photo">
-                <image-slot
-                id={s.id}
-                src={s.photo || undefined}
-                shape="rect"
-                fit="cover"
-                placeholder="Drop this week's photo">
-                </image-slot>
-              </div>
-              <div className="special-body">
-                <div className="special-headline">
-                  <h3>{s.name}</h3>
-                  {s.veg ? <VegLeaf /> : null}
-                </div>
-                <p className="special-desc">{s.desc}</p>
-                {s.price ? (
-                  <div className="special-foot">
-                    <span className="special-price">${s.price}</span>
-                  </div>
-                ) : null}
-              </div>
-            </article>
-          )}
-        </div>
-        )}
-      </div>
-    </section>);
-
-}
-
 function BuzzBand({ onGoBuzz }) {
   const today = new Date();
   const dayName = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"][today.getDay()];
@@ -402,7 +352,6 @@ function DailyBuzzPage({ onBack }) {
 
 }
 
-window.Specials = Specials;
 window.BuzzBand = BuzzBand;
 window.About = About;
 window.Retail = Retail;
