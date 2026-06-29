@@ -119,23 +119,23 @@
 
 :root {
   /* ====== PRIMARY BRAND REDS ====== */
-  --color-flytrap-red-deep:   #992F1E;  /* marble bar epoxy matrix — primary brand red, CTAs */
-  --color-flytrap-red-bright: #CC4433;  /* dining-room wall — hero impact (TBD on return visit) */
+  --color-flytrap-red-deep:   #FD0003;  /* marble bar epoxy matrix — primary brand red, CTAs */
+  --color-flytrap-red-bright: #FD0003;  /* dining-room wall — hero impact (TBD on return visit) */
 
   /* ====== WALL ZONES (6-wall expanded model) ====== */
-  --color-cream-paper:    #F5EEDC;  /* default page canvas, body sections, menu cards */
+  --color-cream-paper:    #FFFFFF;  /* default page canvas, body sections, menu cards */
   --color-butter-yellow:  #C8B880;  /* solid butter wall — warm/inviting sections */
   --color-chartreuse:     #C8B000;  /* atomic-pendant back-bar — high-energy accents */
   --color-terracotta:     #D88858;  /* burnt-orange wall — loud sections (about, press) */
   --color-plum:           #685050;  /* ceramic-jacks room — dark callouts */
   --color-navy-slate:     #383838;  /* chalkboard-menu wall — footer, dark contrast */
   --color-back-bar-mauve: #6A6A6E;  /* Joe Strummer back-bar — mid-tone neutrals */
-  --color-checker-black:  #1A1A1A;  /* floor / structural — text, borders */
+  --color-checker-black:  #000000;  /* floor / structural — text, borders */
 
   /* ====== SEMANTIC TEXT ====== */
   --color-text-ink:      #1A1A1A;   /* body, headings */
   --color-text-charcoal: #4A4A4E;   /* secondary copy */
-  --color-text-light:    #F5EEDC;   /* text on dark bg */
+  --color-text-light:    #FFFFFF;   /* text on dark bg */
 
   /* ====== SEMANTIC BG ====== */
   --color-bg-white:     #FFFFFF;
