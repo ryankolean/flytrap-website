@@ -307,7 +307,7 @@ function Footer({ onNavigate }) {
       <div className="container">
         <div className="footer-grid">
           <div className="footer-brand">
-            <img src="assets/flytrap-wordmark-retro-cream.png" alt="The Fly Trap" />
+            <img src="assets/brand/flytrap-logo-cream.png" alt="The Fly Trap" />
             <span className="tag">Catch a Buzz.</span>
             <p style={{ fontSize: 13, opacity: .7, lineHeight: 1.55, marginTop: 12, maxWidth: "32ch" }}>
               22950 Woodward Ave, Ferndale, MI 48220. Walk in, sit down, eat magnificently.

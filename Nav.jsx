@@ -32,7 +32,7 @@ function Nav({ scrolled, darkBg, onNavigate, currentPage }) {
       <nav className={"nav" + (navScrolled ? " scrolled" : "") + (navDarkBg ? " dark-bg" : "")}>
         <div className="nav-inner">
           <a className="lockup" href="#top" onClick={(e) => handleClick(e, "#top")} aria-label="The Fly Trap — home">
-            <img src={navDarkBg ? "assets/flytrap-wordmark-retro-cream.png" : "assets/flytrap-wordmark-retro-dark.png"} alt="The Fly Trap" />
+            <img src={navDarkBg ? "assets/brand/flytrap-logo-cream.png" : "assets/brand/flytrap-logo.png"} alt="The Fly Trap" />
           </a>
           <ul className="nav-links">
             {links.map(l => (

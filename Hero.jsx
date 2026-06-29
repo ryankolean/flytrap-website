@@ -28,7 +28,7 @@ function Hero({ onOpenMenu }) {
 
       <div className="hero-content">
         <div className="hero-kicker">a finer diner</div>
-        <img className="hero-wordmark" src="assets/flytrap-wordmark.png" alt="The Fly Trap" />
+        <img className="hero-wordmark" src="assets/brand/flytrap-logo-cream.png" alt="The Fly Trap" />
         <p className="hero-lead">
           A neighborhood diner on Woodward, Buzzin' since 2004.
         </p>
