@@ -29,7 +29,7 @@ button { font-family: inherit; }
    ============================================================ */
 .nav {
   position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-  background: rgba(245, 238, 220, 0);
+  background: rgba(255, 255, 255, 0);
   backdrop-filter: blur(0);
   -webkit-backdrop-filter: blur(0);
   border-bottom: 1px solid transparent;
@@ -38,7 +38,7 @@ button { font-family: inherit; }
               border-color 250ms var(--ease-out);
 }
 .nav.scrolled {
-  background: rgba(245, 238, 220, 0.92);
+  background: rgba(255, 255, 255, 0.92);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   border-bottom-color: rgba(26, 26, 26, 0.1);
