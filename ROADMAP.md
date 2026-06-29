@@ -30,6 +30,7 @@ _Audited 2026-06-29 against Sean's 2026-06-25 change list — every item below i
   menu (checkerboard card on black), press, dishes. Cream type, red accents. Currently the
   *muted* brand values; whether to switch to the brighter `.net` palette is a pending decision —
   see [Blocked](#blocked--waiting-on-the-client).
+  menu (checkerboard card on black), press, dishes. Cream type, red accents.
 - **Cut-out brand fly** — buzzing accent in the hero (`assets/brand/fly*.png`).
 
 ---
@@ -95,6 +96,7 @@ Once Toast is the source of truth, do the coupled UI work:
 - Remove the dead `Gallery` component + `showGallery` toggle (`Sections.jsx` / `App.jsx`) — the old
   "On the walls" paintings scroll. Hidden (`showGallery: false`) so it's **not on the live site**,
   but the code lingers; the dish-scroll superseded it.
+- Delete the now-unused `assets/flytrap-wordmark-*.png` (superseded by `assets/brand/flytrap-logo*.png`).
 - Brand fonts **Casmira** / **Lounge Bait** are **not** web-embeddable — personal-use /
   foundry-restricted licenses. Logo *images* are fine; revisit web fonts only if a
   commercial license is purchased.
