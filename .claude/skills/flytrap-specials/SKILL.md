@@ -138,6 +138,77 @@ copy (it's the kitchen's system of record) and flag the difference to the user.
   the parent `id` (sibling-post leak guard). `display_resources[length-1]` is the
   150px thumb — the array is unsorted; use max-area / `display_url`.
 
+  **If the anchor-click download doesn't save files** (some Chrome profiles only
+  allow the *first* download per page-load for a given site, so slides 2+ never
+  land on disk), use the local receiver instead — it's deterministic and saves
+  every slide:
+
+  1. Start the receiver — a small localhost server that writes any posted bytes
+     to `~/Downloads/<name>`. The CORS + Private-Network-Access headers let the
+     https embed page talk to `http://127.0.0.1`; it binds to localhost only:
+     ```bash
+     python3 - <<'PY' &
+     import http.server, os, re, socketserver
+     class H(http.server.BaseHTTPRequestHandler):
+         def c(self):
+             self.send_header("Access-Control-Allow-Origin", "*")
+             self.send_header("Access-Control-Allow-Methods", "POST, OPTIONS, GET")
+             self.send_header("Access-Control-Allow-Headers", "*")
+             self.send_header("Access-Control-Allow-Private-Network", "true")
+         def do_OPTIONS(self): self.send_response(204); self.c(); self.end_headers()
+         def do_GET(self):
+             self.send_response(200); self.c()
+             self.send_header("Content-Type", "text/html"); self.end_headers()
+             self.wfile.write(b"<!doctype html><meta charset=utf-8><title>sink</title>sink ready")
+         def do_POST(self):
+             name = re.sub(r"[^A-Za-z0-9._-]", "", self.path.lstrip("/")) or "x.bin"
+             d = self.rfile.read(int(self.headers.get("Content-Length", 0)))
+             open(os.path.expanduser("~/Downloads/" + name), "wb").write(d)
+             self.send_response(200); self.c(); self.end_headers(); self.wfile.write(b"ok")
+         def log_message(self, *a): pass
+     socketserver.TCPServer(("127.0.0.1", 8770), H).serve_forever()
+     PY
+     ```
+  2. On the embed page, collect the slide URLs and hand them to the receiver's
+     page via the URL hash (the page navigates *itself*, so the long signed URLs
+     stay in the browser; the hash survives the navigation):
+     ```js
+     (function(){
+       const ad = window.__additionalData;
+       let m = ad?.extra?.data?.shortcode_media;
+       if(!m && ad){ for(const k in ad){ if(ad[k]?.data?.shortcode_media){ m = ad[k].data.shortcode_media; break; } } }
+       const urls = m.edge_sidecar_to_children.edges.map(e=>{
+         const n=e.node; let url=n.display_url;
+         if(n.display_resources?.length){
+           const best=n.display_resources.slice().sort((a,b)=>(b.config_width*b.config_height)-(a.config_width*a.config_height))[0];
+           if(best && best.config_width>=(n.dimensions?.width||0)) url=best.src;
+         }
+         return url;
+       });
+       location.href='http://127.0.0.1:8770/#'+encodeURIComponent(JSON.stringify(urls));
+       return {navigating:true,count:urls.length};
+     })();
+     ```
+  3. On the receiver page (`127.0.0.1:8770`), fetch each image and POST the bytes
+     back — they save as `ftw-1.jpg`, `ftw-2.jpg`, …:
+     ```js
+     (async function(){
+       const urls=JSON.parse(decodeURIComponent(location.hash.slice(1)));
+       const out=[];
+       for(let i=0;i<urls.length;i++){
+         const b=await fetch(urls[i]).then(x=>x.blob());
+         const res=await fetch('/ftw-'+(i+1)+'.jpg',{method:'POST',body:b});
+         out.push({slide:i+1,bytes:b.size,sink:res.status});
+       }
+       return out;
+     })();
+     ```
+  Why this path: the embed page's own `fetch()` can't POST straight to localhost
+  (its `connect-src` policy only allows Instagram hosts), and `window.name`
+  resets across a cross-origin navigation — but a URL hash carries the slide URLs
+  through the self-navigation cleanly. Then `kill $(lsof -ti tcp:8770)` and pass
+  the saved `~/Downloads/ftw-<N>.jpg` files to Stage 5 in order.
+
 ### Stage 5 — Process + guards (deterministic, any count)
 Pass the week date then one source image per special, **in order**:
 ```bash
