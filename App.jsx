@@ -224,6 +224,7 @@ window.Hero = function HeroWrap(props) {
   return (
     <header className="hero hero-solid" id="top" style={{ background: bg, color: lightOnDark ? "var(--color-cream-paper)" : "var(--color-checker-black)" }}>
       <div className="hero-content">
+        <img className="hero-fly" src={lightOnDark ? "assets/brand/fly-cream.png" : "assets/brand/fly.png"} alt="" aria-hidden="true" />
         <div className="hero-kicker" style={{ color: lightOnDark ? "var(--color-cream-paper)" : "var(--color-flytrap-red-deep)" }}>a finer diner</div>
         <img className="hero-wordmark" src={lightOnDark ? "assets/brand/flytrap-logo-cream.png" : "assets/brand/flytrap-logo.png"} alt="The Fly Trap" />
         <p className="hero-lead" style={{ color: "inherit" }}>A neighborhood diner on Woodward, Buzzin' since 2004.</p>

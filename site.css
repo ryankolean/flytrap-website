@@ -310,6 +310,20 @@ button { font-family: inherit; }
 @media (min-width: 768px) { .hero-wordmark { max-width: 680px; } }
 @media (min-width: 1024px) { .hero-wordmark { max-width: 780px; } }
 
+/* Cut-out brand fly — buzzing accent in the empty upper hero (item 1b) */
+.hero-fly {
+  position: absolute;
+  top: 15%;
+  right: 11%;
+  width: 52px;
+  height: auto;
+  opacity: .85;
+  transform: rotate(14deg);
+  filter: drop-shadow(0 3px 10px rgba(0,0,0,.4));
+  pointer-events: none;
+}
+@media (min-width: 768px) { .hero-fly { width: 70px; top: 17%; right: 15%; } }
+
 .hero-lead {
   font-family: var(--font-serif);
   font-weight: 400;
