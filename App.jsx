@@ -14,14 +14,12 @@ const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
 function App() {
   const [page, setPage] = uS(window.location.hash === "#daily-buzz" ? "buzz" : "home");
   const [scrolled, setScrolled] = uS(false);
-  const [overHero, setOverHero] = uS(true);
   const [tweaks, setTweak] = window.useTweaks(TWEAK_DEFAULTS);
 
   uE(() => {
     const onScroll = () => {
       const y = window.scrollY;
       setScrolled(y > 40);
-      setOverHero(y < window.innerHeight - 80);
     };
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
@@ -115,7 +113,7 @@ function App() {
 
   return (
     <React.Fragment>
-      <Nav scrolled={scrolled} darkBg={page === "home" && overHero} onNavigate={navigate} currentPage={page} />
+      <Nav scrolled={scrolled} darkBg={false} onNavigate={navigate} currentPage={page} />
 
       {page === "home" ?
       <main>
@@ -201,26 +199,16 @@ function App() {
 
 // Solid-color hero
 window.Hero = function HeroWrap(props) {
-  const colorMap = {
-    "flytrap-red-deep": "var(--color-flytrap-red-deep)",
-    "flytrap-red-bright": "var(--color-flytrap-red-bright)",
-    "checker-black": "var(--color-checker-black)",
-    "terracotta": "var(--color-terracotta)",
-    "plum": "var(--color-plum)",
-    "butter": "var(--color-butter-yellow)",
-    "chartreuse": "var(--color-chartreuse)",
-    "back-bar-mauve": "var(--color-back-bar-mauve)"
-  };
-  const bg = colorMap[props.heroColor] || "var(--color-flytrap-red-deep)";
-  const lightOnDark = !["butter", "chartreuse"].includes(props.heroColor);
   const isOpen = window.useOpenNow();
 
+  // Inverted hero: white field with electric-red branding (the inverse of the
+  // red-field/white-branding hero). Logo + fly use the red glyph assets.
   return (
-    <header className="hero hero-solid" id="top" style={{ background: bg, color: lightOnDark ? "var(--color-cream-paper)" : "var(--color-checker-black)" }}>
+    <header className="hero hero-solid" id="top" style={{ background: "var(--color-bg-white)", color: "var(--color-flytrap-red-deep)" }}>
       <div className="hero-content">
-        <img className="hero-fly" src={lightOnDark ? "assets/brand/fly-cream.png" : "assets/brand/fly.png"} alt="" aria-hidden="true" />
-        <div className="hero-kicker" style={{ color: lightOnDark ? "var(--color-cream-paper)" : "var(--color-flytrap-red-deep)" }}>a finer diner</div>
-        <img className="hero-wordmark" src={lightOnDark ? "assets/brand/flytrap-logo-cream.png" : "assets/brand/flytrap-logo.png"} alt="The Fly Trap" />
+        <img className="hero-fly" src="assets/brand/fly-red.png" alt="" aria-hidden="true" />
+        <div className="hero-kicker" style={{ color: "var(--color-flytrap-red-deep)" }}>a finer diner</div>
+        <img className="hero-wordmark" src="assets/brand/flytrap-logo-red.png" alt="The Fly Trap" />
         <p className="hero-lead" style={{ color: "inherit" }}>A neighborhood diner on Woodward, Buzzin' since 2004.</p>
         <div className="hero-actions">
           <a href="#menu" className="btn btn-primary" onClick={(e) => {e.preventDefault();props.onOpenMenu && props.onOpenMenu();}}>

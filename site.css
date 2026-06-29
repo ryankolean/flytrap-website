@@ -298,7 +298,7 @@ button { font-family: inherit; }
 .hero-kicker::before {
   content: '';
   width: 36px; height: 1px;
-  background: var(--color-cream-paper);
+  background: currentColor;
 }
 
 .hero-wordmark {
