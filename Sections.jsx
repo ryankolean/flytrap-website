@@ -81,7 +81,6 @@ function DishScroll() {
     <section className="dishes" data-screen-label="Dishes">
       <div className="container">
         <div className="section-head center reveal" style={{ marginBottom: 24 }}>
-          <div className="eyebrow">From the griddle</div>
           <h2 className="title" style={{ fontSize: 32 }}>A few of our favorites.</h2>
         </div>
       </div>
