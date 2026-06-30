@@ -768,39 +768,8 @@ section { position: relative; }
   display: grid;
   grid-template-columns: 1fr;
   gap: 40px;
-  align-items: center;
-}
-@media (min-width: 880px) {
-  .about-grid { grid-template-columns: 1.05fr 1fr; gap: 64px; }
-}
-
-.about-photo {
-  position: relative;
-  aspect-ratio: 4/5;
-  background-size: cover;
-  background-position: center;
-  border-radius: 4px;
-  box-shadow: 0 20px 40px rgba(0,0,0,.25);
-  overflow: hidden;
-}
-.about-photo .frame {
-  position: absolute;
-  inset: 12px;
-  border: 2px solid var(--color-cream-paper);
-  pointer-events: none;
-  opacity: .25;
-}
-.about-photo .tag {
-  position: absolute;
-  bottom: 16px; left: 16px;
-  font-family: var(--font-serif);
-  font-style: italic;
-  font-size: 13px;
-  color: var(--color-cream-paper);
-  background: rgba(26,26,26,.6);
-  padding: 6px 12px;
-  border-radius: 99px;
-  backdrop-filter: blur(4px);
+  max-width: 760px;
+  margin-inline: auto;
 }
 
 .about-pull {

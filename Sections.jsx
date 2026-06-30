@@ -32,10 +32,6 @@ function About() {
     <section id="about" className="section about" data-screen-label="About">
       <div className="container">
         <div className="about-grid">
-          <div className="about-photo reveal" style={{ backgroundImage: "url(assets/details/marble-bar-A.jpg)" }}>
-            <div className="frame" />
-            <div className="tag">The marble bar — 22 ft, real gemstones, real epoxy.</div>
-          </div>
           <div className="reveal">
             <div className="eyebrow">Buzzin' since 2004</div>
             <h2 className="title">Why 'The Fly Trap'?</h2>
