@@ -32,10 +32,6 @@ function About() {
     <section id="about" className="section about" data-screen-label="About">
       <div className="container">
         <div className="about-grid">
-          <div className="about-photo reveal" style={{ backgroundImage: "url(assets/details/marble-bar-A.jpg)" }}>
-            <div className="frame" />
-            <div className="tag">The marble bar — 22 ft, real gemstones, real epoxy.</div>
-          </div>
           <div className="reveal">
             <div className="eyebrow">Buzzin' since 2004</div>
             <h2 className="title">Why 'The Fly Trap'?</h2>
@@ -44,21 +40,6 @@ function About() {
             <p className="lede">Along with our beloved and inquisitive customers came the many questions of our origin. The most important of which we will address right here and now… "Why?" they asked. "Why did you name your restaurant The Fly Trap?"</p>
 
             <p className="about-pull">We always swore we would make up some exciting folklore tale of the origin of our now-venerated name, but we never quite came up with a story glorious enough to do justice to the wonderment.</p>
-
-            <div className="about-stats">
-              <div>
-                <p className="stat-num">20</p>
-                <div className="stat-label">years on Woodward</div>
-              </div>
-              <div>
-                <p className="stat-num">17</p>
-                <div className="stat-label">flies on the walls</div>
-              </div>
-              <div>
-                <p className="stat-num">∞</p>
-                <div className="stat-label">cups of coffee poured</div>
-              </div>
-            </div>
           </div>
         </div>
       </div>
