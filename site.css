@@ -1159,7 +1159,8 @@ section { position: relative; }
   background: var(--color-flytrap-red-deep);
 }
 .retail .eyebrow { color: var(--color-cream-paper); }
-.retail h2.title { color: var(--color-cream-paper); }
+/* Match the menu section headers (e.g. "This week's specials"): Fraunces italic 700. */
+.retail h2.title { color: var(--color-cream-paper); font-style: italic; font-weight: 700; }
 .retail-grid {
   display: grid;
   grid-template-columns: 1fr;
