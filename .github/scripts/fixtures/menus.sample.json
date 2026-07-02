@@ -1,0 +1,40 @@
+{
+  "restaurantGuid": "00000000-0000-0000-0000-000000000000",
+  "lastUpdated": "2026-07-02T14:00:00.000+0000",
+  "menus": [
+    {
+      "name": "Food",
+      "guid": "menu-food",
+      "menuGroups": [
+        {
+          "name": "All Things Eggs",
+          "guid": "grp-eggs",
+          "menuItems": [
+            { "name": "Green Eggs and Ham", "guid": "i1", "price": 14.95, "description": "Poblano pesto and jack cheese rumbled with eggs, sidled by seared city ham." },
+            { "name": "Veggie Rumble", "guid": "i2", "price": 13.95, "description": "Red pepper, carrots, mushrooms, peas, spinach and provolone. (v)", "image": "https://cdn.toasttab.com/img/veggie-rumble.jpg" }
+          ]
+        },
+        {
+          "name": "Green Things",
+          "guid": "grp-salads",
+          "menuItems": [
+            { "name": "The Echo", "guid": "i3", "price": 15.95, "description": "Greens, feta, beets, kalamata olives, red onion. (v)" }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Drinks",
+      "guid": "menu-drinks",
+      "menuGroups": [
+        {
+          "name": "Whistle Wetters",
+          "guid": "grp-drinks",
+          "menuItems": [
+            { "name": "Arnie Palmer", "guid": "i4", "price": 2.5, "description": "Half iced tea, half lemonade. (v)" }
+          ]
+        }
+      ]
+    }
+  ]
+}

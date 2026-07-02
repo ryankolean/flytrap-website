@@ -98,10 +98,11 @@ function Menu() {
                 {cat.sub ? <p className="sub">{cat.sub}</p> : null}
                 <div className="menu-items">
                   {visibleItems.map((it, i) => (
-                    <div className="menu-item" key={cat.id + i}>
+                    <div className={"menu-item" + (it.soldOut ? " sold-out" : "")} key={cat.id + i} aria-disabled={it.soldOut ? "true" : undefined}>
                       <div className="nm-row">
                         <span className="nm">{it.nm}</span>
                         {it.veg ? <VegLeaf /> : null}
+                        {it.soldOut ? <span className="oos-tag">Out of stock</span> : null}
                       </div>
                       <span className="pr">${it.price}</span>
                       {it.desc ? <p className="desc">{it.desc}</p> : null}

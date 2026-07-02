@@ -1041,6 +1041,21 @@ section { position: relative; }
   margin-top: 2px;
 }
 .menu-item.hidden { display: none; }
+.menu-item.sold-out { opacity: .5; }
+.menu-item.sold-out .pr { text-decoration: line-through; }
+.menu-item .oos-tag {
+  display: inline-flex;
+  align-items: center;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: #fff;
+  background: var(--color-flytrap-red-deep);
+  padding: 3px 6px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
 
 /* callouts on menu */
 .menu-callout {
