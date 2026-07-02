@@ -23,8 +23,25 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - uses: actions/configure-pages@v6
+      - name: Stage site
+        run: |
+          mkdir _site
+          rsync -a \
+            --exclude='.git' \
+            --exclude='.github' \
+            --exclude='.claude' \
+            --exclude='docs' \
+            --exclude='test' \
+            --exclude='apps-script' \
+            --exclude='AGENTS.md' \
+            --exclude='README.md' \
+            --exclude='ROADMAP.md' \
+            --exclude='LICENSE' \
+            --exclude='.gitignore' \
+            --exclude='.image-slots.state.json' \
+            ./ _site/
       - uses: actions/upload-pages-artifact@v5
         with:
-          path: .
+          path: _site
       - id: deployment
         uses: actions/deploy-pages@v5

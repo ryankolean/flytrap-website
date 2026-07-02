@@ -35,7 +35,7 @@ Add new sections as new `.jsx` files at root + new `<script type="text/babel">` 
 
 ## Deploy
 
-- `main` auto-deploys to GitHub Pages via `.github/workflows/pages.yml`. Artifact = repo root.
+- `main` auto-deploys to GitHub Pages via `.github/workflows/pages.yml`. Artifact = repo root staged into `_site` (excludes `.git`, `.github`, `.claude`, docs, tooling).
 - Design syncs land on `design-sync` branch first. Review + PR to `main` before going live.
 
 ## Code style
