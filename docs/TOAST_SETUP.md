@@ -26,8 +26,8 @@ beyond the existing Toast subscription.
 1. Go to **Integrations → Toast API access → Manage credentials**.
 2. Click **Create new credentials** → choose **Standard API**.
 3. **Credential name:** `Website menu sync`.
-4. **Select scopes:** enable **`menus:read`** (read menu data). Nothing else is
-   needed — this is read-only.
+4. **Select scopes:** enable **`menus:read`** (read menu data) **and
+   `stock:read`** (read out-of-stock / 86 status). Both are read-only.
 5. **Select locations:** pick **The Fly Trap Ferndale** (or "all locations" if
    the group is just the one), then **Apply**.
 6. **Confirm.**
@@ -70,6 +70,13 @@ Until #2 is decided, the sync regenerates **only the standing menu**
 (`menuCategories` + `menuItems`); specials stay on the Instagram flow. Nothing
 about the current specials behavior changes.
 
+### Out of stock (86'd items) — automatic, no decision needed
+When the kitchen marks an item out of stock in Toast (86s it), the site greys the
+item out and stamps an **"Out of stock"** badge on it within a few minutes — no
+menu re-publish required. When it's back, the badge clears automatically. Toast's
+low-quantity status ("QUANTITY") is treated as still available. This just works
+once `stock:read` is on the credential.
+
 ---
 
 ## 3. Installing the credentials (us)
@@ -99,26 +106,35 @@ this can merge before the credentials arrive.
 
 - **`.github/scripts/toast-sync.mjs`** — zero-dependency Node (uses the built-in
   `fetch`; no `package.json`, no `node_modules`, so the no-build rule holds).
+  Each run:
   1. Authenticates: `POST /authentication/v1/authentication/login` with
      `{ clientId, clientSecret, userAccessType: "TOAST_MACHINE_CLIENT" }` →
      bearer `accessToken`.
-  2. Cheap change check: `GET /menus/v2/metadata` returns `lastUpdated`. If it
-     matches the stored value (`.github/scripts/.toast-menu-state.json`), it
-     stops — no full pull.
-  3. On change: `GET /menus/v2/menus` (both requests send
-     `Authorization: Bearer …` + `Toast-Restaurant-External-ID: <GUID>`).
+  2. Menu: `GET /menus/v2/metadata` returns the publish timestamp. The full
+     `GET /menus/v2/menus` runs **only when it changed**; otherwise the cached
+     menu base (`.github/scripts/.toast-menu-cache.json`, which holds the Toast
+     item GUIDs) is reused — respecting Toast's "don't re-pull unchanged menus"
+     guidance.
+  3. Stock: `GET /stock/v1/inventory` runs **every time** (86'ing an item does
+     *not* bump the menu timestamp, so stock must be checked independently).
+     Items with status `OUT_OF_STOCK` get `soldOut: true`.
   4. Transforms Toast's `menus → menuGroups → menuItems` into our
      `menuCategories` / `menuItems` shape (name, description, price, `veg`,
-     optional `img`), and splices it into `data.js` **between the
+     `soldOut`, optional `img`), and splices it into `data.js` **between the
      `TOAST-SYNC:START/END` markers** — everything else in `data.js` (press,
      buzz, specials, dishes) is left untouched.
   5. Refuses to write an empty menu (guards against a bad pull blanking the site).
 
-- **`.github/workflows/toast-menu-sync.yml`** — runs every 30 min during open
+  All requests send `Authorization: Bearer …` + `Toast-Restaurant-External-ID:
+  <GUID>`.
+
+- **`.github/workflows/toast-menu-sync.yml`** — runs every 5 min during open
   hours and on manual dispatch. On a real change it commits `data.js` to `main`
   and triggers the Pages deploy. (The automated menu commit to `main` is the one
   sanctioned exception to the "everything via PR" rule — it's a bot syncing a
-  data file, and it only ever touches the marked menu region.)
+  data file, and it only ever touches the marked menu region.) GitHub's scheduler
+  is best-effort and can lag a few minutes; that's the practical ceiling for a
+  static site with no backend.
 
 - Menus API returns **published data only**, so drafts in Toast won't leak to the
   site until Kara publishes.
@@ -126,10 +142,11 @@ this can merge before the credentials arrive.
 ### Test it offline (no credentials)
 ```bash
 TOAST_MENUS_FIXTURE=.github/scripts/fixtures/menus.sample.json \
+TOAST_STOCK_FIXTURE=.github/scripts/fixtures/stock.sample.json \
   node .github/scripts/toast-sync.mjs
 ```
-Regenerates the menu region from the sample payload so you can eyeball the
-transform. `git checkout data.js` to revert.
+Regenerates the menu region from the sample payloads (one item flagged out of
+stock) so you can eyeball the transform. `git checkout data.js` to revert.
 
 ### Notes / limits
 - **Menu-as-home-screen** and a **variable-count specials tab** are the remaining

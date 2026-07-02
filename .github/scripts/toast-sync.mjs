@@ -1,21 +1,29 @@
 #!/usr/bin/env node
-// Toast Menus API V2 -> data.js menu region generator.
+// Toast Menus + Stock API -> data.js menu region generator.
 //
 // Zero-dependency (Node 20+ global fetch, no package.json, no node_modules).
 // Lives under .github/ so the repo's guardrails ESM grep ignores it and the
 // no-build invariant is preserved. The served site stays 100% static.
 //
-// Flow:
-//   1. auth  -> POST /authentication/v1/authentication/login  (client credentials)
-//   2. check -> GET  /menus/v2/metadata   (cheap; lastUpdated timestamp)
-//   3. pull  -> GET  /menus/v2/menus       (only if metadata changed)
-//   4. splice the transformed menu into data.js between the TOAST-SYNC markers
+// Flow every run:
+//   1. auth   -> POST /authentication/v1/authentication/login  (client credentials)
+//   2. menu   -> GET  /menus/v2/metadata  (cheap); pull GET /menus/v2/menus only
+//                when the published timestamp changed, else reuse the cached base.
+//   3. stock  -> GET  /stock/v1/inventory  (ALWAYS — 86'ing an item does not bump
+//                the menu timestamp, so stock must be checked every run).
+//   4. overlay soldOut on OUT_OF_STOCK items and splice the menu region of data.js.
+//
+// The menu base (with Toast item GUIDs, needed to map stock) is cached in
+// .toast-menu-cache.json so we honor Toast's "only pull /menus when it changed"
+// guidance while still reflecting stock in near-real-time.
 //
 // Exit codes: 0 = wrote a change OR clean no-op (up to date / creds absent);
 //             1 = hard error (auth / API / parse failure).
 //
-// Local testing without live credentials:
-//   TOAST_MENUS_FIXTURE=.github/scripts/fixtures/menus.sample.json node .github/scripts/toast-sync.mjs
+// Offline test (no network):
+//   TOAST_MENUS_FIXTURE=.github/scripts/fixtures/menus.sample.json \
+//   TOAST_STOCK_FIXTURE=.github/scripts/fixtures/stock.sample.json \
+//   node .github/scripts/toast-sync.mjs
 
 import { readFile, writeFile } from 'node:fs/promises'
 import { fileURLToPath } from 'node:url'
@@ -24,7 +32,7 @@ import { dirname, resolve } from 'node:path'
 const HERE = dirname(fileURLToPath(import.meta.url))
 const REPO_ROOT = resolve(HERE, '..', '..')
 const DATA_JS = resolve(REPO_ROOT, 'data.js')
-const STATE_FILE = resolve(HERE, '.toast-menu-state.json')
+const CACHE_FILE = resolve(HERE, '.toast-menu-cache.json')
 
 // --- Toast connection (from GitHub Actions secrets) ---
 const HOST = process.env.TOAST_HOSTNAME || 'https://ws-api.toasttab.com'
@@ -52,7 +60,8 @@ const fmtPrice = (p) => (p == null || p === '') ? '' : Number(p).toFixed(2)
 const q = (s) => '"' + String(s).replace(/\\/g, '\\\\').replace(/"/g, '\\"') + '"'
 
 // Recursively walk Toast menu groups; every group that has items becomes a
-// category. Nested subgroups become their own categories.
+// category. Nested subgroups become their own categories. Item GUIDs are
+// retained (needed to map stock) and stripped before serialization.
 function collect(group, categories, items) {
   if (!group || EXCLUDE_GROUPS.includes(group.name)) return
   const groupItems = group.menuItems || []
@@ -64,7 +73,7 @@ function collect(group, categories, items) {
       const raw = (it.description || '').trim()
       const veg = raw.includes(VEG_MARKER)
       const desc = veg ? raw.split(VEG_MARKER).join('').replace(/\s+/g, ' ').trim() : raw
-      const entry = { cat: id, nm: it.name, desc, price: fmtPrice(it.price) }
+      const entry = { cat: id, nm: it.name, desc, price: fmtPrice(it.price), guid: it.guid }
       if (veg) entry.veg = true
       if (it.image) entry.img = it.image
       items.push(entry)
@@ -73,8 +82,8 @@ function collect(group, categories, items) {
   for (const sub of (group.menuGroups || [])) collect(sub, categories, items)
 }
 
-// Toast /menus response -> { categories, items }.
-function transform(payload) {
+// Toast /menus response -> { categories, items } base (items carry guid).
+function buildBase(payload) {
   const categories = []
   const items = []
   for (const menu of (payload.menus || [])) {
@@ -84,21 +93,32 @@ function transform(payload) {
   return { categories, items }
 }
 
-// Serialize the { categories, items } into the exact FT_DATA region text,
-// including both markers. Matches the file's 2-space, unquoted-key style.
-function renderRegion({ categories, items }) {
+// Toast /stock/v1/inventory array -> Set of GUIDs that are OUT_OF_STOCK.
+// (QUANTITY status means low-but-available, so it stays orderable.)
+function outOfStockSet(inventory) {
+  const set = new Set()
+  for (const row of (Array.isArray(inventory) ? inventory : [])) {
+    if (row && row.status === 'OUT_OF_STOCK' && row.guid) set.add(row.guid)
+  }
+  return set
+}
+
+// Serialize { categories, items } into the exact FT_DATA region text, including
+// both markers. GUIDs are dropped; soldOut is emitted for OUT_OF_STOCK items.
+function renderRegion({ categories, items }, oos) {
   const catLines = categories.map(
     (c) => `    { id: ${q(c.id)}, title: ${q(c.title)}, sub: ${c.sub == null ? 'null' : q(c.sub)} },`
   )
   const itemLines = items.map((it) => {
     let s = `    { cat: ${q(it.cat)}, nm: ${q(it.nm)}, desc: ${q(it.desc)}, price: ${q(it.price)}`
     if (it.veg) s += ', veg: true'
+    if (oos.has(it.guid)) s += ', soldOut: true'
     if (it.img) s += `, img: ${q(it.img)}`
     return s + ' },'
   })
   return [
     '  // >>> TOAST-SYNC:START — generated by .github/scripts/toast-sync.mjs from Toast',
-    '  // Menus API V2. Do not hand-edit this region; it is overwritten on each sync.',
+    '  // Menus API V2 + Stock API. Do not hand-edit this region; overwritten each sync.',
     '  menuCategories: [',
     ...catLines,
     '  ],',
@@ -141,20 +161,25 @@ async function apiGet(token, path) {
   return r.json()
 }
 
-async function loadState() {
-  try { return JSON.parse(await readFile(STATE_FILE, 'utf8')) } catch { return {} }
+async function loadCache() {
+  try { return JSON.parse(await readFile(CACHE_FILE, 'utf8')) } catch { return null }
 }
-async function saveState(state) {
-  await writeFile(STATE_FILE, JSON.stringify(state, null, 2) + '\n')
+async function saveCache(base) {
+  await writeFile(CACHE_FILE, JSON.stringify(base, null, 2) + '\n')
+}
+
+async function readJson(relPath) {
+  return JSON.parse(await readFile(resolve(REPO_ROOT, relPath), 'utf8'))
 }
 
 async function main() {
   // Offline path: transform a saved sample payload, no network.
   if (process.env.TOAST_MENUS_FIXTURE) {
-    const payload = JSON.parse(await readFile(resolve(REPO_ROOT, process.env.TOAST_MENUS_FIXTURE), 'utf8'))
-    const built = transform(payload)
-    const changed = await spliceDataJs(renderRegion(built))
-    console.log(`[fixture] ${changed ? 'wrote' : 'no change to'} data.js (${built.items.length} items).`)
+    const base = buildBase(await readJson(process.env.TOAST_MENUS_FIXTURE))
+    const oos = process.env.TOAST_STOCK_FIXTURE
+      ? outOfStockSet(await readJson(process.env.TOAST_STOCK_FIXTURE)) : new Set()
+    const changed = await spliceDataJs(renderRegion(base, oos))
+    console.log(`[fixture] ${changed ? 'wrote' : 'no change to'} data.js (${base.items.length} items, ${oos.size} out of stock).`)
     return
   }
 
@@ -164,19 +189,27 @@ async function main() {
   }
 
   const token = await login()
+
+  // Menu base: only re-pull /menus when the published timestamp changed.
   const meta = await apiGet(token, '/menus/v2/metadata')
   const lastUpdated = meta?.lastUpdated || meta?.lastPublished || null
-  const state = await loadState()
-  if (lastUpdated && state.lastUpdated === lastUpdated) {
-    console.log(`Menu unchanged (lastUpdated=${lastUpdated}) — skipping pull.`)
-    return
+  let base = await loadCache()
+  if (!base || !base.lastUpdated || base.lastUpdated !== lastUpdated) {
+    base = buildBase(await apiGet(token, '/menus/v2/menus'))
+    base.lastUpdated = lastUpdated
+    await saveCache(base)
+    console.log(`Pulled menu from Toast (lastUpdated=${lastUpdated}, ${base.items.length} items).`)
+  } else {
+    console.log(`Menu unchanged (lastUpdated=${lastUpdated}); using cached base (${base.items.length} items).`)
   }
 
-  const menus = await apiGet(token, '/menus/v2/menus')
-  const built = transform(menus)
-  const changed = await spliceDataJs(renderRegion(built))
-  await saveState({ lastUpdated, syncedItems: built.items.length })
-  console.log(changed ? `Wrote data.js (${built.items.length} items).` : `data.js already current (${built.items.length} items).`)
+  // Stock: always checked; 86'ing does not change the menu timestamp.
+  const oos = outOfStockSet(await apiGet(token, '/stock/v1/inventory'))
+
+  const changed = await spliceDataJs(renderRegion(base, oos))
+  console.log(changed
+    ? `Wrote data.js (${base.items.length} items, ${oos.size} out of stock).`
+    : `data.js already current (${base.items.length} items, ${oos.size} out of stock).`)
 }
 
 main().catch((e) => { console.error(String(e?.stack || e)); process.exit(1) })
