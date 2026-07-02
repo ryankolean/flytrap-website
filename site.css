@@ -368,6 +368,24 @@ button { font-family: inherit; }
   .hero-fly { right: 8%; }
 }
 
+/* Second fly — free flyer that follows the reader down the back of the page.
+   Fixed to the viewport; transform + opacity are driven per frame by BackFly in
+   App.jsx. Sits above section content but below both nav bars (z 100 / 99). */
+.back-fly {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 18px;              /* fallback — BackFly sizes it to ~half the header text */
+  height: auto;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 50;
+  transform: translate(-100px, -100px);
+  will-change: transform, opacity;
+  filter: drop-shadow(0 3px 8px rgba(0,0,0,.25));
+}
+@media (prefers-reduced-motion: reduce) { .back-fly { display: none; } }
+
 .hero-lead {
   font-family: var(--font-serif);
   font-weight: 400;
@@ -795,12 +813,12 @@ section { position: relative; }
    ABOUT — terracotta zone, two-up grid
    ============================================================ */
 .about {
-  background: var(--color-flytrap-red-deep);
-  color: var(--color-cream-paper);
+  background: var(--color-bg-white);
+  color: var(--color-flytrap-red-deep);
 }
 .about .eyebrow,
-.about h2.title { color: var(--color-cream-paper); }
-.about .lede { color: var(--color-cream-paper); }
+.about h2.title { color: var(--color-flytrap-red-deep); }
+.about .lede { color: var(--color-flytrap-red-deep); }
 
 .about-grid {
   display: grid;
@@ -1136,11 +1154,12 @@ section { position: relative; }
    RETAIL
    ============================================================ */
 .retail {
-  background: var(--color-flytrap-red-deep);
+  background: var(--color-bg-white);
+  color: var(--color-flytrap-red-deep);
 }
-.retail .eyebrow { color: var(--color-cream-paper); }
+.retail .eyebrow { color: var(--color-flytrap-red-deep); }
 /* Match the menu section headers (e.g. "This week's specials"): Fraunces italic 700. */
-.retail h2.title { color: var(--color-cream-paper); font-style: italic; font-weight: 700; }
+.retail h2.title { color: var(--color-flytrap-red-deep); font-style: italic; font-weight: 700; }
 .retail-grid {
   display: grid;
   grid-template-columns: 1fr;
