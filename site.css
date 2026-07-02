@@ -1250,6 +1250,58 @@ section { position: relative; }
   color: var(--color-text-charcoal);
 }
 
+/* Retail carousel — a card whose product has multiple options shows one at a time.
+   Arrows + dots are the click affordance; the photo captures horizontal swipes. */
+.retail-card.carousel .ph { touch-action: pan-y; }
+.car-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 34px; height: 34px;
+  border: 0; border-radius: 50%;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: rgba(255,255,255,.9);
+  color: var(--color-flytrap-red-deep);
+  cursor: pointer; z-index: 2;
+  box-shadow: 0 2px 8px rgba(0,0,0,.28);
+  transition: background 150ms, transform 80ms;
+}
+.car-nav:hover { background: #fff; }
+.car-nav:active { transform: translateY(-50%) scale(.9); }
+.car-nav.prev { left: 8px; }
+.car-nav.next { right: 8px; }
+.car-count {
+  position: absolute;
+  right: 8px; bottom: 8px; z-index: 2;
+  font-family: var(--font-sans);
+  font-size: 11px; font-weight: 700; letter-spacing: .04em;
+  color: var(--color-cream-paper);
+  background: rgba(0,0,0,.5);
+  padding: 2px 8px; border-radius: 999px;
+}
+.car-name {
+  font-family: var(--font-sans);
+  font-size: 12px; font-weight: 700; letter-spacing: .04em;
+  line-height: 1.35;
+  color: var(--color-flytrap-red-deep);
+  margin: 0 0 6px;
+  min-height: 2.7em;              /* reserve two lines so slides keep a steady height */
+}
+.retail-card.carousel .desc { min-height: 4.5em; }
+.car-dots {
+  display: flex; gap: 7px;
+  margin: 2px 0 16px;
+}
+.car-dot {
+  width: 8px; height: 8px; padding: 0;
+  border: 0; border-radius: 50%;
+  background: rgba(26,26,26,.22);
+  cursor: pointer;
+  transition: background 150ms, transform 150ms;
+}
+.car-dot.on { background: var(--color-flytrap-red-deep); transform: scale(1.15); }
+.car-dot:hover { background: rgba(253,0,3,.55); }
+
 /* ============================================================
    PRESS
    ============================================================ */
