@@ -308,28 +308,62 @@ button { font-family: inherit; }
   background: currentColor;
 }
 
-.hero-wordmark {
+/* Wordmark wrapper — positioning context so the fly can perch on the letters */
+.hero-wordmark-wrap {
+  position: relative;
+  align-self: flex-start;
   width: 100%;
   max-width: 540px;
   margin: 0 0 24px;
+}
+@media (min-width: 768px) { .hero-wordmark-wrap { max-width: 680px; } }
+@media (min-width: 1024px) { .hero-wordmark-wrap { max-width: 780px; } }
+
+.hero-wordmark {
+  display: block;
+  width: 100%;
   filter: drop-shadow(0 4px 16px rgba(0,0,0,.5)) brightness(1.05);
 }
-@media (min-width: 768px) { .hero-wordmark { max-width: 680px; } }
-@media (min-width: 1024px) { .hero-wordmark { max-width: 780px; } }
 
-/* Cut-out brand fly — buzzing accent in the empty upper hero (item 1b) */
+/* Hero copy sits ABOVE the background fly. Raise the wordmark IMG and each copy
+   element individually — never `.hero-wordmark-wrap`, which would become a
+   stacking context and trap the absolutely-positioned fly in front of the letters. */
+.hero-kicker,
+.hero-wordmark,
+.hero-lead,
+.hero-actions {
+  position: relative;
+  z-index: 2;
+}
+
+/* Cut-out brand fly — perched at the top of the wordmark letters.
+   Buzzes up and away when the hero scrolls; returns to the same spot on scroll-up. */
 .hero-fly {
   position: absolute;
-  top: 15%;
-  right: 11%;
-  width: 52px;
+  /* Fluid size + lift: smaller on phones, scales with the viewport, capped on
+     desktop. The lift tracks the width (~0.6x) so the fly stays perched on the
+     letter tops at every screen size. */
+  top: clamp(-42px, -6vw, -20px);
+  right: 6%;
+  /* Background layer: the fly keeps its natural stacking level and the hero copy
+     is lifted ABOVE it with positive z-index (see the `.hero-kicker, .hero-wordmark,
+     .hero-lead, .hero-actions` rule above). Positive z on the content is honored
+     cross-browser; a negative z on this composited (will-change) element was not. */
+  width: clamp(34px, 10vw, 70px);
   height: auto;
-  opacity: .85;
-  transform: rotate(14deg);
+  opacity: .9;
+  transform: translate(0, 0) scale(1);
+  transform-origin: center;
   filter: drop-shadow(0 3px 10px rgba(0,0,0,.4));
   pointer-events: none;
+  /* Position + opacity are driven per frame by the scroll handler in App.jsx
+     (HeroWrap), keeping the flight locked to scroll speed. No CSS transition
+     here on purpose — it would lag behind the scroll. */
+  will-change: transform, opacity;
 }
-@media (min-width: 768px) { .hero-fly { width: 70px; top: 17%; right: 15%; } }
+@media (min-width: 768px) {
+  .hero-fly { right: 8%; }
+}
 
 .hero-lead {
   font-family: var(--font-serif);
