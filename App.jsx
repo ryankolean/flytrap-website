@@ -21,8 +21,16 @@ function App() {
     const onScroll = () => {
       const y = window.scrollY;
       setScrolled(y > 40);
-      // Header wordmark fades in once the hero has scrolled (nearly) out of view.
-      setPastHero(y > window.innerHeight - 80);
+      // Header lockup hands off from the hero wordmark: it fades in the moment the hero
+      // "the fly trap" scrolls up past the nav's lower edge, and back out on scroll-up.
+      const heroWm = document.querySelector(".hero-wordmark");
+      if (heroWm) {
+        const navEl = document.querySelector(".nav");
+        const navB = navEl ? navEl.getBoundingClientRect().bottom : 70;
+        setPastHero(heroWm.getBoundingClientRect().bottom <= navB);
+      } else {
+        setPastHero(y > window.innerHeight - 80);
+      }
     };
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
@@ -216,13 +224,14 @@ window.Hero = function HeroWrap(props) {
 
     let anchor = null;  // fly's own (untransformed) box center — x viewport, y page (scroll-independent)
     let target = null;  // nav lockup-fly center — viewport coords (the nav is fixed)
-    let perchX = 0;     // resting x (viewport): open space on the right, clear of the left-aligned kicker
+    let perchX = 0;     // resting x (viewport): above the final "p" of "the fly trap"
     let refTop = 0;     // topmost hero-text edge in page space; its viewport y is refTop - scrollY
     let gap = 0;        // vertical clearance the fly always keeps above the wordmark top
     let dockS = 1;      // scroll position at which the fly reaches the lockup height and parks
     let flyW = 0;       // fly width — scales the wander + loop so they stay proportional
     let flyH = 0;       // fly height — for header/hero clearance math
     let navBoxes = [];  // visible header content (links / CTA / burger) the fly must clear
+    let kickerBox = null; // "a finer diner" kicker box (page-space top) the flight must clear
 
     const measure = () => {
       const host = fly.offsetParent;
@@ -234,10 +243,17 @@ window.Hero = function HeroWrap(props) {
       };
       const wm = document.querySelector(".hero-wordmark");
       const wr = (wm || host).getBoundingClientRect();
-      perchX = wr.left + wr.width * 0.82;
+      perchX = wr.left + wr.width * 0.9;
       flyW = fly.offsetWidth;
       flyH = fly.offsetHeight;
-      gap = flyH / 2 + 30;                      // keep the fly's lower edge ~30px above the copy
+      // Rest the fly on the kicker's row — right of "a finer diner", above the "p".
+      // Negative gap centers it on that line; it still lifts above every line of copy
+      // the instant you scroll (rise tracks scroll 1:1, drift is slow).
+      const kicker = document.querySelector(".hero-kicker");
+      const kr = kicker ? kicker.getBoundingClientRect() : null;
+      const kH = kr ? kr.height : flyH;
+      gap = -(kH / 2);
+      kickerBox = kr ? { left: kr.left, right: kr.right, top: kr.top + window.scrollY } : null;
       // Ride above the TOPMOST hero-text edge (the kicker sits just above the
       // wordmark) so the fly clears every line of copy, not only the wordmark.
       let topY = wr.top + window.scrollY;
@@ -312,6 +328,13 @@ window.Hero = function HeroWrap(props) {
       }
       const minY = ceil > 0 ? (ceil + flyH * 0.5 + 5) : (flyH * 0.35);
       if (minY < baseY && y < minY) y = minY;
+
+      // Never cross the "a finer diner" kicker: where the fly's x overlaps it, hold the
+      // fly just above the kicker's top edge (the kicker scrolls, so subtract scroll s).
+      if (kickerBox && x + flyW * 0.5 > kickerBox.left && x - flyW * 0.5 < kickerBox.right) {
+        const kCeil = (kickerBox.top - s) - flyH * 0.5 - 4;
+        if (y > kCeil) y = kCeil;
+      }
 
       return {
         x: x,
