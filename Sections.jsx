@@ -81,6 +81,64 @@ function DishScroll() {
 
 }
 
+// Retail card whose product has multiple options (e.g. SWAT! sauces). Shows one
+// option at a time — arrows + dots to click, swipe on touch — so three long blurbs
+// no longer stack the card into a tall column. Each option reuses the card photo for
+// now; swap in per-option images later by giving each variant its own `photo`.
+function RetailCarousel({ card }) {
+  const variants = card.variants;
+  const n = variants.length;
+  const [i, setI] = useState(0);
+  const startX = useRef(null);
+  const go = (d) => setI((p) => (p + d + n) % n);
+  const onStart = (e) => { startX.current = e.touches[0].clientX; };
+  const onEnd = (e) => {
+    if (startX.current == null) return;
+    const dx = e.changedTouches[0].clientX - startX.current;
+    startX.current = null;
+    if (Math.abs(dx) > 40) go(dx < 0 ? 1 : -1);
+  };
+  const v = variants[i];
+  const photo = v.photo || card.photo;
+  return (
+    <article className={"retail-card reveal carousel " + card.cls}>
+      <div className="ph" onTouchStart={onStart} onTouchEnd={onEnd}>
+        <img className="ph-img" src={photo} alt={v.name} loading="lazy" />
+        <button type="button" className="car-nav prev" aria-label="Previous option" onClick={() => go(-1)}>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round"><path d="M15 18l-6-6 6-6" /></svg>
+        </button>
+        <button type="button" className="car-nav next" aria-label="Next option" onClick={() => go(1)}>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round"><path d="M9 6l6 6-6 6" /></svg>
+        </button>
+        <span className="car-count" aria-hidden="true">{i + 1} / {n}</span>
+      </div>
+      <div className="body">
+        <h3>{card.title}</h3>
+        <p className="car-name">{v.name}</p>
+        <p className="desc">{v.desc}</p>
+        <div className="car-dots" role="tablist" aria-label="Choose an option">
+          {variants.map((vv, k) =>
+          <button
+            type="button"
+            key={k}
+            className={"car-dot" + (k === i ? " on" : "")}
+            role="tab"
+            aria-selected={k === i}
+            aria-label={vv.name}
+            onClick={() => setI(k)} />
+          )}
+        </div>
+        {card.price || card.ask ?
+        <div className="meta-row">
+            {card.price ? <span className="price">{card.price}</span> : null}
+            {card.ask ? <span className="ask">{card.ask}</span> : null}
+          </div> :
+        null}
+      </div>
+    </article>);
+
+}
+
 function Retail() {
   const cards = [
   { cls: "swat", label: "SWAT", photo: "assets/retail/swat-hot-sauce.png", title: "SWAT! Sauces", price: "$7 / bottle", ask: "", variants: [
@@ -99,6 +157,8 @@ function Retail() {
         </div>
         <div className="retail-grid">
           {cards.map((c) =>
+          c.variants ?
+          <RetailCarousel key={c.cls} card={c} /> :
           <article key={c.cls} className={"retail-card reveal " + c.cls}>
               <div className="ph">
                 {c.photo ?
@@ -107,11 +167,7 @@ function Retail() {
               </div>
               <div className="body">
                 <h3>{c.title}</h3>
-                {c.variants ?
-              c.variants.map((v, i) =>
-              <p className="desc" key={i}><strong>{v.name}</strong><br />{v.desc}</p>) :
-
-              <p className="desc">{c.desc}</p>}
+                <p className="desc">{c.desc}</p>
                 {c.price || c.ask ?
               <div className="meta-row">
                     {c.price ? <span className="price">{c.price}</span> : null}
