@@ -231,7 +231,6 @@ window.Hero = function HeroWrap(props) {
     let flyW = 0;       // fly width — scales the wander + loop so they stay proportional
     let flyH = 0;       // fly height — for header/hero clearance math
     let navBoxes = [];  // visible header content (links / CTA / burger) the fly must clear
-    let kickerBox = null; // "a finer diner" kicker box (page-space top) the flight must clear
 
     const measure = () => {
       const host = fly.offsetParent;
@@ -253,7 +252,6 @@ window.Hero = function HeroWrap(props) {
       const kr = kicker ? kicker.getBoundingClientRect() : null;
       const kH = kr ? kr.height : flyH;
       gap = -(kH / 2);
-      kickerBox = kr ? { left: kr.left, right: kr.right, top: kr.top + window.scrollY } : null;
       // Ride above the TOPMOST hero-text edge (the kicker sits just above the
       // wordmark) so the fly clears every line of copy, not only the wordmark.
       let topY = wr.top + window.scrollY;
@@ -295,25 +293,26 @@ window.Hero = function HeroWrap(props) {
       const baseY = Math.max(target.y, (refTop - s) - gap);
       const baseX = perchX + (target.x - perchX) * ex;
 
-      // Three-phase path: S wiggle -> full sweeping loop -> arcing S into the lockup.
-      // Every vertical offset is <= 0 (bulges UP), so the fly never drops below the ride
-      // line -> the hero copy is never touched, by construction.
-      const B0 = 0.28, B1 = 0.5;
+      // Three-phase path: an upward loop that breaks right + up, a downward loop that
+      // dives back down behind the "a finer diner" kicker (the hero copy layers over
+      // the fly), then a decaying serpentine into the upper-left lockup.
+      const B0 = 0.2, B1 = 0.45;
       let ox = 0, oy = 0;
       if (xp < B0) {
-        const t = xp / B0;                                     // Phase 1 — S wiggle (serpentine)
-        ox += Math.sin(t * Math.PI * 2) * (flyW * 0.6);
-        oy += -Math.sin(t * Math.PI) * (flyW * 0.1);
+        const t = xp / B0;                                     // Phase 1 — upward loop (right, then up)
+        const ph = t * Math.PI * 2;
+        ox += Math.sin(ph) * (flyW * 1.0);
+        oy += -(1 - Math.cos(ph)) * (flyW * 1.2);              // bulges UP
       } else if (xp < B1) {
-        const t = (xp - B0) / (B1 - B0);                       // Phase 2 — full sweeping loop
-        const th = t * Math.PI * 2;                            // wide + short: the horizontal swing
-        ox += Math.sin(th) * (flyW * 0.9);                     // outruns the drift, so it self-crosses
-        oy += -(1 - Math.cos(th)) * (flyW * 0.3);
+        const t = (xp - B0) / (B1 - B0);                       // Phase 2 — downward loop, behind the kicker
+        const ph = t * Math.PI * 2;
+        ox += Math.sin(ph) * (flyW * 0.9);
+        oy += (1 - Math.cos(ph)) * (flyW * 0.8);               // dives DOWN, occluded by the copy
       } else {
-        const t = (xp - B1) / (1 - B1);                        // Phase 3 — arcing S into the lockup
-        const d = 1 - t;
-        ox += Math.sin(t * Math.PI * 2) * (flyW * 0.5) * d;
-        oy += -Math.sin(t * Math.PI) * (flyW * 0.3) * d;
+        const t = (xp - B1) / (1 - B1);                        // Phase 3 — serpentine into the lockup
+        const d = 1 - t;                                       // amplitude decays into the corner
+        ox += Math.sin(t * Math.PI * 3) * (flyW * 0.8) * d;    // zig-zag across the drift
+        oy += -Math.abs(Math.sin(t * Math.PI * 3)) * (flyW * 0.35) * d;
       }
 
       let x = baseX + ox;
@@ -328,13 +327,6 @@ window.Hero = function HeroWrap(props) {
       }
       const minY = ceil > 0 ? (ceil + flyH * 0.5 + 5) : (flyH * 0.35);
       if (minY < baseY && y < minY) y = minY;
-
-      // Never cross the "a finer diner" kicker: where the fly's x overlaps it, hold the
-      // fly just above the kicker's top edge (the kicker scrolls, so subtract scroll s).
-      if (kickerBox && x + flyW * 0.5 > kickerBox.left && x - flyW * 0.5 < kickerBox.right) {
-        const kCeil = (kickerBox.top - s) - flyH * 0.5 - 4;
-        if (y > kCeil) y = kCeil;
-      }
 
       return {
         x: x,
