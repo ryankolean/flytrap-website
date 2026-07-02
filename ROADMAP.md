@@ -10,7 +10,8 @@ lands as atomic single-purpose PRs → `main` auto-deploys to GitHub Pages.
 
 ## Shipped
 
-_Audited 2026-06-29 against Sean's 2026-06-25 change list — every item below is live on `main`._
+_Audited 2026-07-02 against `origin/main` (through #53) and Sean's 2026-06-25 change
+list — every item below is live on `main`._
 
 - **Hero** — removed the "American comfort food with a global cooks' table" tagline.
 - **Menu** — removed the "What's cooking" intro; veg toggle → green-**leaf** indicator
@@ -40,6 +41,17 @@ _Audited 2026-06-29 against Sean's 2026-06-25 change list — every item below i
   leaf-with-stem; shared component, so menu + specials + daily-buzz board all updated (#40).
 - **Dead-code / asset cleanup** — removed the dead `Gallery` component + `showGallery` toggle
   (#41); deleted the six unused `assets/flytrap-wordmark-*.png` (#42).
+- **Specials → default menu tab** — folded the specials into `Menu.jsx` as a first-class
+  `"specials"` tab that opens active (`useState(SPECIALS_TAB)`); the standalone specials
+  section is gone (#48). This is the first half of the Toast "coupled UI work" below — done
+  ahead of the Toast pull.
+- **Retro favicon** — recolored the favicon to electric red to match the palette (#49).
+- **Hero invert** — flipped the hero to a white field with electric-red branding (wordmark,
+  kicker, fly, outline CTAs), red nav with a scroll-fade-in wordmark; solid-red "See the Menu"
+  stays as the accent CTA. Added `assets/brand/flytrap-logo-red.png` + `fly-red.png` (#50).
+- **Retail header font** — matched the Retail section header to the menu section headers (#51).
+- **About simplify** — dropped the marble photo, stats, and divider (#52).
+- **Dishes eyebrow** — removed the "From the griddle" eyebrow from the key-dishes section (#53).
 
 ---
 
@@ -70,9 +82,10 @@ Instagram-based specials flow.
 3. Confirm how **specials** are represented in Toast (a dedicated menu group?) and the
    **veg-marker** convention in item descriptions.
 
-Once Toast is the source of truth, do the coupled UI work:
+Once Toast is the source of truth, do the remaining coupled UI work:
 - **Menu becomes the home screen**, with the fly-trap logo as its header.
-- **Specials** as the default menu tab (variable count).
+- **Specials tab handles a variable count** from Toast (the tab itself already ships as the
+  default — #48; today it renders the Instagram-sourced specials).
 
 ---
 
