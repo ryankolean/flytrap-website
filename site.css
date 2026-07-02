@@ -282,7 +282,9 @@ button { font-family: inherit; }
   min-height: 100svh;
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
   padding: 120px 20px 80px;
 }
 @media (min-width: 768px) {
@@ -299,10 +301,11 @@ button { font-family: inherit; }
   color: var(--color-cream-paper);
   text-shadow: 0 2px 8px rgba(0,0,0,.5);
   margin-bottom: 8px;
-  align-self: flex-start;
+  align-self: center;
   transform: rotate(-2deg);
 }
-.hero-kicker::before {
+.hero-kicker::before,
+.hero-kicker::after {
   content: '';
   width: 36px; height: 1px;
   background: currentColor;
@@ -311,7 +314,7 @@ button { font-family: inherit; }
 /* Wordmark wrapper — positioning context so the fly can perch on the letters */
 .hero-wordmark-wrap {
   position: relative;
-  align-self: flex-start;
+  align-self: center;
   width: 100%;
   max-width: 540px;
   margin: 0 0 24px;
@@ -349,7 +352,7 @@ button { font-family: inherit; }
      is lifted ABOVE it with positive z-index (see the `.hero-kicker, .hero-wordmark,
      .hero-lead, .hero-actions` rule above). Positive z on the content is honored
      cross-browser; a negative z on this composited (will-change) element was not. */
-  width: clamp(34px, 10vw, 70px);
+  width: clamp(22px, 4.5vw, 30px);
   height: auto;
   opacity: .9;
   transform: translate(0, 0) scale(1);
@@ -380,6 +383,7 @@ button { font-family: inherit; }
 .hero-actions {
   display: flex;
   flex-wrap: wrap;
+  justify-content: center;
   gap: 12px;
 }
 /* CTA visibility — mobile sees Order Takeout, desktop sees Today's Buzz / Visit Us.
