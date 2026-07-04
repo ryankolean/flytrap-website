@@ -1,8 +1,7 @@
 // About + Retail + Press + Buzz band + Visit + Footer + DailyBuzz page
 
 function BuzzBand({ onGoBuzz }) {
-  const today = new Date();
-  const dayName = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"][today.getDay()];
+  const dayName = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"][window.ftTodayIdx()];
   const buzz = window.FT_DATA.buzz.find((b) => b.day === dayName) || window.FT_DATA.buzz[0];
 
   return (
@@ -212,7 +211,7 @@ function Press() {
 }
 
 function Visit() {
-  const today = new Date().getDay();
+  const today = window.ftTodayIdx();
   const days = [
   { i: 1, label: "Mon" }, { i: 2, label: "Tue" }, { i: 3, label: "Wed" },
   { i: 4, label: "Thu" }, { i: 5, label: "Fri" }, { i: 6, label: "Sat" }, { i: 0, label: "Sun" }];
@@ -311,17 +310,18 @@ function Footer({ onNavigate }) {
 }
 
 function DailyBuzzPage({ onBack }) {
-  const todayIdx = new Date().getDay(); // 0=Sun..6=Sat
+  const todayIdx = window.ftTodayIdx(); // 0=Sun..6=Sat, in America/Detroit
   const dayMap = { Sunday: 0, Monday: 1, Tuesday: 2, Wednesday: 3, Thursday: 4, Friday: 5, Saturday: 6 };
   const buzz = window.FT_DATA.buzz;
   const soup = window.FT_DATA.soup;
   const pastry = window.FT_DATA.pastry;
 
-  // Build calendar dates for upcoming week
-  const today = new Date();
+  // Build calendar dates for the upcoming week, anchored to Detroit's current
+  // date (noon avoids DST edges) so labels match todayIdx for any visitor.
+  const today = new Date(new Date().toLocaleDateString("en-US", { timeZone: "America/Detroit" }) + " 12:00");
   const dateFor = (dayOfWeek) => {
     const d = new Date(today);
-    const diff = (dayOfWeek - today.getDay() + 7) % 7;
+    const diff = (dayOfWeek - todayIdx + 7) % 7;
     d.setDate(today.getDate() + diff);
     return d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
   };
