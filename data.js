@@ -165,7 +165,21 @@ window.ftOpenNow = function () {
     const mins = h * 60 + +parts.find((p) => p.type === "minute").value;
     return mins >= 480 && mins < 900; // 8:00a (480) – 3:00p (900)
   } catch (e) {
-    return true; // Intl/timeZone unavailable — fall back to prior behavior
+    return false; // Intl/timeZone unavailable — fail closed rather than claim "Open"
+  }
+};
+
+// Weekday index (0=Sun..6=Sat) at the restaurant's local time. Anchors "today"
+// highlighting to America/Detroit so it agrees with the Open-now badge no matter
+// what timezone the visitor is in.
+window.ftTodayIdx = function () {
+  try {
+    const wd = new Intl.DateTimeFormat("en-US", {
+      timeZone: "America/Detroit", weekday: "short"
+    }).format(new Date());
+    return { Sun: 0, Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5, Sat: 6 }[wd];
+  } catch (e) {
+    return new Date().getDay(); // Intl/timeZone unavailable — visitor-local fallback
   }
 };
 
