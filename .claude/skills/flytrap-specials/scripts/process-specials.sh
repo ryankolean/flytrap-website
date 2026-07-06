@@ -26,14 +26,19 @@ ASSETS="assets/specials"
 
 sha() { shasum -a 256 "$1" | awk '{print $1}'; }
 
-# --- Guard 1: each is a real photo (>=800px wide), not an IG thumbnail -------
+# --- Guard 1: each is a real photo, not a thumbnail --------------------------
+# Guards the LONG edge (max of w,h): blocks the 150px IG-thumbnail leak while
+# passing Toast's CDN photos, whose long edge is 720 (short edge can be ~405 on
+# a portrait). Toast images are soft after the 1080^2 upscale — that's accepted.
 i=0
 for src in "$@"; do
   i=$((i+1))
   [ -f "$src" ] || die "special $i source not found: $src"
-  w=$(sips -g pixelWidth "$src" 2>/dev/null | awk '/pixelWidth/{print $2}')
-  [ -n "${w:-}" ] || die "special $i: not a readable image: $src"
-  [ "$w" -ge 800 ] || die "special $i source is only ${w}px wide — you pulled a thumbnail, not the full image. Re-fetch full-res."
+  w=$(sips -g pixelWidth "$src"  2>/dev/null | awk '/pixelWidth/{print $2}')
+  h=$(sips -g pixelHeight "$src" 2>/dev/null | awk '/pixelHeight/{print $2}')
+  [ -n "${w:-}" ] && [ -n "${h:-}" ] || die "special $i: not a readable image: $src"
+  long=$(( w > h ? w : h ))
+  [ "$long" -ge 700 ] || die "special $i source is only ${w}x${h} — long edge < 700px, that's a thumbnail. Re-fetch full-res."
 done
 
 # --- Guard 2: no two sources identical (same image in two slots) ------------
