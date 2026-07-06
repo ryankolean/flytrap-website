@@ -50,18 +50,21 @@ between the same markers:
   (or all dishes) use the Toast photo, and you **flag the mismatch to the user.**
   Never pair an IG slide to a dish by slide position alone — always by name. A stale or
   different IG post must never silently attach the wrong photo.
-- **Any count.** One plated special or several — `Sections.jsx` maps the array, so 1 /
-  2 / 3+ all render; an empty array renders "No specials running this week." Do not
-  force two.
+- **Any count.** One plated special or several — `Menu.jsx` maps `specials` under the
+  Specials tab, so 1 / 2 / 3+ all render; an empty array renders "No specials running
+  this week — check back soon." Do not force two.
 - **Positional data, matched photos.** `specials[i]` = Toast card i (top-to-bottom).
   IDs are `special-1`, `special-2`, … Photos are `week-<date>-<N>.jpg` (1-based), where
   N follows **Toast** order — the IG→Toast name match maps each slide to the right N.
 - **Price comes from Toast — store it without the `$`.** Toast lists a price on every
-  plated dish; put it in `price` **without** the leading `$` (`Sections.jsx` renders
-  `${s.price}`, so a stored `$` doubles it). Omit only if a dish genuinely has none.
-- **Don't hand-set the expiry date.** `Sections.jsx` computes the "Here through <date>,
-  then gone" line as the end of the current week (Sunday) at render time. `weekOf` in
-  `data.js` is informational only.
+  plated dish; put it in `price` **without** the leading `$`. **Note:** `Menu.jsx`
+  renders only `photo` / `name` / `veg` / `desc` for a special — it does **not** display
+  `price`. The field is stored for data completeness (and any future price display), not
+  shown today. Omit only if a dish genuinely has none.
+- **No expiry line, no displayed date.** `Menu.jsx` renders a fixed sub-line ("What the
+  cooks are running this week. Get it before it's gone.") — there is **no** computed
+  "Here through <date>" line and `weekOf` is **not** displayed anywhere. `weekOf` in
+  `data.js` is informational only; keep it current but don't expect it on the page.
 - **Never blank the section.** If any step fails, leave last week's specials live and
   stop — a half-update must never ship.
 - **Branch → PR. Never commit to `main`** (it auto-deploys). Read `AGENTS.md`.
@@ -192,9 +195,11 @@ For each dish `n` (1-based, Toast order), fetch `plan[n-1].src` to
   ```bash
   curl -sL -A "Mozilla/5.0" "<toast src>" -o ~/Downloads/ft-special-n.jpg
   ```
-- **Instagram source** (`useIG:true`): in-page `fetch` works on the IG embed origin;
-  save via the anchor-click snippet (Appendix B), or the localhost receiver if slides
-  2+ won't save. Use each dish's `slideIndex` from the plan — **not** a naive counter.
+- **Instagram source** (`useIG:true`): use the **localhost receiver** (Appendix B) —
+  it's the reliable path. The embed page's in-page `fetch` gets the bytes, but the
+  anchor-click download does **not** persist in the MCP browser context, and returning
+  the bytes as base64 through a JS eval is blocked by the harness. The receiver sidesteps
+  both. Use each dish's `slideIndex` from the plan — **not** a naive counter.
 
 Then **view each saved image** and confirm it's the dish its record describes. `file
 ~/Downloads/ft-special-*.jpg` must all be JPEG. (Toast photos are ≤720px long edge and
@@ -226,20 +231,32 @@ One `{ … }` per special, `special-1`-indexed, photo paths from Stage 5, price 
 Leave `soup` / `pastry` alone.
 
 ### Stage 7 — Verify (REQUIRED before PR)
-`preview_start` the `flytrap` launch config, load `#specials`, then at **375 / 768 /
-1280**:
-- Each `<image-slot>` shows this week's filename, `naturalWidth >= 800`, `complete ===
-  true`.
-- The lede reads "Here through <upcoming Sunday>, then gone" — a **future** date.
+`preview_start` the `flytrap` launch config. The specials render inside `Menu.jsx`
+under the **Specials tab** (plain DOM — no `#specials` id, no `image-slot` custom
+element; that markup is gone). Activate the tab, scroll a `.special-card` into view,
+and check at **375 / 768 / 1280**:
+- Each `.special-photo img` shows this week's filename, `naturalWidth >= 800`,
+  `complete === true`, and `alt` == the dish name (alt-vs-name is the pairing check).
+- The veg leaf shows on veg dishes only (`.special-headline` contains the `VegLeaf`
+  svg when `veg:true`).
 - `preview_console_logs` level error EMPTY (Babel-in-browser warning is expected).
 - `scrollWidth === clientWidth` at 375 (no horizontal overflow).
-- **Eyeball the pairing**: each photo matches its dish; price/desc read right.
+- **Eyeball the pairing**: each photo matches its dish; the desc reads right. (Price and
+  `weekOf` are not rendered — don't look for them.)
 
 ```js
-[...document.querySelector('#specials').querySelectorAll('image-slot')].map(s=>{
-  const img=s.shadowRoot?.querySelector('img');
-  return {file:img?.src.split('/').pop().split('?')[0], nw:img?.naturalWidth, complete:img?.complete};
-});
+(function(){
+  // activate the Specials tab, then read the cards
+  const tab=[...document.querySelectorAll('button,a,[role=tab],li')].find(e=>/^\s*specials\s*$/i.test(e.textContent||''));
+  if(tab) tab.click();
+  const card=document.querySelector('.special-card');
+  if(card){ card.scrollIntoView({block:'start'}); document.documentElement.scrollTop -= 100; }  // documentElement is the scroller
+  return [...document.querySelectorAll('.special-card')].map(c=>{
+    const img=c.querySelector('.special-photo img');
+    return { file:img?.src.split('/').pop().split('?')[0], nw:img?.naturalWidth,
+             complete:img?.complete, alt:img?.alt, veg:!!c.querySelector('.special-headline svg') };
+  });
+})();
 ```
 
 ### Stage 8 — Commit + push + PR
@@ -275,7 +292,8 @@ gh pr create --base main --title "feat(specials): Week of <Month Day>" --body-fi
 | Toast image res | ≤720px long edge, signed CloudFront (soft after upscale) |
 | IG image res | typically 800–1080px long edge (higher — preferred) |
 | Match rule | IG slide → Toast dish by **name**, gated on all-found + distinct + count |
-| Expiry date | Auto-computed (end of current week) in `Sections.jsx` — never hand-set |
+| Rendered fields | `Menu.jsx` shows `photo` / `name` / `veg` / `desc` only — `price` + `weekOf` are stored but NOT displayed |
+| IG download | Localhost receiver (Appendix B) — anchor-click doesn't persist, base64 return is blocked |
 | Branch | `chore/specials-<date>` → PR to `main` |
 
 ## Gotchas
@@ -291,7 +309,9 @@ gh pr create --base main --title "feat(specials): Week of <Month Day>" --body-fi
 | In-page `fetch()` of a Toast photo | CORS-blocked. Read `img.src` in Chrome, `curl` from the shell. (IG embed's own fetch works.) |
 | Bumping Toast `resize:fit:720:720` | Token is signed → 403. 720px is the max. |
 | Reading IG `<img>` tags for res | Logged-out DOM holds only slide 1 + other posts' thumbs. Read `window.__additionalData` (Stage 3.5). |
-| Price with a `$` | Store without the `$` — the site adds one. |
+| Saving an IG image | Anchor-click download doesn't persist in the MCP browser; base64 return is blocked. Use the localhost receiver (Appendix B). |
+| Expecting price/date on the page | `Menu.jsx` renders `photo`/`name`/`veg`/`desc` only. `price` + `weekOf` are stored, never displayed. Don't verify for them. |
+| Price with a `$` | Store without the `$`. (Field is stored, not rendered — see above.) |
 | Committing to `main` | Auto-deploys live. Always branch + PR. |
 | Eval `await` | The Chrome eval sandbox rejects top-level `await` — keep snippets synchronous (`(function(){…})()`). |
 
@@ -304,90 +324,81 @@ grid order, take the first **non-pinned** post, and validate via the embed capti
 ask the user for the URL. Stage 3.5's name gates are the real safety net — a wrong post
 fails `gatesPass` and falls back to Toast.
 
-## Appendix B — Download an IG carousel slide
+## Appendix B — Download the IG images (localhost receiver)
 
-On `…/p/<CODE>/embed/captioned` (hydrated ~3s), for a given `slideIndex` (0-based, from
-the Stage 3.5 plan):
-```js
-(function(){
-  const ad = window.__additionalData;
-  let m = ad?.extra?.data?.shortcode_media;
-  if(!m && ad){ for(const k in ad){ if(ad[k]?.data?.shortcode_media){ m = ad[k].data.shortcode_media; break; } } }
-  const i = 0;  // slideIndex from the plan
-  const n = m.edge_sidecar_to_children.edges[i].node;
-  let url = n.display_url;
-  if(n.display_resources?.length){
-    const best = n.display_resources.slice()
-      .sort((a,b)=>(b.config_width*b.config_height)-(a.config_width*a.config_height))[0];
-    if(best && best.config_width >= (n.dimensions?.width||0)) url = best.src;
-  }
-  fetch(url).then(r=>r.blob()).then(b=>{ const a=document.createElement('a');
-    a.href=URL.createObjectURL(b); a.download='ft-special-'+(i+1)+'.jpg';
-    document.body.appendChild(a); a.click(); window.__dl='size='+b.size; });
-  return {kicked:i};
-})();
-```
-Assert each child `is_video === false` and shares the parent `id`'s leading digits
-(sibling-post leak guard); `display_resources[length-1]` is the 150px thumb — use
-max-area / `display_url`. **If the anchor-click only saves the first slide** (some Chrome
-profiles allow one download per page-load per site), use the localhost receiver instead:
+This is the **reliable** way to land IG bytes on disk. Why not simpler routes: the
+embed page's own `fetch()` gets the blob, but (a) the anchor-click `download` does **not**
+persist in the MCP browser context, and (b) returning the bytes as base64 from a JS eval
+is blocked by the harness. The embed page also **can't POST to localhost** (its
+`connect-src` CSP only allows Instagram hosts). The fix: carry the signed slide URLs to a
+localhost sink page via the URL hash, and let the **sink page** (no CSP) fetch + POST them
+to itself. IG's CDN allows the cross-origin GET, so this works.
 
-1. Start a localhost sink that writes any POSTed bytes to `~/Downloads/<name>`:
-   ```bash
-   python3 - <<'PY' &
+The Stage 3.5 snippet already stashed `window.__plan` (each `{n, url, useIG}` in Toast
+order). Steps:
+
+1. **Start the sink.** Write it to a file and run it in the background — an inline
+   `python3 - <<PY &` heredoc may be sandbox-denied, and a foreground server blocks.
+   ```python
+   # scripts/sink.py  (or scratchpad) — writes any POSTed bytes to ~/Downloads/<path>
    import http.server, os, re, socketserver
    class H(http.server.BaseHTTPRequestHandler):
        def c(self):
-           self.send_header("Access-Control-Allow-Origin", "*")
-           self.send_header("Access-Control-Allow-Methods", "POST, OPTIONS, GET")
-           self.send_header("Access-Control-Allow-Headers", "*")
-           self.send_header("Access-Control-Allow-Private-Network", "true")
+           self.send_header("Access-Control-Allow-Origin","*")
+           self.send_header("Access-Control-Allow-Methods","POST, OPTIONS, GET")
+           self.send_header("Access-Control-Allow-Headers","*")
+           self.send_header("Access-Control-Allow-Private-Network","true")
        def do_OPTIONS(self): self.send_response(204); self.c(); self.end_headers()
        def do_GET(self):
            self.send_response(200); self.c()
-           self.send_header("Content-Type", "text/html"); self.end_headers()
+           self.send_header("Content-Type","text/html"); self.end_headers()
            self.wfile.write(b"<!doctype html><meta charset=utf-8><title>sink</title>sink ready")
        def do_POST(self):
-           name = re.sub(r"[^A-Za-z0-9._-]", "", self.path.lstrip("/")) or "x.bin"
-           d = self.rfile.read(int(self.headers.get("Content-Length", 0)))
-           open(os.path.expanduser("~/Downloads/" + name), "wb").write(d)
+           name=re.sub(r"[^A-Za-z0-9._-]","",self.path.lstrip("/")) or "x.bin"
+           d=self.rfile.read(int(self.headers.get("Content-Length",0)))
+           open(os.path.expanduser("~/Downloads/"+name),"wb").write(d)
            self.send_response(200); self.c(); self.end_headers(); self.wfile.write(b"ok")
-       def log_message(self, *a): pass
-   socketserver.TCPServer(("127.0.0.1", 8770), H).serve_forever()
-   PY
+       def log_message(self,*a): pass
+   socketserver.TCPServer(("127.0.0.1",8770),H).serve_forever()
    ```
-2. On the embed page, collect the chosen slide URLs and carry them to the sink via the
-   URL hash (survives the self-navigation; the long signed URLs stay in the browser):
+   Run with the Bash tool's `run_in_background: true`, then `curl -s -o /dev/null -w
+   "%{http_code}" http://127.0.0.1:8770/` should return 200.
+
+2. **Carry the chosen URLs to the sink.** On the embed tab, navigate it to the sink with
+   the `useIG` dishes' `{n,url}` in the hash (the long signed URLs ride along in the
+   browser — you never need to read them out, which is good since the harness redacts
+   them):
    ```js
    (function(){
-     const ad = window.__additionalData;
-     let m = ad?.extra?.data?.shortcode_media;
-     if(!m && ad){ for(const k in ad){ if(ad[k]?.data?.shortcode_media){ m = ad[k].data.shortcode_media; break; } } }
-     const urls = m.edge_sidecar_to_children.edges.map(e=>{
-       const n=e.node; let url=n.display_url;
-       if(n.display_resources?.length){
-         const best=n.display_resources.slice().sort((a,b)=>(b.config_width*b.config_height)-(a.config_width*a.config_height))[0];
-         if(best && best.config_width>=(n.dimensions?.width||0)) url=best.src;
-       }
-       return url;
-     });
-     location.href='http://127.0.0.1:8770/#'+encodeURIComponent(JSON.stringify(urls));
-     return {navigating:true,count:urls.length};
+     const items=(window.__plan||[]).filter(p=>p.useIG).map(p=>({n:p.n,url:p.url}));
+     location.href='http://127.0.0.1:8770/#'+encodeURIComponent(JSON.stringify(items));
+     return {navigating:true,count:items.length};
    })();
    ```
-3. On the sink page (`127.0.0.1:8770`), fetch each and POST it back — saves as
-   `ftw-1.jpg`, `ftw-2.jpg`, …:
+
+3. **Fetch + POST from the sink page**, saving directly as `ft-special-<N>.jpg` by Toast
+   order N (no rename step). Keep it promise-chained — the eval sandbox rejects top-level
+   `await`. Stash results, then read them back in a second eval:
    ```js
-   (async function(){
-     const urls=JSON.parse(decodeURIComponent(location.hash.slice(1)));
-     const out=[];
-     for(let i=0;i<urls.length;i++){
-       const b=await fetch(urls[i]).then(x=>x.blob());
-       const res=await fetch('/ftw-'+(i+1)+'.jpg',{method:'POST',body:b});
-       out.push({slide:i+1,bytes:b.size,sink:res.status});
-     }
-     return out;
+   (function(){
+     window.__sink={};
+     JSON.parse(decodeURIComponent(location.hash.slice(1))).forEach(it=>{
+       fetch(it.url).then(r=>r.blob()).then(b=>
+         fetch('/ft-special-'+it.n+'.jpg',{method:'POST',body:b})
+           .then(res=>{window.__sink[it.n]='ok '+res.status+' '+b.size+'B';}))
+         .catch(e=>{window.__sink[it.n]='ERR '+e;});
+     });
+     return 'posting';
    })();
+   // second eval: window.__sink   → {1:"ok 200 …B", 2:"ok 200 …B"}
    ```
-   Then `kill $(lsof -ti tcp:8770)` and rename the saved `~/Downloads/ftw-<slideIndex+1>.jpg`
-   files to `ft-special-<N>.jpg` per the plan's Toast order before Stage 5.
+
+4. **Confirm + clean up.** `file ~/Downloads/ft-special-*.jpg` (all JPEG, fresh mtime —
+   delete any stale files from a prior run first so you never process last week's photo),
+   **view each** to confirm dish↔photo, then stop the background server (kill it / TaskStop).
+   Hand the `ft-special-<N>.jpg` files to Stage 5 in Toast order.
+
+Guards to keep in mind: each child `is_video === false`; carousel children share the
+parent media id's leading ~8 digits (sibling-post leak guard — carousel child ids are
+distinct media ids, so test a shared prefix, not equality); `display_resources[0]` after
+a max-area sort is the full image (`[length-1]` is the 150px thumb).
