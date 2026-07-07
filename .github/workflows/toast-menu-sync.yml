@@ -25,6 +25,11 @@ on:
     # static site gets without a backend/webhook receiver.
     - cron: '*/5 12-20 * * *'
   workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Verify only — auth + pull from Toast and log counts, write/commit nothing'
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -52,10 +57,12 @@ jobs:
           TOAST_HOSTNAME: ${{ secrets.TOAST_HOSTNAME }}
           TOAST_VEG_MARKER: ${{ secrets.TOAST_VEG_MARKER }}
           TOAST_EXCLUDE_GROUPS: ${{ secrets.TOAST_EXCLUDE_GROUPS }}
+          TOAST_DRY_RUN: ${{ inputs.dry_run && '1' || '' }}
         run: node .github/scripts/toast-sync.mjs
 
       - name: Commit menu changes
         id: commit
+        if: ${{ !inputs.dry_run }}
         run: |
           set -euo pipefail
           if git diff --quiet -- data.js .github/scripts/.toast-menu-cache.json; then

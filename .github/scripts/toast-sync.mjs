@@ -188,16 +188,19 @@ async function main() {
     return
   }
 
+  const dryRun = !!process.env.TOAST_DRY_RUN
+
   const token = await login()
+  console.log('Auth OK.')
 
   // Menu base: only re-pull /menus when the published timestamp changed.
   const meta = await apiGet(token, '/menus/v2/metadata')
   const lastUpdated = meta?.lastUpdated || meta?.lastPublished || null
   let base = await loadCache()
-  if (!base || !base.lastUpdated || base.lastUpdated !== lastUpdated) {
+  if (dryRun || !base || !base.lastUpdated || base.lastUpdated !== lastUpdated) {
     base = buildBase(await apiGet(token, '/menus/v2/menus'))
     base.lastUpdated = lastUpdated
-    await saveCache(base)
+    if (!dryRun) await saveCache(base)
     console.log(`Pulled menu from Toast (lastUpdated=${lastUpdated}, ${base.items.length} items).`)
   } else {
     console.log(`Menu unchanged (lastUpdated=${lastUpdated}); using cached base (${base.items.length} items).`)
@@ -205,6 +208,14 @@ async function main() {
 
   // Stock: always checked; 86'ing does not change the menu timestamp.
   const oos = outOfStockSet(await apiGet(token, '/stock/v1/inventory'))
+
+  if (dryRun) {
+    console.log(`[dry-run] auth + menu + stock all reachable. Nothing written.`)
+    console.log(`[dry-run] ${base.categories.length} categories, ${base.items.length} items, ${oos.size} out of stock.`)
+    console.log(`[dry-run] categories: ${base.categories.map((c) => c.title).join(' · ')}`)
+    console.log(`[dry-run] veg items flagged: ${base.items.filter((i) => i.veg).length} (using marker ${JSON.stringify(VEG_MARKER)})`)
+    return
+  }
 
   const changed = await spliceDataJs(renderRegion(base, oos))
   console.log(changed
