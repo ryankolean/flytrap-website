@@ -44,9 +44,12 @@ const RESTAURANT_GUID = process.env.TOAST_RESTAURANT_GUID
 // Veg marker: a token Kara appends to a Toast item description to flag it
 // vegetarian. It is stripped from the displayed description and sets veg:true.
 const VEG_MARKER = process.env.TOAST_VEG_MARKER || '(v)'
-// Toast menu-group names to EXCLUDE from the website (internal / online-only),
-// comma-separated.
-const EXCLUDE_GROUPS = (process.env.TOAST_EXCLUDE_GROUPS || '')
+// Toast menu-group names to EXCLUDE from the website menu, comma-separated.
+// Default hides the retail groups (already shown in the hand-built Retail
+// section) and the Toast "Weekly Specials" group (specials stay on the
+// Instagram flow for now). Override with TOAST_EXCLUDE_GROUPS to change it.
+const EXCLUDE_GROUPS = (process.env.TOAST_EXCLUDE_GROUPS ||
+  'Weekly Specials,SWAT! Sauce,WHAM! Jam,Fly Trap Swag')
   .split(',').map(s => s.trim()).filter(Boolean)
 // Optional per-group presentation overrides keyed by Toast group name, so the
 // playful category titles + blurbs survive the pull. Example:
@@ -210,9 +213,16 @@ async function main() {
   const oos = outOfStockSet(await apiGet(token, '/stock/v1/inventory'))
 
   if (dryRun) {
+    const rows = base.categories.map((c) => {
+      const its = base.items.filter((i) => i.cat === c.id)
+      return { title: c.title, n: its.length, out: its.filter((i) => oos.has(i.guid)).length }
+    })
+    const shownOOS = rows.reduce((a, r) => a + r.out, 0)
     console.log(`[dry-run] auth + menu + stock all reachable. Nothing written.`)
-    console.log(`[dry-run] ${base.categories.length} categories, ${base.items.length} items, ${oos.size} out of stock.`)
-    console.log(`[dry-run] categories: ${base.categories.map((c) => c.title).join(' · ')}`)
+    console.log(`[dry-run] excluded groups: ${EXCLUDE_GROUPS.join(', ') || 'none'}`)
+    console.log(`[dry-run] SHOWN on site: ${base.categories.length} categories, ${base.items.length} items, ${shownOOS} out of stock.`)
+    console.log(`[dry-run] (Toast total out-of-stock across all groups incl. excluded: ${oos.size})`)
+    for (const r of rows) console.log(`[dry-run]   ${r.title}: ${r.n} items, ${r.out} out of stock`)
     console.log(`[dry-run] veg items flagged: ${base.items.filter((i) => i.veg).length} (using marker ${JSON.stringify(VEG_MARKER)})`)
     return
   }
