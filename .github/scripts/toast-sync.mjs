@@ -175,6 +175,33 @@ async function readJson(relPath) {
   return JSON.parse(await readFile(resolve(REPO_ROOT, relPath), 'utf8'))
 }
 
+// Write a human-readable markdown listing of every menu group + item, flagging
+// out-of-stock, whether the item carries a photo, and groups excluded by default.
+async function writeDump(payload, oos, path) {
+  const lines = ['# Toast menu dump', '']
+  const walk = (group) => {
+    const excluded = EXCLUDE_GROUPS.includes(group.name)
+    const items = group.menuItems || []
+    if (items.length) {
+      lines.push(`### ${group.name}${excluded ? ' _(excluded by default)_' : ''} — ${items.length} items`)
+      for (const it of items) {
+        const flags = []
+        if (oos.has(it.guid)) flags.push('OUT OF STOCK')
+        if (it.image) flags.push('photo')
+        const price = (it.price == null || it.price === '') ? '' : ` — $${Number(it.price).toFixed(2)}`
+        lines.push(`- ${it.name}${price}${flags.length ? '  [' + flags.join(', ') + ']' : ''}`)
+      }
+      lines.push('')
+    }
+    for (const sub of (group.menuGroups || [])) walk(sub)
+  }
+  for (const menu of (payload.menus || [])) {
+    lines.push(`## ${menu.name}`, '')
+    for (const group of (menu.menuGroups || [])) walk(group)
+  }
+  await writeFile(path, lines.join('\n') + '\n')
+}
+
 async function main() {
   // Offline path: transform a saved sample payload, no network.
   if (process.env.TOAST_MENUS_FIXTURE) {
@@ -200,8 +227,10 @@ async function main() {
   const meta = await apiGet(token, '/menus/v2/metadata')
   const lastUpdated = meta?.lastUpdated || meta?.lastPublished || null
   let base = await loadCache()
+  let payload = null
   if (dryRun || !base || !base.lastUpdated || base.lastUpdated !== lastUpdated) {
-    base = buildBase(await apiGet(token, '/menus/v2/menus'))
+    payload = await apiGet(token, '/menus/v2/menus')
+    base = buildBase(payload)
     base.lastUpdated = lastUpdated
     if (!dryRun) await saveCache(base)
     console.log(`Pulled menu from Toast (lastUpdated=${lastUpdated}, ${base.items.length} items).`)
@@ -211,6 +240,13 @@ async function main() {
 
   // Stock: always checked; 86'ing does not change the menu timestamp.
   const oos = outOfStockSet(await apiGet(token, '/stock/v1/inventory'))
+
+  // Full listing to a file, every group (incl. excluded), for review.
+  if (process.env.TOAST_DUMP && payload) {
+    await writeDump(payload, oos, process.env.TOAST_DUMP)
+    console.log(`[dump] wrote full menu listing to ${process.env.TOAST_DUMP}`)
+    return
+  }
 
   if (dryRun) {
     const rows = base.categories.map((c) => {
