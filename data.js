@@ -133,11 +133,11 @@ window.FT_DATA = {
   // photos onto the slots (they persist), or set `photo` to a committed file.
   // ---------------------------------------------------------------------------
   /* SPECIALS:START */
-  sourcePost: "https://order.toasttab.com/online/the-fly-trap-ferndale-22950-woodward-avenue",
+  sourcePost: "",
   weekOf: "Week of July 6",
   specials: [
-    { id: "special-1", name: "The Karen Gillan", desc: "It's lemon poundcake French toast! Served up with macerated Michigan strawberries and burnt butter cream cheese.", veg: true, price: "12.95", photo: "assets/specials/week-2026-07-06-1.jpg" },
-    { id: "special-2", name: "El Puerco Borracho", desc: "Pork carnitas swimming in beer soaked pintos served up with eggs how you like 'em, a jack cheese and scallion quesadilla, lime crema and salsa verde.", veg: false, price: "14.95", photo: "assets/specials/week-2026-07-06-2.jpg" },
+    { id: "special-1", name: "The Karen Gillan", desc: "It's lemon poundcake French toast! Served up with macerated Michigan strawberries and burnt butter cream cheese.", veg: true, photo: "assets/specials/toast-the-karen-gillan.jpg", price: "12.95" },
+    { id: "special-2", name: "El Puerco Borracho", desc: "Pork carnitas swimming in beer soaked pintos served up with eggs how you like 'em, a jack cheese and scallion quesadilla, lime crema and salsa verde.", veg: false, photo: "assets/specials/toast-el-puerco-borracho.jpg", price: "14.95" },
   ],
   /* SPECIALS:END */
   soup: { name: "Cream of Roasted Tomato & Fennel", desc: "Slow-roasted Roma tomatoes, fennel bulb, basil oil swirl, parmesan crisp on the side. Cup $5 / Bowl $6." },
