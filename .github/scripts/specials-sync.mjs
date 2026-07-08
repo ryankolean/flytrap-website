@@ -25,7 +25,7 @@
 //   node .github/scripts/specials-sync.mjs
 
 import { readFile, writeFile, mkdir, access } from 'node:fs/promises'
-import { fileURLToPath } from 'node:url'
+import { fileURLToPath, pathToFileURL } from 'node:url'
 import { dirname, resolve } from 'node:path'
 import specialsLib from '../../apps-script/lib/specials.js'
 
@@ -46,6 +46,44 @@ const DRY_RUN = !!process.env.TOAST_DRY_RUN
 
 const slug = (s) => String(s).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
 const exists = (p) => access(p).then(() => true, () => false)
+
+// Vegetarian detection. A "(v)" tag alone is unreliable (depends on Kara tagging
+// every dish), so the primary signal is inverted: a special is vegetarian unless
+// its Toast description names a meat/seafood. The VEG_MARKER stays as an explicit
+// override for mock-meat cases the word list would misread (e.g. "tempeh bacon").
+const MEAT_TERMS = [
+  // beef / red meat
+  'beef', 'steak', 'brisket', 'flank', 'ribeye', 'sirloin', 'pastrami', 'meatball', 'meatloaf',
+  'burger', 'hamburger', 'cheeseburger',
+  // pork
+  'pork', 'bacon', 'ham', 'sausage', 'chorizo', 'salami', 'pepperoni', 'prosciutto', 'pancetta',
+  'carnitas', 'ribs', 'bratwurst', 'kielbasa', 'guanciale',
+  // poultry
+  'chicken', 'turkey', 'duck', 'poultry',
+  // other land meat
+  'lamb', 'veal', 'goat', 'bison', 'venison', 'rabbit', 'gyro', 'meat',
+  // seafood (vegetarians exclude fish/shellfish)
+  'fish', 'salmon', 'tuna', 'cod', 'halibut', 'trout', 'anchovy', 'anchovies', 'sardine',
+  'mackerel', 'shrimp', 'prawn', 'crab', 'lobster', 'oyster', 'clam', 'mussel', 'scallop',
+  'squid', 'octopus', 'calamari', 'crawfish', 'crayfish', 'seafood',
+  // spanish (the menu uses them: "carnitas", "El Puerco", etc.)
+  'carne', 'pollo', 'cerdo', 'puerco', 'res', 'pescado', 'camaron', 'camarones', 'jamon',
+  'tocino', 'birria', 'barbacoa', 'chuleta',
+]
+const MEAT_RE = new RegExp(`\\b(?:${MEAT_TERMS.join('|')})\\b`, 'i')
+
+export function containsMeat(desc) {
+  return MEAT_RE.test(String(desc == null ? '' : desc))
+}
+
+// Returns { desc, veg }: desc with the veg marker stripped, veg = explicit marker
+// OR no meat term found.
+export function classifyVeg(rawDescription, marker = VEG_MARKER) {
+  const raw = String(rawDescription == null ? '' : rawDescription).trim()
+  const hasMarker = raw.includes(marker)
+  const desc = hasMarker ? raw.split(marker).join('').replace(/\s+/g, ' ').trim() : raw
+  return { desc, veg: hasMarker || !containsMeat(desc) }
+}
 
 async function login() {
   const r = await fetch(`${HOST}/authentication/v1/authentication/login`, {
@@ -100,9 +138,7 @@ function extractSpecials(payload) {
   if (!group) throw new Error(`Toast group "${SPECIALS_GROUP}" not found — refusing to touch specials.`)
   const items = (group.menuItems || []).filter((it) => it.image)
   return items.map((it) => {
-    const raw = (it.description || '').trim()
-    const veg = raw.includes(VEG_MARKER)
-    const desc = veg ? raw.split(VEG_MARKER).join('').replace(/\s+/g, ' ').trim() : raw
+    const { desc, veg } = classifyVeg(it.description)
     return {
       name: it.name,
       desc,
@@ -162,4 +198,7 @@ async function main() {
   console.log(`Wrote ${specials.length} specials to data.js${fixture ? ' [fixture, images skipped]' : ' (+ images)'}.`)
 }
 
-main().catch((e) => { console.error(String(e?.stack || e)); process.exit(1) })
+// Only run when executed directly (not when imported by tests).
+if (import.meta.url === pathToFileURL(process.argv[1] || '').href) {
+  main().catch((e) => { console.error(String(e?.stack || e)); process.exit(1) })
+}
