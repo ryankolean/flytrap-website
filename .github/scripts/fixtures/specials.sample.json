@@ -1,0 +1,23 @@
+{
+  "menus": [
+    {
+      "name": "Fly Trap Food",
+      "menuGroups": [
+        {
+          "name": "Weekly Specials",
+          "menuItems": [
+            { "name": "The Karen Gillan", "price": 12.95, "description": "It's lemon poundcake French toast! Served up with macerated Michigan strawberries and burnt butter cream cheese.", "image": "https://cdn.toasttab.com/sample/karen-gillan.jpg" },
+            { "name": "El Puerco Borracho", "price": 14.95, "description": "Pork carnitas swimming in beer soaked pintos served up with eggs how you like 'em, a jack cheese and scallion quesadilla, lime crema and salsa verde.", "image": "https://cdn.toasttab.com/sample/puerco-borracho.jpg" },
+            { "name": "Cup of Soup", "price": 5.0, "description": "Daily soup, no photo — should be dropped." }
+          ]
+        },
+        {
+          "name": "All Things Eggs",
+          "menuItems": [
+            { "name": "Green Eggs and Ham", "price": 14.95, "description": "Should be ignored — not a special." }
+          ]
+        }
+      ]
+    }
+  ]
+}
