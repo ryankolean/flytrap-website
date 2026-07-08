@@ -55,37 +55,36 @@ list — every item below is live on `main`._
 
 ---
 
-## Next up — Toast menu pull (the big one)
+## Toast integration — RESOLVED (specials-only automation, LIVE)
 
-Pull the **menu + specials dynamically from Toast** so the website updates whenever the
-restaurant updates Toast. Replaces the hand-maintained `data.js` menu and the
-Instagram-based specials flow.
+Investigated the full **menu + specials** pull from Toast. **Decision: automate only
+the specials.** Toast's full menu is ~245 items — the whole bar, Kid's menu,
+protein-variant duplicates, and `$0` POS artifacts (`***ADD ON***`, `NO BEV`, …) — so
+auto-regenerating the site menu from it would replace a clean, curated menu with noise
+for near-zero benefit (the standing menu rarely changes). The full-menu pipeline was
+built, then dropped once the live data made the tradeoff obvious (PR #56, closed).
 
-**Approach** (researched — only viable path):
+**Shipped & live** — specials auto-sync (#65 + first sync `211ea66`):
 
-- **Toast Standard API Access** — the restaurant self-issues its own client id/secret for
-  its own data (no commercial-partner onboarding). The public `order.toasttab.com` page is
-  Akamai-blocked, so scraping is out.
-- **Auth/data** — client credentials → bearer token; each request sends
-  `Toast-Restaurant-External-ID: <GUID>`. `GET /menus/v2/menus` returns menu groups → items
-  (name, description, price, image URLs); poll `/metadata` to detect changes.
-- **Architecture** — a **scheduled GitHub Action** authenticates to Toast, pulls the menu,
-  regenerates `data.js`, and commits on change → Pages auto-deploys. (No backend; the site
-  stays static.)
-- **Covers the asks** — dynamic items + descriptions + specials; specials as the default
-  menu tab; veg "green leaf" via a marker Kara adds in the Toast item description; pictures
-  for select items via Toast image URLs.
+- A **scheduled GitHub Action** (a few times/day) authenticates with Toast Standard API
+  Access (`menus:read`), reads the **"Weekly Specials"** menu group, keeps the items that
+  carry a **photo** (that's how the featured dishes are told apart from soup/muffins in the
+  same group), downloads each photo into `assets/specials/`, and rewrites only the
+  `/* SPECIALS:START…END */` block of `data.js` via the tested
+  `apps-script/lib/specials.js`. Commits on change → Pages redeploys. **No weekly
+  hand-edit; Toast is the source of truth.**
+- **Veg by meat-detection, not a tag.** A special is vegetarian unless its Toast
+  description names a meat/seafood (English + Spanish word list, word-boundary matched).
+  The `(v)` marker stays as an override for mock-meat ("tempeh bacon"). Unit-tested.
+- **Fallback:** any auth/API/download error writes nothing, so the last-good specials stay
+  live. The standing menu is never pulled — a Toast outage cannot touch it.
+- Setup + the conventions Kara controls in Toast: [docs/SPECIALS_SYNC.md](docs/SPECIALS_SYNC.md).
 
-**Blocked on Kara/Gavin:**
-1. Enable Standard API Access in Toast → client id + secret (stored as GitHub Actions secrets).
-2. The restaurant **GUID**.
-3. Confirm how **specials** are represented in Toast (a dedicated menu group?) and the
-   **veg-marker** convention in item descriptions.
+**The standing menu stays hand-curated** — deliberately not pulled from Toast.
 
-Once Toast is the source of truth, do the remaining coupled UI work:
-- **Menu becomes the home screen**, with the fly-trap logo as its header.
-- **Specials tab handles a variable count** from Toast (the tab itself already ships as the
-  default — #48; today it renders the Instagram-sourced specials).
+**Optional, not scheduled:**
+- **Menu-as-home-screen** with the fly-trap logo as its header (the specials tab already
+  ships as the default menu tab — #48).
 
 ---
 
