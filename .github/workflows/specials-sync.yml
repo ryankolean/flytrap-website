@@ -14,9 +14,10 @@ name: Specials sync
 
 on:
   schedule:
-    # 8a, 11a, 2p America/Detroit (EDT) — specials get set in the morning; a few
-    # checks a day is plenty for a weekly-cadence change.
-    - cron: '0 12,15,18 * * *'
+    # Every hour at :05 — poll Toast for menu/specials updates. Most runs are a
+    # no-op (nothing committed unless the specials actually changed). GitHub's
+    # scheduler is best-effort and can lag a few minutes.
+    - cron: '5 * * * *'
   workflow_dispatch:
     inputs:
       dry_run:
