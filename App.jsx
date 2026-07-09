@@ -525,12 +525,10 @@ window.Hero = function HeroWrap(props) {
   // Inverted hero: white field with electric-red branding (the inverse of the
   // red-field/white-branding hero). Logo + fly use the red glyph assets.
   return (
-    <header className="hero hero-solid" id="top" style={{ background: "var(--color-bg-white)", color: "var(--color-flytrap-red-deep)" }}>
+    <header className="hero hero-solid" id="top" style={{ background: "var(--color-checker-black)", color: "var(--color-flytrap-red-bright)" }}>
       <div className="hero-content">
-        <div className="hero-kicker" style={{ color: "var(--color-flytrap-red-deep)" }}>a finer diner</div>
         <div className="hero-wordmark-wrap">
-          <img className="hero-wordmark" src="assets/brand/flytrap-logo-red.png" alt="The Fly Trap" />
-          <img ref={flyRef} className="hero-fly" src="assets/brand/fly-red.png" alt="" aria-hidden="true" />
+          <img className="hero-wordmark" src="assets/brand/flytrap-logo-original-red.png" alt="The Fly Trap — a finer diner" />
         </div>
         <div className="hero-actions">
           <a

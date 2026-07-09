@@ -38,10 +38,10 @@ button { font-family: inherit; }
               border-color 250ms var(--ease-out);
 }
 .nav.scrolled {
-  background: rgba(255, 255, 255, 0.92);
+  background: rgba(0, 0, 0, 0.92);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  border-bottom-color: rgba(26, 26, 26, 0.1);
+  border-bottom-color: rgba(245, 238, 220, 0.12);
 }
 .nav.dark-bg { /* when over dark hero painting */
   color: var(--color-cream-paper);
@@ -243,8 +243,6 @@ button { font-family: inherit; }
 .hero {
   position: relative;
   width: 100%;
-  min-height: 100vh;
-  min-height: 100svh;
   overflow: hidden;
   color: var(--color-cream-paper);
   isolation: isolate;
@@ -278,17 +276,14 @@ button { font-family: inherit; }
 .hero-content {
   position: relative;
   width: 100%;
-  min-height: 100vh;
-  min-height: 100svh;
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
   text-align: center;
-  padding: 120px 20px 80px;
+  padding: 88px 20px 24px;
 }
 @media (min-width: 768px) {
-  .hero-content { padding: 140px 48px 96px; }
+  .hero-content { padding: 108px 48px 32px; }
 }
 
 .hero-kicker {
@@ -451,12 +446,13 @@ button { font-family: inherit; }
 
 /* hero meta strip — open status, hours, address */
 .hero-strip {
-  position: absolute;
-  bottom: 24px; left: 0; right: 0;
-  display: none;
-  justify-content: space-between;
+  position: static;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px 24px;
   align-items: center;
-  padding: 0 32px;
+  padding: 0 20px 22px;
   font-family: var(--font-sans);
   font-size: 12px;
   font-weight: 500;
