@@ -4,7 +4,7 @@ const { useState: uS, useEffect: uE, useMemo: uM, useCallback: uC, useRef: uR } 
 const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
   "heroMode": "solid",
   "heroColor": "flytrap-red-deep",
-  "aboutZone": "bg-white",
+  "aboutZone": "checker-black",
   "pressZone": "checker-black",
   "showRetail": true,
   "showPress": true,

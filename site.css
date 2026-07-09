@@ -9,7 +9,7 @@ html { scroll-behavior: smooth; }
 body {
   font-family: var(--font-sans);
   color: var(--color-text-ink);
-  background: var(--color-cream-paper);
+  background: var(--color-checker-black);
   overflow-x: hidden;
 }
 img { max-width: 100%; display: block; }
@@ -813,12 +813,12 @@ section { position: relative; }
    ABOUT — terracotta zone, two-up grid
    ============================================================ */
 .about {
-  background: var(--color-bg-white);
-  color: var(--color-flytrap-red-deep);
+  background: var(--color-checker-black);
+  color: var(--color-cream-paper);
 }
 .about .eyebrow,
-.about h2.title { color: var(--color-flytrap-red-deep); }
-.about .lede { color: var(--color-flytrap-red-deep); }
+.about h2.title { color: var(--color-flytrap-red-bright); }
+.about .lede { color: var(--color-cream-paper); }
 
 .about-grid {
   display: grid;
@@ -1154,12 +1154,12 @@ section { position: relative; }
    RETAIL
    ============================================================ */
 .retail {
-  background: var(--color-bg-white);
-  color: var(--color-flytrap-red-deep);
+  background: var(--color-checker-black);
+  color: var(--color-cream-paper);
 }
-.retail .eyebrow { color: var(--color-flytrap-red-deep); }
+.retail .eyebrow { color: var(--color-flytrap-red-bright); }
 /* Match the menu section headers (e.g. "This week's specials"): Fraunces italic 700. */
-.retail h2.title { color: var(--color-flytrap-red-deep); font-style: italic; font-weight: 700; }
+.retail h2.title { color: var(--color-flytrap-red-bright); font-style: italic; font-weight: 700; }
 .retail-grid {
   display: grid;
   grid-template-columns: 1fr;
