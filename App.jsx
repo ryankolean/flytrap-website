@@ -532,6 +532,15 @@ window.Hero = function HeroWrap(props) {
           <img className="hero-wordmark" src="assets/brand/flytrap-logo-red.png" alt="The Fly Trap" />
           <img ref={flyRef} className="hero-fly" src="assets/brand/fly-red.png" alt="" aria-hidden="true" />
         </div>
+        <div className="hero-actions">
+          <a
+            href="https://order.toasttab.com/online/the-fly-trap-ferndale-22950-woodward-avenue"
+            className="btn btn-ghost hero-cta-mobile"
+            style={{ color: "inherit", borderColor: "currentColor" }}
+            target="_blank"
+            rel="noopener"
+          >Order Takeout →</a>
+        </div>
       </div>
 
       <div className="hero-strip" style={{ color: "inherit" }}>
