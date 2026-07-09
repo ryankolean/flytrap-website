@@ -145,8 +145,8 @@ function Retail() {
     { name: "LA PICA – JALAPEÑO HOT SAUCE", desc: "¡OYE! MEXICAN-ISH IN STYLE WITH HERBACEOUS SPICES, EARTHLY JALAPEÑO & A GARLICKY ZING" },
     { name: "LIL' PRIK – THAI CHILI HOT SAUCE", desc: "THE SWEETEST OF THE BUNCH. THAI-ISH IN STYLE KICKED UP WITH CHILIES, TAMARI & CHARRED ONION" }] },
   { cls: "jam", label: "Wham! Jam", photo: "assets/retail/wham-jam.png", title: "Wham! Jam", desc: "These three flavors are always in stock: Strawberry Basil, Blackberry Ginger & Mango Tamarindo. Funky fun flavors are offered at the restaurant and bottled in limited quantities at the restaurant.", price: "$8 / jar", ask: "" },
-  { cls: "tees", label: "the fly trap", title: "Other Fly Trap Swag", desc: "Sometimes there are T-Shirts, sometimes sweatshirts, maybe pins, maybe patches, come see us to find out!", price: "", ask: "" },
-  { cls: "gift", label: "Gift Cards", title: "Gift Cards", desc: "Great gifts available in any denomination.", price: "", ask: "" }];
+  { cls: "gift", label: "Gift Cards", title: "Gift Cards", desc: "Great gifts available in any denomination.", price: "", ask: "" },
+  { cls: "tees", label: "the fly trap", title: "Other Fly Trap Swag", desc: "Sometimes there are T-Shirts, sometimes sweatshirts, maybe pins, maybe patches, come see us to find out!", price: "", ask: "" }];
 
   return (
     <section id="retail" className="section retail" data-screen-label="Retail">
