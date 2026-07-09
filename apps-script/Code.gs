@@ -23,15 +23,16 @@ function publishSpecials(payload) {
   }
   var s = payload.specials || [];
   for (var i = 0; i < s.length; i++) {
-    if (!s[i].name || !s[i].desc || !s[i].imageDataUrl) {
-      throw new Error('Special ' + (i + 1) + ' is missing a name, description, or photo.');
+    if (!s[i].name || !s[i].desc) {
+      throw new Error('Special ' + (i + 1) + ' is missing a name or description.');
     }
   }
 
   var week = isoWeek_();
-  var photos = s.map(function (x, i) { return 'assets/specials/week-' + week + '-' + (i + 1) + '.jpg'; });
+  // Photo is optional — a special with no image still publishes (photo: '').
   var specials = s.map(function (x, i) {
-    return { name: x.name, desc: x.desc, veg: !!x.veg, price: x.price || '', photo: photos[i] };
+    var photo = x.imageDataUrl ? ('assets/specials/week-' + week + '-' + (i + 1) + '.jpg') : '';
+    return { name: x.name, desc: x.desc, veg: !!x.veg, price: x.price || '', photo: photo };
   });
 
   var current = gh_('GET', '/repos/' + REPO + '/contents/data.js?ref=' + BRANCH);
@@ -43,9 +44,10 @@ function publishSpecials(payload) {
     { content: Utilities.base64Encode(Utilities.newBlob(newDataJs).getBytes()), encoding: 'base64' });
   var files = [{ path: 'data.js', sha: dataBlob.sha }];
   for (var j = 0; j < s.length; j++) {
+    if (!s[j].imageDataUrl) continue;
     var imgBlob = gh_('POST', '/repos/' + REPO + '/git/blobs',
       { content: dataUrlToBase64_(s[j].imageDataUrl), encoding: 'base64' });
-    files.push({ path: photos[j], sha: imgBlob.sha });
+    files.push({ path: specials[j].photo, sha: imgBlob.sha });
   }
 
   var ref = gh_('GET', '/repos/' + REPO + '/git/ref/heads/' + BRANCH);

@@ -71,10 +71,12 @@ function Menu() {
                 </div>
                 <div className="specials-grid">
                   {specials.map((s) => (
-                    <article className="special-card" key={s.id}>
-                      <div className="special-photo">
-                        <img src={s.photo} alt={s.name} loading="lazy" />
-                      </div>
+                    <article className={"special-card" + (s.photo ? "" : " no-photo")} key={s.id}>
+                      {s.photo ? (
+                        <div className="special-photo">
+                          <img src={s.photo} alt={s.name} loading="lazy" />
+                        </div>
+                      ) : null}
                       <div className="special-body">
                         <div className="special-headline">
                           <h3>{s.name}</h3>
