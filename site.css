@@ -38,10 +38,10 @@ button { font-family: inherit; }
               border-color 250ms var(--ease-out);
 }
 .nav.scrolled {
-  background: rgba(255, 255, 255, 0.92);
+  background: rgba(0, 0, 0, 0.92);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  border-bottom-color: rgba(26, 26, 26, 0.1);
+  border-bottom-color: rgba(245, 238, 220, 0.12);
 }
 .nav.dark-bg { /* when over dark hero painting */
   color: var(--color-cream-paper);
