@@ -946,6 +946,26 @@ section { position: relative; }
 }
 .menu-tabs button:hover:not(.on) { color: var(--color-flytrap-red-deep); border-color: var(--color-flytrap-red-deep); }
 
+/* Group 7 — sticky jump-nav (scrollspy). Stays under the fixed site nav while
+   the stacked menu sections scroll; a horizontal strip so 8 sections never wrap. */
+.menu-jumpnav {
+  position: sticky;
+  top: 56px;
+  z-index: 5;
+  background: #fff;
+  margin-bottom: 20px;
+  padding-top: 8px;
+}
+@media (min-width: 768px) { .menu-jumpnav { top: 62px; } }
+.menu-jumpnav .menu-tabs {
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.menu-jumpnav .menu-tabs::-webkit-scrollbar { display: none; }
+.menu-jumpnav .menu-tabs button { flex: 0 0 auto; }
+
 .menu-filters {
   display: flex;
   align-items: center;
