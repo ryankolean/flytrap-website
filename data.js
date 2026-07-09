@@ -82,13 +82,17 @@ window.FT_DATA = {
     { cat: "drinks", nm: "Lil' Can o' V-8", desc: "", price: "2.50", veg: true },
     { cat: "drinks", nm: "Grapefruit Juice", desc: "Sm $1.95 · Lg $2.95.", price: "1.95", veg: true },
   ],
+  // BLOCKED / UNVERIFIED: every entry below is placeholder copy, not a real
+  // citation. Owner review pending (Sean, 7/8: "Is the Metro Times quote real?").
+  // Do not ship as-is. Replace outlet/title with confirmed press and set `url`
+  // to the real article link — items with an empty `url` render non-clickable.
   press: [
-    { year: "2018", outlet: "Food Network Magazine", title: "50 States, 50 Breakfasts — Michigan picks the Fly Trap." },
-    { year: "2016", outlet: "The Detroit News", title: "Profile of the room, the cooks, and why the eggs are like that." },
-    { year: "2014", outlet: "Metro Times", title: "A long love letter to the marble bar and the seventeen flies." },
-    { year: "2012", outlet: "Detroit Free Press", title: "21 Great Breakfasts — we made the cut." },
-    { year: "2011", outlet: "Diners, Drive-Ins and Dives", title: "Guy Fieri orders the Cowboy Curtis. He says it's nuts." },
-    { year: "2009", outlet: "NBC Nightly News", title: "A short segment on the Ferndale revival, filmed at Table 4." },
+    { year: "2018", outlet: "Food Network Magazine", title: "50 States, 50 Breakfasts — Michigan picks the Fly Trap.", url: "" },
+    { year: "2016", outlet: "The Detroit News", title: "Profile of the room, the cooks, and why the eggs are like that.", url: "" },
+    { year: "2014", outlet: "Metro Times", title: "A long love letter to the marble bar and the seventeen flies.", url: "" },
+    { year: "2012", outlet: "Detroit Free Press", title: "21 Great Breakfasts — we made the cut.", url: "" },
+    { year: "2011", outlet: "Diners, Drive-Ins and Dives", title: "Guy Fieri orders the Cowboy Curtis. He says it's nuts.", url: "" },
+    { year: "2009", outlet: "NBC Nightly News", title: "A short segment on the Ferndale revival, filmed at Table 4.", url: "" },
   ],
   // Daily buzz — rotating weekly schedule
   buzz: [

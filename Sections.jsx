@@ -191,19 +191,24 @@ function Press() {
           <div className="eyebrow">In the news</div>
           <h2 className="title">People keep writing about us.</h2>
         </div>
-        <p className="press-pull reveal">A long love letter to the marble bar and the seventeen flies.</p>
-        <p className="press-pull-attr reveal">— Metro Times</p>
+        {/* BLOCKED: pull-quote hidden pending owner confirmation that this Metro
+            Times quote is real (Sean, 7/8). Restore with a verified quote + attr. */}
         <div className="press-list reveal">
-          {items.map((it, i) =>
-          <a key={i} className="press-item" href="#" onClick={(e) => e.preventDefault()}>
-              <span className="year">{it.year}</span>
-              <span className="body">
-                <span className="outlet">{it.outlet}</span>
-                <span className="title">{it.title}</span>
-              </span>
-              <span className="arrow">↗</span>
-            </a>
-          )}
+          {items.map((it, i) => {
+            const inner = (
+              <React.Fragment>
+                <span className="year">{it.year}</span>
+                <span className="body">
+                  <span className="outlet">{it.outlet}</span>
+                  <span className="title">{it.title}</span>
+                </span>
+                {it.url ? <span className="arrow">↗</span> : null}
+              </React.Fragment>
+            );
+            return it.url ?
+            <a key={i} className="press-item" href={it.url} target="_blank" rel="noopener">{inner}</a> :
+            <div key={i} className="press-item is-static">{inner}</div>;
+          })}
         </div>
       </div>
     </section>);
