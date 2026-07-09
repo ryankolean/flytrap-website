@@ -36,9 +36,15 @@ function About() {
             <h2 className="title">Why 'The Fly Trap'?</h2>
             <p className="lede">The doors of The Fly Trap: a finer diner were eagerly thrown open for the first time on December 28th 2004. We welcomed our first customers and started our magnificent life as a business that continues on through today.</p>
 
-            <p className="lede">Along with our beloved and inquisitive customers came the many questions of our origin. The most important of which we will address right here and now… "Why?" they asked. "Why did you name your restaurant The Fly Trap?"</p>
+            <p className="lede">Along with our beloved and inquisitive customers came the many questions of our origin. The most important of which we will address right here and now… “Why?” they asked. “Why did you name your restaurant The Fly Trap?”</p>
 
             <p className="about-pull">We always swore we would make up some exciting folklore tale of the origin of our now-venerated name, but we never quite came up with a story glorious enough to do justice to the wonderment.</p>
+
+            <p className="lede">So now, in a moment of honesty, for the eyes of our website visitors ONLY, we give you the real skinny on the naming of our restaurant. We had been toiling arduously at the restaurant for many weeks when we knew it was time to give our creation a name. We took a small respite from our renovations and decided to brainstorm over a few cocktails. We wrote down many different names, and with whisky as our muse combined The Fly Trap, which we thought was a punchy homage to our predecessor, with a finer diner, which was a quick rhythmic summation of the vision for our creation.</p>
+
+            <p className="lede">We proceeded to have fun with the name by calling our specials the “daily buzz” and our carry-out business “on the fly”. After ten years in business we now have alcohol and call this part of our business “bar fly.” This was the point we knew we needn’t search any further, we had found our identity.</p>
+
+            <p className="lede">Sure, we had to deal with the people that nobly declared “I would never eat at a place called The Fly Trap” and our family and friends thinking that we had a failure-wish, but we think with our unusual name we weeded out the closed-minded few and impressed the adventurous many with a bona fide finer diner. Our name also gets the credit for directing the attention of the Food Network’s Diners, Drive-Ins and Dives here to Ferndale, MI and put our little spot on the national map.</p>
           </div>
         </div>
       </div>
@@ -145,8 +151,8 @@ function Retail() {
     { name: "LA PICA – JALAPEÑO HOT SAUCE", desc: "¡OYE! MEXICAN-ISH IN STYLE WITH HERBACEOUS SPICES, EARTHLY JALAPEÑO & A GARLICKY ZING" },
     { name: "LIL' PRIK – THAI CHILI HOT SAUCE", desc: "THE SWEETEST OF THE BUNCH. THAI-ISH IN STYLE KICKED UP WITH CHILIES, TAMARI & CHARRED ONION" }] },
   { cls: "jam", label: "Wham! Jam", photo: "assets/retail/wham-jam.png", title: "Wham! Jam", desc: "These three flavors are always in stock: Strawberry Basil, Blackberry Ginger & Mango Tamarindo. Funky fun flavors are offered at the restaurant and bottled in limited quantities at the restaurant.", price: "$8 / jar", ask: "" },
-  { cls: "tees", label: "the fly trap", title: "Other Fly Trap Swag", desc: "Sometimes there are T-Shirts, sometimes sweatshirts, maybe pins, maybe patches, come see us to find out!", price: "", ask: "" },
-  { cls: "gift", label: "Gift Cards", title: "Gift Cards", desc: "Great gifts available in any denomination.", price: "", ask: "" }];
+  { cls: "gift", label: "Gift Cards", title: "Gift Cards", desc: "Great gifts available in any denomination.", price: "", ask: "" },
+  { cls: "tees", label: "the fly trap", title: "Other Fly Trap Swag", desc: "Sometimes there are T-Shirts, sometimes sweatshirts, maybe pins, maybe patches, come see us to find out!", price: "", ask: "" }];
 
   return (
     <section id="retail" className="section retail" data-screen-label="Retail">
@@ -243,7 +249,6 @@ function Visit() {
               <a href="mailto:dine@theflytrapferndale.com">dine@theflytrapferndale.com</a>
               <a href="https://www.instagram.com/theflytrapferndale/" target="_blank" rel="noopener">@theflytrapferndale</a>
             </div>
-            <p className="visit-note">Walk in, sit down — the cooks know you.</p>
           </div>
 
           <div className="visit-card reveal">
