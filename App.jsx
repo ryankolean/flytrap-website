@@ -268,7 +268,7 @@ function App() {
 
   return (
     <React.Fragment>
-      <Nav scrolled={scrolled} darkBg={false} pastHero={pastHero} onNavigate={navigate} currentPage={page} />
+      <Nav scrolled={scrolled} pastHero={pastHero} onNavigate={navigate} />
 
       {page === "home" ?
       <main>
@@ -283,16 +283,7 @@ function App() {
           <BackFly />
         </main> :
 
-      <main>
-          <Hero onOpenMenu={() => navigate("#menu")} heroColor={tweaks.heroColor} />
-          <Menu />
-          <About />
-          <DishScroll />
-          {tweaks.showRetail ? <Retail /> : null}
-          {tweaks.showPress ? <Press /> : null}
-          <Visit />
-          <Footer onNavigate={navigate} />
-        </main>
+      <DailyBuzzPage onBack={backHome} />
       }
 
       <window.TweaksPanel title="Tweaks">
@@ -357,173 +348,10 @@ function App() {
 // Solid-color hero
 window.Hero = function HeroWrap(props) {
   const isOpen = window.useOpenNow();
-  const flyRef = uR(null);
 
-  // Scroll-linked hero fly: its flight is locked to scroll position (not time).
-  // It rests in the open whitespace above the wordmark and, as you scroll, rides
-  // up-and-left a fixed gap above the rising copy — so it never touches the hero
-  // text — then parks and dissolves into the upper-left header lockup.
-  uE(() => {
-    const fly = flyRef.current;
-    if (!fly) return;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-
-    let anchor = null;  // fly's own (untransformed) box center — x viewport, y page (scroll-independent)
-    let target = null;  // nav lockup-fly center — viewport coords (the nav is fixed)
-    let perchX = 0;     // resting x (viewport): above the final "p" of "the fly trap"
-    let refTop = 0;     // topmost hero-text edge in page space; its viewport y is refTop - scrollY
-    let gap = 0;        // vertical clearance the fly always keeps above the wordmark top
-    let dockS = 1;      // scroll position at which the fly reaches the lockup height and parks
-    let flyW = 0;       // fly width — scales the wander + loop so they stay proportional
-    let flyH = 0;       // fly height — for header/hero clearance math
-    let navBoxes = [];  // visible header content (links / CTA / burger) the fly must clear
-
-    const measure = () => {
-      const host = fly.offsetParent;
-      if (!host) return;
-      const hr = host.getBoundingClientRect();
-      anchor = {
-        x: hr.left + fly.offsetLeft + fly.offsetWidth / 2,
-        y: hr.top + window.scrollY + fly.offsetTop + fly.offsetHeight / 2
-      };
-      const wm = document.querySelector(".hero-wordmark");
-      const wr = (wm || host).getBoundingClientRect();
-      perchX = wr.left + wr.width * 0.9;
-      flyW = fly.offsetWidth;
-      flyH = fly.offsetHeight;
-      // Rest the fly on the kicker's row — right of "a finer diner", above the "p".
-      // Negative gap centers it on that line; it still lifts above every line of copy
-      // the instant you scroll (rise tracks scroll 1:1, drift is slow).
-      const kicker = document.querySelector(".hero-kicker");
-      const kr = kicker ? kicker.getBoundingClientRect() : null;
-      const kH = kr ? kr.height : flyH;
-      gap = -(kH / 2);
-      // Ride above the TOPMOST hero-text edge (the kicker sits just above the
-      // wordmark) so the fly clears every line of copy, not only the wordmark.
-      let topY = wr.top + window.scrollY;
-      [".hero-kicker", ".hero-lead", ".hero-actions"].forEach((sel) => {
-        const el = document.querySelector(sel);
-        if (el) topY = Math.min(topY, el.getBoundingClientRect().top + window.scrollY);
-      });
-      refTop = topY;
-      const lock = document.querySelector(".nav .lockup-fly") || document.querySelector(".nav .lockup");
-      const lr = lock ? lock.getBoundingClientRect() : null;
-      target = lr && lr.width ?
-        { x: lr.left + lr.width / 2, y: lr.top + lr.height / 2 } :
-        { x: 44, y: 34 };
-      dockS = Math.max(120, refTop - gap - target.y);
-
-      // Visible header content the flight must never cross (the lockup is excluded —
-      // it is hidden at dock time and is the fly's destination).
-      navBoxes = [".nav-links", ".nav-cta", ".nav-burger"]
-        .map((sel) => document.querySelector(sel))
-        .filter(Boolean)
-        .map((el) => {
-          const cs = getComputedStyle(el);
-          const r = el.getBoundingClientRect();
-          return (cs.display !== "none" && +cs.opacity > 0.5 && r.width > 0) ?
-            { left: r.left, right: r.right, bottom: r.bottom } : null;
-        })
-        .filter(Boolean);
-    };
-
-    let raf = 0;
-
-    // Full flight position at scroll depth s — a pure function, so render can also
-    // sample s + ds and orient the fly along its direction of travel.
-    const flyPos = (s) => {
-      const xp = Math.min(1, Math.max(0, s / dockS));
-      const ex = xp * xp * (3 - 2 * xp);
-
-      // Ride a fixed gap above the topmost copy; drift left toward the lockup.
-      const baseY = Math.max(target.y, (refTop - s) - gap);
-      const baseX = perchX + (target.x - perchX) * ex;
-
-      // Three-phase path: an upward loop that breaks right + up, a downward loop that
-      // dives back down behind the "a finer diner" kicker (the hero copy layers over
-      // the fly), then a decaying serpentine into the upper-left lockup.
-      const B0 = 0.2, B1 = 0.45;
-      let ox = 0, oy = 0;
-      if (xp < B0) {
-        const t = xp / B0;                                     // Phase 1 — upward loop (right, then up)
-        const ph = t * Math.PI * 2;
-        ox += Math.sin(ph) * (flyW * 1.0);
-        oy += -(1 - Math.cos(ph)) * (flyW * 1.2);              // bulges UP
-      } else if (xp < B1) {
-        const t = (xp - B0) / (B1 - B0);                       // Phase 2 — downward loop, behind the kicker
-        const ph = t * Math.PI * 2;
-        ox += Math.sin(ph) * (flyW * 0.9);
-        oy += (1 - Math.cos(ph)) * (flyW * 0.8);               // dives DOWN, occluded by the copy
-      } else {
-        const t = (xp - B1) / (1 - B1);                        // Phase 3 — serpentine into the lockup
-        const d = 1 - t;                                       // amplitude decays into the corner
-        ox += Math.sin(t * Math.PI * 3) * (flyW * 0.8) * d;    // zig-zag across the drift
-        oy += -Math.abs(Math.sin(t * Math.PI * 3)) * (flyW * 0.35) * d;
-      }
-
-      let x = baseX + ox;
-      let y = baseY + oy;
-
-      // Header clamp: if the fly's x overlaps a visible nav item, keep it below that item;
-      // in clear x it may rise near the top edge, giving the loop room.
-      let ceil = 0;
-      for (let i = 0; i < navBoxes.length; i++) {
-        const b = navBoxes[i];
-        if (x + flyW * 0.5 > b.left && x - flyW * 0.5 < b.right) ceil = Math.max(ceil, b.bottom);
-      }
-      const minY = ceil > 0 ? (ceil + flyH * 0.5 + 5) : (flyH * 0.35);
-      if (minY < baseY && y < minY) y = minY;
-
-      return {
-        x: x,
-        y: y,
-        scale: 1 - 0.5 * ex,                                   // gradual 50% shrink as it flies off
-        opacity: 0.9 * (1 - Math.min(1, Math.max(0, (xp - 0.72) / 0.28)))
-      };
-    };
-
-    // Smoothing: instead of snapping the fly to f(scrollY) on each scroll event, ease a
-    // displayed scroll value toward the real one every animation frame. That inserts extra
-    // in-between frames between coarse (e.g. mouse-wheel) scroll steps -> smoother motion.
-    let dispS = window.scrollY;
-    const SMOOTH = 0.5;                 // ease fraction per frame — lower = smoother / more frames
-    const MAX_LAG = 22;                 // cap the lag below the 30px hero clearance so never-touch holds
-    const render = () => {
-      raf = 0;
-      if (!anchor || !target) return;
-      const realS = window.scrollY;
-      dispS += (realS - dispS) * SMOOTH;
-      if (dispS < realS - MAX_LAG) dispS = realS - MAX_LAG;
-      if (dispS > realS + MAX_LAG) dispS = realS + MAX_LAG;
-      if (Math.abs(realS - dispS) < 0.3) dispS = realS;
-      const cur = flyPos(dispS);
-      const tx = cur.x - anchor.x;
-      const ty = cur.y - (anchor.y - realS);   // place vs the REAL box position (it scrolls with realS)
-      fly.style.transform = "translate(" + tx.toFixed(2) + "px," + ty.toFixed(2) + "px) scale(" + cur.scale.toFixed(3) + ")";
-      fly.style.opacity = cur.opacity.toFixed(3);
-      if (Math.abs(realS - dispS) > 0.1) raf = requestAnimationFrame(render);   // keep easing toward target
-    };
-
-    const onScroll = () => { if (!raf) raf = requestAnimationFrame(render); };
-    const onResize = () => { dispS = window.scrollY; measure(); render(); };
-
-    measure();
-    render();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onResize);
-    window.addEventListener("load", onResize);
-    const settle = setTimeout(onResize, 400); // re-measure once brand images lay out
-    return () => {
-      window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", onResize);
-      window.removeEventListener("load", onResize);
-      clearTimeout(settle);
-      if (raf) cancelAnimationFrame(raf);
-    };
-  }, []);
-
-  // Inverted hero: white field with electric-red branding (the inverse of the
-  // red-field/white-branding hero). Logo + fly use the red glyph assets.
+  // Compact hero: black field, electric-red original-form logo (the art includes
+  // "a finer diner" and the fly). Shrink-on-scroll is driven from App's scroll
+  // handler; menu/specials ride directly beneath.
   return (
     <header className="hero hero-solid" id="top" style={{ background: "var(--color-checker-black)", color: "var(--color-flytrap-red-bright)" }}>
       <div className="hero-content">

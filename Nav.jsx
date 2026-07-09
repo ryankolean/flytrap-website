@@ -1,5 +1,5 @@
 // Sticky navigation + mobile drawer
-function Nav({ scrolled, darkBg, pastHero, onNavigate, currentPage }) {
+function Nav({ scrolled, pastHero, onNavigate }) {
   const [open, setOpen] = useState(false);
   const isOpen = window.useOpenNow();
 
@@ -21,15 +21,13 @@ function Nav({ scrolled, darkBg, pastHero, onNavigate, currentPage }) {
     onNavigate(href);
   };
 
-  // While the drawer is open the nav sits on the cream drawer bg, so force
-  // the scrolled/light-bg color scheme (dark wordmark + dark burger + cream
-  // bg) regardless of whether the underlying hero is dark.
+  // While the drawer is open, force the scrolled scheme so the nav bar reads
+  // against the drawer instead of the hero.
   const navScrolled = scrolled || open;
-  const navDarkBg = darkBg && !navScrolled;
 
   return (
     <React.Fragment>
-      <nav className={"nav" + (navScrolled ? " scrolled" : "") + (navDarkBg ? " dark-bg" : "")}>
+      <nav className={"nav" + (navScrolled ? " scrolled" : "")}>
         <div className="nav-inner">
           <a className={"lockup" + (pastHero ? " show" : "")} href="#top" onClick={(e) => handleClick(e, "#top")} aria-label="The Fly Trap — home">
             <img className="lockup-wordmark" src="assets/brand/flytrap-logo-original-red.png" alt="The Fly Trap — a finer diner" />
@@ -51,7 +49,7 @@ function Nav({ scrolled, darkBg, pastHero, onNavigate, currentPage }) {
         </div>
       </nav>
 
-      <div className={"drawer" + (open ? " open" : "")} aria-hidden={!open}>
+      <div className={"drawer" + (open ? " open" : "")} aria-hidden={!open} inert={open ? undefined : ""}>
         <ul>
           {links.map(l => (
             <li key={l.href}>

@@ -54,7 +54,8 @@ function Menu() {
     const y = window.scrollY + el.getBoundingClientRect().top - siteH - navH - 8;
     setActive(id);
     clickLock.current = Date.now() + 700;
-    window.scrollTo({ top: y, behavior: "smooth" });
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    window.scrollTo({ top: y, behavior: reduceMotion ? "auto" : "smooth" });
   };
 
   return (
@@ -65,19 +66,18 @@ function Menu() {
           <div className="menu-inner">
 
             <div className="menu-toolbar menu-jumpnav" ref={navRef}>
-              <div className="menu-tabs" role="tablist" aria-label="Jump to a menu section">
+              <nav className="menu-tabs" aria-label="Jump to a menu section">
                 {sections.map((s) => (
                   <button
                     key={s.id}
                     className={s.id === active ? "on" : ""}
                     onClick={() => jumpTo(s.id)}
-                    role="tab"
-                    aria-selected={s.id === active}
+                    aria-current={s.id === active ? "location" : undefined}
                   >
                     {s.title}
                   </button>
                 ))}
-              </div>
+              </nav>
             </div>
 
             <div className="menu-cat" id="menu-sec-specials">
