@@ -532,7 +532,6 @@ window.Hero = function HeroWrap(props) {
           <img className="hero-wordmark" src="assets/brand/flytrap-logo-red.png" alt="The Fly Trap" />
           <img ref={flyRef} className="hero-fly" src="assets/brand/fly-red.png" alt="" aria-hidden="true" />
         </div>
-        <p className="hero-lead" style={{ color: "inherit" }}>A neighborhood diner on Woodward, Buzzin' since 2004.</p>
       </div>
 
       <div className="hero-strip" style={{ color: "inherit" }}>
