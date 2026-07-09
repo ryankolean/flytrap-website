@@ -45,6 +45,18 @@ function Menu() {
     return () => obs.disconnect();
   }, []);
 
+  // Follow the active section: slide the sticky tab strip horizontally so the
+  // current section's tab stays in view as you scroll (and on click-jump).
+  useEffect(() => {
+    const strip = navRef.current && navRef.current.querySelector(".menu-tabs");
+    if (!strip) return;
+    const btn = strip.querySelector("button.on");
+    if (!btn) return;
+    const target = btn.offsetLeft - strip.clientWidth / 2 + btn.offsetWidth / 2;
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    strip.scrollTo({ left: Math.max(0, target), behavior: reduceMotion ? "auto" : "smooth" });
+  }, [active]);
+
   const jumpTo = (id) => {
     const el = document.getElementById("menu-sec-" + id);
     if (!el) return;
