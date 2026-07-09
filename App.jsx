@@ -533,15 +533,6 @@ window.Hero = function HeroWrap(props) {
           <img ref={flyRef} className="hero-fly" src="assets/brand/fly-red.png" alt="" aria-hidden="true" />
         </div>
         <div className="hero-actions">
-          <a href="#menu" className="btn btn-primary" onClick={(e) => {e.preventDefault();props.onOpenMenu && props.onOpenMenu();}}>
-            See the Menu
-          </a>
-          <a
-            href="#visit"
-            className="btn btn-ghost hero-cta-desktop"
-            style={{ color: "inherit", borderColor: "currentColor" }}
-            onClick={(e) => {e.preventDefault();const el = document.querySelector("#visit");if (el) window.scrollTo({ top: el.offsetTop - 70, behavior: "smooth" });}}
-          >Visit Us →</a>
           <a
             href="https://order.toasttab.com/online/the-fly-trap-ferndale-22950-woodward-avenue"
             className="btn btn-ghost hero-cta-mobile"
