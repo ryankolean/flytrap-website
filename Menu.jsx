@@ -68,7 +68,6 @@ function Menu() {
               <div className="menu-specials" key="specials">
                 <div className="menu-cat">
                   <h3>This week's specials</h3>
-                  <p className="sub">What the cooks are running this week. Get it before it's gone.</p>
                 </div>
                 <div className="specials-grid">
                   {specials.map((s) => (
