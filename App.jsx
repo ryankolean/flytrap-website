@@ -161,6 +161,7 @@ function App() {
   const [tweaks, setTweak] = window.useTweaks(TWEAK_DEFAULTS);
 
   uE(() => {
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const onScroll = () => {
       const y = window.scrollY;
       setScrolled(y > 40);
@@ -168,6 +169,16 @@ function App() {
       // "the fly trap" scrolls up past the nav's lower edge, and back out on scroll-up.
       const heroWm = document.querySelector(".hero-wordmark");
       if (heroWm) {
+        // Shrink + lift + fade the hero logo off the page as you scroll through the hero,
+        // handing off to the small nav lockup. Skipped under reduced-motion.
+        if (!reduceMotion) {
+          const heroEl = heroWm.closest(".hero");
+          const heroH = heroEl ? heroEl.offsetHeight : window.innerHeight;
+          const p = Math.min(1, Math.max(0, y / (heroH * 0.85)));
+          heroWm.style.transformOrigin = "50% 0";
+          heroWm.style.transform = "scale(" + (1 - 0.4 * p).toFixed(3) + ") translateY(" + (-p * 20).toFixed(1) + "px)";
+          heroWm.style.opacity = (1 - p).toFixed(3);
+        }
         const navEl = document.querySelector(".nav");
         const navB = navEl ? navEl.getBoundingClientRect().bottom : 70;
         setPastHero(heroWm.getBoundingClientRect().bottom <= navB);
