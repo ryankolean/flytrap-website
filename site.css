@@ -43,9 +43,6 @@ button { font-family: inherit; }
   -webkit-backdrop-filter: blur(10px);
   border-bottom-color: rgba(245, 238, 220, 0.12);
 }
-.nav.dark-bg { /* when over dark hero painting */
-  color: var(--color-cream-paper);
-}
 .nav-inner {
   max-width: 1180px;
   margin: 0 auto;
@@ -71,7 +68,6 @@ button { font-family: inherit; }
   filter: none;
   transition: filter 200ms;
 }
-.nav .lockup .lockup-fly { height: 24px; }
 
 .nav-links {
   display: none;
@@ -98,7 +94,6 @@ button { font-family: inherit; }
   transition: transform 200ms var(--ease-out);
 }
 .nav-links a:hover::after { transform: scaleX(1); }
-.nav.dark-bg:not(.scrolled) .nav-links a { color: var(--color-cream-paper); text-shadow: 0 1px 3px rgba(0,0,0,.4); }
 
 .nav-cta {
   display: none;
@@ -117,17 +112,6 @@ button { font-family: inherit; }
 }
 .nav-cta:hover { background: var(--color-flytrap-red-bright); border-color: var(--color-flytrap-red-bright); color: var(--color-cream-paper); }
 .nav-cta:active { transform: translateY(1px); }
-/* Over the dark/red hero the solid-red button blends in — flip to a cream fill for contrast */
-.nav.dark-bg:not(.scrolled) .nav-cta {
-  background: var(--color-cream-paper);
-  color: var(--color-flytrap-red-deep);
-  border-color: var(--color-cream-paper);
-}
-.nav.dark-bg:not(.scrolled) .nav-cta:hover {
-  background: transparent;
-  color: var(--color-cream-paper);
-  border-color: var(--color-cream-paper);
-}
 
 .nav-burger {
   display: flex;
@@ -145,10 +129,9 @@ button { font-family: inherit; }
   border-radius: 2px;
   transition: transform 200ms, opacity 150ms, background 200ms;
 }
-.nav.dark-bg:not(.scrolled) .nav-burger span { background: var(--color-cream-paper); }
-.nav-burger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); background: var(--color-checker-black); }
+.nav-burger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); background: var(--color-cream-paper); }
 .nav-burger.open span:nth-child(2) { opacity: 0; }
-.nav-burger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); background: var(--color-checker-black); }
+.nav-burger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); background: var(--color-cream-paper); }
 
 @media (min-width: 880px) {
   .nav-burger { display: none; }
@@ -247,31 +230,8 @@ button { font-family: inherit; }
   color: var(--color-cream-paper);
   isolation: isolate;
 }
-.hero.hero-solid .hero-kicker { text-shadow: none; }
 .hero.hero-solid .hero-wordmark { filter: none; }
-.hero.hero-solid .hero-lead { text-shadow: none; }
 .hero.hero-solid .hero-strip { text-shadow: none; }
-.hero-bg {
-  position: absolute; inset: 0;
-  z-index: -2;
-  background: var(--color-checker-black);
-}
-.hero-slide {
-  position: absolute; inset: 0;
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  opacity: 0;
-  transition: opacity 1500ms var(--ease-in-out);
-}
-.hero-slide.active { opacity: 1; }
-.hero-overlay {
-  position: absolute; inset: 0;
-  z-index: -1;
-  background:
-    linear-gradient(180deg, rgba(0,0,0,.45) 0%, rgba(0,0,0,.15) 30%, rgba(0,0,0,.55) 100%),
-    linear-gradient(135deg, rgba(153,47,30,.25), rgba(212,165,116,.15));
-}
 
 .hero-content {
   position: relative;
@@ -286,25 +246,6 @@ button { font-family: inherit; }
   .hero-content { padding: 108px 48px 32px; }
 }
 
-.hero-kicker {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  font-family: var(--font-script);
-  font-size: 28px;
-  line-height: 1;
-  color: var(--color-cream-paper);
-  text-shadow: 0 2px 8px rgba(0,0,0,.5);
-  margin-bottom: 8px;
-  align-self: center;
-  transform: rotate(-2deg);
-}
-.hero-kicker::before,
-.hero-kicker::after {
-  content: '';
-  width: 36px; height: 1px;
-  background: currentColor;
-}
 
 /* Wordmark wrapper — positioning context so the fly can perch on the letters */
 .hero-wordmark-wrap {
@@ -326,41 +267,10 @@ button { font-family: inherit; }
 /* Hero copy sits ABOVE the background fly. Raise the wordmark IMG and each copy
    element individually — never `.hero-wordmark-wrap`, which would become a
    stacking context and trap the absolutely-positioned fly in front of the letters. */
-.hero-kicker,
 .hero-wordmark,
-.hero-lead,
 .hero-actions {
   position: relative;
   z-index: 2;
-}
-
-/* Cut-out brand fly — perched at the top of the wordmark letters.
-   Buzzes up and away when the hero scrolls; returns to the same spot on scroll-up. */
-.hero-fly {
-  position: absolute;
-  /* Fluid size + lift: smaller on phones, scales with the viewport, capped on
-     desktop. The lift tracks the width (~0.6x) so the fly stays perched on the
-     letter tops at every screen size. */
-  top: clamp(-42px, -6vw, -20px);
-  right: 6%;
-  /* Background layer: the fly keeps its natural stacking level and the hero copy
-     is lifted ABOVE it with positive z-index (see the `.hero-kicker, .hero-wordmark,
-     .hero-lead, .hero-actions` rule above). Positive z on the content is honored
-     cross-browser; a negative z on this composited (will-change) element was not. */
-  width: clamp(22px, 4.5vw, 30px);
-  height: auto;
-  opacity: .9;
-  transform: translate(0, 0) scale(1);
-  transform-origin: center;
-  filter: drop-shadow(0 3px 10px rgba(0,0,0,.4));
-  pointer-events: none;
-  /* Position + opacity are driven per frame by the scroll handler in App.jsx
-     (HeroWrap), keeping the flight locked to scroll speed. No CSS transition
-     here on purpose — it would lag behind the scroll. */
-  will-change: transform, opacity;
-}
-@media (min-width: 768px) {
-  .hero-fly { right: 8%; }
 }
 
 /* Second fly — free flyer that follows the reader down the back of the page.
@@ -381,17 +291,6 @@ button { font-family: inherit; }
 }
 @media (prefers-reduced-motion: reduce) { .back-fly { display: none; } }
 
-.hero-lead {
-  font-family: var(--font-serif);
-  font-weight: 400;
-  font-size: 18px;
-  line-height: 1.5;
-  max-width: 36ch;
-  margin: 0 0 32px;
-  color: var(--color-cream-paper);
-  text-shadow: 0 1px 8px rgba(0,0,0,.6);
-}
-@media (min-width: 768px) { .hero-lead { font-size: 22px; max-width: 42ch; } }
 
 .hero-actions {
   display: flex;
@@ -399,12 +298,10 @@ button { font-family: inherit; }
   justify-content: center;
   gap: 12px;
 }
-/* CTA visibility — mobile sees Order Takeout, desktop sees Today's Buzz / Visit Us.
-   Selector uses .btn.hero-cta-* to outrank the later `.btn { display: inline-flex }` rule. */
-.btn.hero-cta-desktop { display: none; }
+/* CTA visibility — the Order Takeout CTA shows on mobile only; desktop reaches
+   Order via the nav. Selector uses .btn.hero-cta-mobile to outrank `.btn`. */
 .btn.hero-cta-mobile { display: inline-flex; }
 @media (min-width: 768px) {
-  .btn.hero-cta-desktop { display: inline-flex; }
   .btn.hero-cta-mobile { display: none; }
 }
 .btn {
@@ -466,8 +363,8 @@ button { font-family: inherit; }
 .hero-strip .open-now { display: inline-flex; align-items: center; gap: 8px; }
 .hero-strip .open-now .dot {
   width: 8px; height: 8px; border-radius: 50%;
-  background: #4CD17A;
-  box-shadow: 0 0 12px #4CD17A;
+  background: #2A8A4E;
+  box-shadow: 0 0 12px #2A8A4E;
 }
 .hero-strip .open-now.closed .dot { background: #9A9A9A; box-shadow: none; }
 @media (min-width: 1024px) { .hero-strip { display: flex; } }
@@ -645,7 +542,7 @@ section { position: relative; }
 /* Specials tab inside the menu reuses .special-card, but renders the photo as a
    plain <img> (the standalone Specials section uses <image-slot>). Give it the
    same absolute-fill sizing so it fills the 1:1 photo box. */
-.menu-specials .special-photo img {
+#menu-sec-specials .special-photo img {
   position: absolute;
   inset: 0;
   width: 100%;
@@ -903,7 +800,6 @@ section { position: relative; }
   padding-bottom: 20px;
   border-bottom: 1px dashed rgba(26,26,26,.18);
 }
-.menu-toolbar .menu-filters { justify-content: flex-start; }
 @media (min-width: 768px) {
   .menu-toolbar { gap: 16px; }
 }
@@ -946,13 +842,13 @@ section { position: relative; }
    the stacked menu sections scroll; a horizontal strip so 8 sections never wrap. */
 .menu-jumpnav {
   position: sticky;
-  top: 56px;
+  top: 74px;
   z-index: 5;
   background: #fff;
   margin-bottom: 20px;
   padding-top: 8px;
 }
-@media (min-width: 768px) { .menu-jumpnav { top: 62px; } }
+@media (min-width: 768px) { .menu-jumpnav { top: 86px; } }
 .menu-jumpnav .menu-tabs {
   flex-wrap: nowrap;
   overflow-x: auto;
@@ -962,36 +858,6 @@ section { position: relative; }
 .menu-jumpnav .menu-tabs::-webkit-scrollbar { display: none; }
 .menu-jumpnav .menu-tabs button { flex: 0 0 auto; }
 
-.menu-filters {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  font-size: 12px;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  font-weight: 600;
-  color: var(--color-text-charcoal);
-}
-.toggle {
-  display: inline-flex; align-items: center; gap: 8px; cursor: pointer; user-select: none;
-}
-.toggle input { position: absolute; opacity: 0; }
-.toggle .track {
-  width: 36px; height: 20px;
-  background: rgba(26,26,26,.2);
-  border-radius: 99px;
-  position: relative;
-  transition: background 200ms;
-}
-.toggle .track::after {
-  content: ''; position: absolute; top: 2px; left: 2px;
-  width: 16px; height: 16px; border-radius: 50%;
-  background: #fff;
-  box-shadow: 0 1px 2px rgba(0,0,0,.2);
-  transition: transform 200ms;
-}
-.toggle input:checked + .track { background: #4A7A2A; }
-.toggle input:checked + .track::after { transform: translateX(16px); }
 
 /* category section */
 .menu-cat {
@@ -1108,7 +974,6 @@ section { position: relative; }
 /* Dish scroll — key dishes carousel that replaces the old paintings gallery */
 .dishes {
   background: var(--color-checker-black);
-  border-top: 1px solid rgba(245,238,220,.12);
   padding: 56px 0 60px;
 }
 .dishes .eyebrow { color: var(--color-flytrap-red-bright); }
@@ -1506,7 +1371,7 @@ section { position: relative; }
   font-size: 14px;
 }
 .hours tr.today {
-  background: linear-gradient(90deg, rgba(204,68,51,.15), transparent);
+  background: linear-gradient(90deg, rgba(253,0,3,.15), transparent);
 }
 .hours tr.today td:first-child {
   color: var(--color-flytrap-red-bright);
@@ -1624,7 +1489,7 @@ footer {
 @media (min-width: 768px) {
   .footer-grid { grid-template-columns: 1.4fr 1fr 1fr 1fr; gap: 32px; }
 }
-.footer-brand img { height: 36px; width: auto; filter: brightness(1.05); }
+.footer-brand img { height: 36px; width: auto; }
 .footer-brand .tag {
   font-family: var(--font-script);
   font-size: 22px;
@@ -1703,7 +1568,7 @@ footer {
   font-size: 56px;
   line-height: 1;
   margin: 0 0 8px;
-  color: var(--color-flytrap-red-deep);
+  color: var(--color-checker-black);
   letter-spacing: -0.02em;
 }
 @media (min-width: 768px) { .db-hero h1 { font-size: 96px; } }
@@ -1855,6 +1720,12 @@ footer {
 
 @media (prefers-reduced-motion: reduce) {
   .reveal { opacity: 1; transform: none; transition: none; }
-  .hero-slide { transition: none; }
+  html { scroll-behavior: auto; }
   * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}
+
+/* Keyboard focus — visible ring on all interactive controls (QA a11y) */
+:where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+  outline: 2px solid var(--color-flytrap-red-bright);
+  outline-offset: 2px;
 }
