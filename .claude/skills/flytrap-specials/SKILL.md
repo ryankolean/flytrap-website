@@ -101,8 +101,9 @@ https://order.toasttab.com/online/the-fly-trap-ferndale-22950-woodward-avenue
 
 ### Stage 2 — Extract the "Weekly Specials" group (Toast = source of record)
 Run in the Toast tab (Chrome `javascript_tool`). Keys off each **dish photo**, returns
-one record per plated special — `{ name, price (no $), desc, img }`. Soup/muffins have
-no photo, so they're excluded:
+one record per plated special — `{ name, price (no $), desc, veg, img }`. Soup/muffins have
+no photo, so they're excluded. `veg` is read from the leafy-green glyph (🥬 `U+1F96C`)
+Kara adds in the Toast description; the glyph is stripped out of `desc`:
 ```js
 (function(){
   const h=[...document.querySelectorAll('h1,h2,h3,h4,[role=heading]')]
@@ -116,8 +117,11 @@ no photo, so they're excluded:
     const priceM=card.innerText.match(/\$\s?(\d+(?:\.\d{2})?)/);
     const lines=card.innerText.split('\n').map(s=>s.trim()).filter(Boolean)
       .filter(l=>l!==name && !/^\$/.test(l) && !/out of stock/i.test(l));
-    const desc=lines.sort((a,b)=>b.length-a.length)[0]||'';
-    return {name, price:priceM?priceM[1]:null, desc, img:im.src};
+    const descRaw=lines.sort((a,b)=>b.length-a.length)[0]||'';
+    const veg=/\u{1F96C}/u.test(descRaw);                              // 🥬 = vegetarian (Kara's Toast tag)
+    const desc=descRaw.replace(/\u{1F96C}\uFE0F?/gu,'')          // strip the glyph for display
+      .replace(/\s{2,}/g,' ').replace(/\s+([.,;!?])/g,'$1').trim();
+    return {name, price:priceM?priceM[1]:null, desc, veg, img:im.src};
   });
 })();
 ```
@@ -127,9 +131,12 @@ names, text, and prices.**
 
 ### Stage 3 — Parse into N specials
 Per record: **name** (keep curly apostrophes), **desc** (the composed-dish sentence),
-**price** (stored without `$`, e.g. `"12.95"`), **veg** (`true` if no meat/fish;
-sausage/bacon/pork/carnitas/brisket/chicken/crab/shrimp/salmon → `false`; ambiguous →
-ask). An "OUT OF STOCK" dish is still valid to list — flag it.
+**price** (stored without `$`, e.g. `"12.95"`), **veg** (straight from Stage 2: `true`
+only when the Toast description carries the 🥬 `U+1F96C` glyph Kara adds — **not** guessed
+from ingredients; Stage 2 already stripped the glyph out of `desc`). If a dish reads
+vegetarian but has no 🥬, leave `veg:false` and flag the gap to the user rather than
+overriding — Kara's tag is the source of truth. An "OUT OF STOCK" dish is still valid to
+list — flag it.
 
 ### Stage 3.5 — Choose the photo source per dish (IG-first, name-matched)
 If you have an IG specials post URL, open its embed in a **fresh Chrome tab** and let
@@ -270,6 +277,7 @@ gh pr create --base main --title "feat(specials): Week of <Month Day>" --body-fi
 | IG handle / hashtag | `@theflytrapferndale` / `#flytrapspecials` |
 | Specials data | `data.js` → between `/* SPECIALS:START */` … `/* SPECIALS:END */` |
 | Per special | `{ id: "special-N", name, desc, veg:<bool>, price:"NN.NN" (no $), photo }` |
+| Vegetarian mark | `veg:true` iff the Toast description contains 🥬 `U+1F96C` (Kara's tag); the glyph is stripped from `desc`. Never guessed from ingredients. |
 | Excluded from specials | Mini Muffins, Bowl/Cup of Soup — site soup/pastry are separate hand-edited fields |
 | Photos | `assets/specials/week-<YYYY-MM-DD>-<N>.jpg`, 1080², 1-based, N = Toast order |
 | Toast image res | ≤720px long edge, signed CloudFront (soft after upscale) |
@@ -288,6 +296,7 @@ gh pr create --base main --title "feat(specials): Week of <Month Day>" --body-fi
 | Pairing IG by slide position | Wrong. Match by **name** (Stage 3.5 gates). A reordered/stale post would swap photos. |
 | IG post ≠ this week | `gatesPass:false` → use Toast photos for all, flag to user. Never guess. |
 | Including soup / muffins | Not site specials. Pull only photo'd plated dishes; leave soup/pastry hand-edited. |
+| Guessing veg from ingredients | Wrong. `veg` = the 🥬 `U+1F96C` glyph in the Toast desc, nothing else. No glyph → `veg:false`, even if it looks meatless — flag the gap, don't override. (Soup uses a legacy `(v)` text tag, but soup isn't a special.) |
 | In-page `fetch()` of a Toast photo | CORS-blocked. Read `img.src` in Chrome, `curl` from the shell. (IG embed's own fetch works.) |
 | Bumping Toast `resize:fit:720:720` | Token is signed → 403. 720px is the max. |
 | Reading IG `<img>` tags for res | Logged-out DOM holds only slide 1 + other posts' thumbs. Read `window.__additionalData` (Stage 3.5). |
