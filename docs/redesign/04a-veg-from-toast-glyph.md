@@ -3,22 +3,33 @@
 **Owner feedback (Sean, 7/8):** *"Kara is able to insert a green leaf in the description of a menu or special item in Toast. She is actively adding these descriptions today … think it is better if this could be controlled by whether or not the description contains the green leaf."*
 
 ## Goal
-Derive the vegetarian mark from the presence of a leaf glyph in the item's Toast description, instead of a manual/heuristic `veg` flag.
+Derive the vegetarian mark from the presence of a glyph in the item's Toast description, instead of a manual/heuristic `veg` flag.
 
-## Current state
-- Site **menu** `veg` flags are hand-set booleans in `data.js`; `Menu.jsx` renders `<VegLeaf />` when `veg` is true. The menu is hand-built, not Toast-pulled.
-- Only **specials** come from Toast (via the `flytrap-specials` skill, outside this repo).
-- The footer legend for the mark shipped separately as Group 4b (#71).
+## Confirmed from Toast — pulled 2026-07-09
+Read the live Toast ordering menu (behind Cloudflare, via Chrome) and scanned every item description for emoji-range glyphs.
+
+- **Exact glyph: 🥬 `U+1F96C` (LEAFY GREEN).** Single code point — **no** variation selector (`U+FE0F`) and **no** ZWJ sequence. It is the only emoji-range glyph anywhere on the menu.
+- **Not** a literal green leaf. Sean's email said "green leaf" (🌿 / 🍃); Kara is actually using 🥬. **Confirm which is canonical** — detection must key off whatever Kara actually types, i.e. 🥬 today.
+- **Placement:** always at the **end** of the description. Spacing is inconsistent — sometimes a leading space (`… Provolone. 🥬`), sometimes none (`… toast.🥬`). Detection and stripping must be whitespace-insensitive.
+- **Tagged so far (5 of many veg items):** Veggie Rumble, The Boot, Huevos Rancheros, Eggs ala Simple, Slacker. All 5 are genuinely vegetarian (no false tags). **Kara's tagging is incomplete** — e.g. Gingerbread Waffle, Oatmeal, Granola, salads, Tempting Tempeh, Tofu Fried Rice are veg but not yet marked.
+
+## Detection spec (ready to implement)
+```js
+const VEG_GLYPH = "\u{1F96C}";                 // 🥬 LEAFY GREEN
+const isVeg   = (desc) => desc.includes(VEG_GLYPH);
+const stripVeg = (desc) => desc.replace(/\s*\u{1F96C}\s*$/u, "").trim();  // remove trailing glyph for display
+```
 
 ## Work (once unblocked)
-1. Toast-pull (specials) — in the `flytrap-specials` skill, set `veg: true` when the Toast description contains the agreed leaf glyph; strip the glyph from the displayed text. (Change lives in `~/.claude/skills/flytrap-specials`, not this repo.)
-2. Hand-built menu — decide: keep manual `veg` booleans in `data.js`, or also honor a leaf glyph if Kara maintains descriptions in Toast for menu items too.
-3. `Menu.jsx` — if we detect from a description string, add a shared `isVeg(desc)` helper used by both specials and menu items.
+1. **Specials (primary):** in the `flytrap-specials` skill Stage 3, replace the no-meat keyword heuristic with `isVeg(desc)` off 🥬, and `stripVeg(desc)` before storing `desc`. Change lives in `~/.claude/skills/flytrap-specials` (**outside this repo**).
+2. **Hand-built menu:** decide — keep manual `veg` booleans in `data.js`, or sync from Toast. If synced, guard against Kara's partial tagging (a glyph-only flip today would **under-mark** ~15 veg dishes that are currently correct via manual flags).
+3. `Menu.jsx` / shared: if detecting from a string, add the `isVeg` / `stripVeg` helpers above.
+4. **Site mark vs Toast glyph:** the site renders a leaf-outline `VegLeaf` SVG (Group 4b legend, #71); Toast uses 🥬. Pick the canonical on-site mark — detection keys off 🥬 regardless of what the site displays.
 
 ## BLOCKED on
-1. **Kara** finishing the leaf glyph in Toast descriptions.
-2. **Confirm the exact glyph** — 🌿 vs 🍃 vs ☘ vs an inline SVG — so detection + the Group 4b legend match.
-3. Decision on whether the hand-built menu switches mechanism or stays manual.
+1. **Kara** finishing the 🥬 tagging in Toast (5 done, more veg items outstanding).
+2. ~~Confirm the exact glyph~~ — **RESOLVED: 🥬 `U+1F96C`** (pulled 2026-07-09).
+3. Decision on whether the hand-built menu switches to glyph-detection or stays manual (see under-marking risk above).
 
 ## Status
-Draft, blocked. Placeholder for the detection change; primary logic is in the specials skill.
+Draft, blocked. Glyph confirmed; primary logic is in the specials skill. Do not flip the hand-built menu until Kara's tagging is complete.
