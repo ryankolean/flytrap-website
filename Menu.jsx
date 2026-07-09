@@ -68,14 +68,15 @@ function Menu() {
               <div className="menu-specials" key="specials">
                 <div className="menu-cat">
                   <h3>This week's specials</h3>
-                  <p className="sub">What the cooks are running this week. Get it before it's gone.</p>
                 </div>
                 <div className="specials-grid">
                   {specials.map((s) => (
-                    <article className="special-card" key={s.id}>
-                      <div className="special-photo">
-                        <img src={s.photo} alt={s.name} loading="lazy" />
-                      </div>
+                    <article className={"special-card" + (s.photo ? "" : " no-photo")} key={s.id}>
+                      {s.photo ? (
+                        <div className="special-photo">
+                          <img src={s.photo} alt={s.name} loading="lazy" />
+                        </div>
+                      ) : null}
                       <div className="special-body">
                         <div className="special-headline">
                           <h3>{s.name}</h3>
@@ -121,6 +122,7 @@ function Menu() {
             </p>
 
             <div className="menu-foot">
+              <span className="veg-legend"><VegLeaf /> = Vegetarian. All dishes can also be made vegan with modifications (except the Mac).</span><br />
               All menu items available for carry out.<br />
               Consuming raw or undercooked meats, shellfish, or eggs may increase the risk of foodborne illness.
             </div>
