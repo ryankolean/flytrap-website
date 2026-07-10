@@ -139,6 +139,7 @@ window.FT_DATA = {
   weekOf: "Week of July 6",
   specials: [
     { id: "special-1", name: "The Ali Wong", desc: "Eggs how you like 'em served up with quinoa green goddess cakes, lime ginger dressed greens, whipped goat cheese and hoisin sauce. Yup, toast.", veg: false, photo: "assets/specials/toast-the-ali-wong.jpg", price: "13.95" },
+    { id: "special-2", name: "The Lou Costello", desc: "House made Calabrian chili and provolone sausage sitting atop an egg rumble of herby oven dried tomatoes, arugula, caramelized onion and gorgonzola. Browns and toast.", veg: false, photo: "assets/specials/toast-the-lou-costello.jpg", price: "15.95" },
   ],
   /* SPECIALS:END */
   soup: { name: "Cream of Roasted Tomato & Fennel", desc: "Slow-roasted Roma tomatoes, fennel bulb, basil oil swirl, parmesan crisp on the side. Cup $5 / Bowl $6." },
