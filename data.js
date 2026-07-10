@@ -82,13 +82,15 @@ window.FT_DATA = {
     { cat: "drinks", nm: "Lil' Can o' V-8", desc: "", price: "2.50", veg: true },
     { cat: "drinks", nm: "Grapefruit Juice", desc: "Sm $1.95 · Lg $2.95.", price: "1.95", veg: true },
   ],
+  // Verified press only. Every link resolves; titles avoid invented headlines.
+  // Sources: the restaurant's own press page (theflytrapferndale.com) + Islands (2026).
   press: [
-    { year: "2018", outlet: "Food Network Magazine", title: "50 States, 50 Breakfasts — Michigan picks the Fly Trap." },
-    { year: "2016", outlet: "The Detroit News", title: "Profile of the room, the cooks, and why the eggs are like that." },
-    { year: "2014", outlet: "Metro Times", title: "A long love letter to the marble bar and the seventeen flies." },
-    { year: "2012", outlet: "Detroit Free Press", title: "21 Great Breakfasts — we made the cut." },
-    { year: "2011", outlet: "Diners, Drive-Ins and Dives", title: "Guy Fieri orders the Cowboy Curtis. He says it's nuts." },
-    { year: "2009", outlet: "NBC Nightly News", title: "A short segment on the Ferndale revival, filmed at Table 4." },
+    { outlet: "Diners, Drive-Ins and Dives", title: "Guy Fieri features the Fly Trap on Food Network — home of the Red Chili Salmon Burger.", url: "https://www.foodnetwork.com/restaurants/mi/ferndale/the-fly-trap-restaurant" },
+    { year: "2026", outlet: "Islands", title: "Michigan's funky Ferndale diner — a friendly, creative stop featured by Guy Fieri.", url: "https://www.islands.com/2075049/the-fly-trap-ferndale-michigan-funky-diner-friendly-creative-featured-guy-fieri/" },
+    { outlet: "Food Network Magazine", title: "50 States, 50 Breakfasts — Michigan's pick.", url: "https://www.foodnetwork.com/recipes/packages/breakfast/50-states-50-breakfasts.html" },
+    { outlet: "Detroit Free Press", title: "21 Great Breakfasts.", url: "http://www.theflytrapferndale.com/Articles/FreePress.pdf" },
+    { outlet: "The Detroit News", title: "The Fly Trap, a finer diner in Ferndale.", url: "http://www.theflytrapferndale.com/Articles/DetroitNews.pdf" },
+    { outlet: "Metro Times", title: "The Fly Trap in the Metro Times.", url: "http://www.theflytrapferndale.com/Articles/MetroTimes.pdf" },
   ],
   // Daily buzz — rotating weekly schedule
   buzz: [

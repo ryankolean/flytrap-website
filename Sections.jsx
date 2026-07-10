@@ -197,12 +197,12 @@ function Press() {
           <div className="eyebrow">In the news</div>
           <h2 className="title">People keep writing about us.</h2>
         </div>
-        <p className="press-pull reveal">A long love letter to the marble bar and the seventeen flies.</p>
-        <p className="press-pull-attr reveal">— Metro Times</p>
+        <p className="press-pull reveal">"Too gorgeous to eat in the kitchen."</p>
+        <p className="press-pull-attr reveal">— Guy Fieri · Diners, Drive-Ins and Dives</p>
         <div className="press-list reveal">
           {items.map((it, i) =>
-          <a key={i} className="press-item" href="#" onClick={(e) => e.preventDefault()}>
-              <span className="year">{it.year}</span>
+          <a key={i} className="press-item" href={it.url} target="_blank" rel="noopener">
+              {it.year ? <span className="year">{it.year}</span> : <span className="year" aria-hidden="true" />}
               <span className="body">
                 <span className="outlet">{it.outlet}</span>
                 <span className="title">{it.title}</span>
