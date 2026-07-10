@@ -138,7 +138,7 @@ window.FT_DATA = {
   sourcePost: "",
   weekOf: "Week of July 6",
   specials: [
-    { id: "special-1", name: "The Riz Ahmed", desc: "A rumble of eggs with roasted hearts of palm, feta, jalapeños, red onion and greens topped with za'atar spice; comes with browns and toast.", veg: false, photo: "", price: "13.95" },
+    { id: "special-1", name: "The Ali Wong", desc: "Eggs how you like 'em served up with quinoa green goddess cakes, lime ginger dressed greens, whipped goat cheese and hoisin sauce. Yup, toast.", veg: false, photo: "assets/specials/toast-the-ali-wong.jpg", price: "13.95" },
   ],
   /* SPECIALS:END */
   soup: { name: "Cream of Roasted Tomato & Fennel", desc: "Slow-roasted Roma tomatoes, fennel bulb, basil oil swirl, parmesan crisp on the side. Cup $5 / Bowl $6." },
