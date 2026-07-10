@@ -710,26 +710,79 @@ section { position: relative; }
   color: var(--color-cream-paper);
 }
 .about .eyebrow,
-.about h2.title { color: var(--color-flytrap-red-bright); }
-.about .lede { color: var(--color-cream-paper); }
+.about h2.title,
+.about-dateline { color: var(--color-flytrap-red-bright); }
 
-.about-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 40px;
-  max-width: 760px;
+/* Editorial origin story: masthead, drop cap, featured pull-quote */
+.about-editorial {
+  max-width: 720px;
   margin-inline: auto;
+}
+.about-masthead {
+  text-align: center;
+  margin-bottom: 38px;
+  padding-bottom: 26px;
+  border-bottom: 1px solid rgba(245,238,220,.18);
+}
+.about-masthead .eyebrow { justify-content: center; }
+.about-masthead h2.title { margin-bottom: 14px; }
+.about-dateline {
+  font-family: var(--font-sans);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+.about-body {
+  font-family: var(--font-serif);
+  font-size: 18px;
+  line-height: 1.7;
+  color: var(--color-cream-paper);
+  margin: 0 0 22px;
+  text-wrap: pretty;
+}
+@media (min-width: 768px) { .about-body { font-size: 19px; } }
+.about-body:last-child { margin-bottom: 0; }
+
+.about-lead::first-letter {
+  float: left;
+  font-family: var(--font-serif);
+  font-weight: 700;
+  font-size: 4.4em;
+  line-height: 0.82;
+  padding: 6px 12px 0 0;
+  color: var(--color-flytrap-red-bright);
+}
+.about-lead::first-line {
+  font-variant: small-caps;
+  letter-spacing: 0.02em;
 }
 
 .about-pull {
   font-family: var(--font-serif);
   font-style: italic;
-  font-size: 28px;
-  line-height: 1.3;
-  margin: 32px 0 12px;
+  font-size: 26px;
+  line-height: 1.35;
+  text-align: center;
+  color: var(--color-cream-paper);
   text-wrap: balance;
+  margin: 36px 0;
+  padding: 24px 0 28px;
+  border-top: 1px solid rgba(245,238,220,.22);
+  border-bottom: 1px solid rgba(245,238,220,.22);
 }
-@media (min-width: 768px) { .about-pull { font-size: 36px; } }
+@media (min-width: 768px) { .about-pull { font-size: 32px; } }
+.about-pull::before {
+  content: "\201C";
+  display: block;
+  font-family: var(--font-serif);
+  font-size: 46px;
+  line-height: 0.1;
+  margin-bottom: 20px;
+  color: var(--color-flytrap-red-bright);
+}
 
 .about-attr {
   font-family: var(--font-sans);
