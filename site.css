@@ -847,6 +847,8 @@ section { position: relative; }
   background: #fff;
   margin-bottom: 20px;
   padding-top: 8px;
+  padding-bottom: 8px;
+  gap: 8px;
 }
 @media (min-width: 768px) { .menu-jumpnav { top: 86px; } }
 .menu-jumpnav .menu-tabs {
@@ -857,6 +859,19 @@ section { position: relative; }
 }
 .menu-jumpnav .menu-tabs::-webkit-scrollbar { display: none; }
 .menu-jumpnav .menu-tabs button { flex: 0 0 auto; }
+.menu-jumpnav .veg-legend {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  flex-wrap: wrap;
+  margin: 0;
+  font-family: var(--font-serif);
+  font-size: 12px;
+  line-height: 1.35;
+  color: var(--color-text-charcoal);
+  text-align: center;
+}
 
 
 /* category section */
