@@ -1442,11 +1442,20 @@ section { position: relative; }
 .visit-contact a {
   color: var(--color-cream-paper);
   text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  width: fit-content;
+  transition: color 150ms;
+}
+.visit-contact a .vc-ico { flex: 0 0 auto; opacity: .85; }
+.visit-contact a .vc-text {
   border-bottom: 1px dashed rgba(245,238,220,.4);
   padding-bottom: 1px;
-  transition: border-color 150ms, color 150ms;
+  transition: border-color 150ms;
 }
-.visit-contact a:hover { color: var(--color-flytrap-red-bright); border-bottom-color: var(--color-flytrap-red-bright); }
+.visit-contact a:hover { color: var(--color-flytrap-red-bright); }
+.visit-contact a:hover .vc-text { border-bottom-color: var(--color-flytrap-red-bright); }
 
 .visit-note {
   margin-top: 20px;
