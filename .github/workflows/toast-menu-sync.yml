@@ -1,0 +1,88 @@
+name: Toast menu sync
+
+# Pulls the full live menu (Menus API V2) from Toast and regenerates
+# assets/menu.json when it changes, then commits to main so Pages redeploys. The
+# site shows exactly what is on the current Toast menu — stock/86 status is NOT
+# reflected (nothing is hidden or greyed). The site fetches this committed file at
+# page load; if that fetch ever fails it falls back to the hand-curated menu
+# inlined in data.js, so the menu is never blank. No-op until the TOAST_* secrets
+# are set, so it is safe to merge before credentials are installed. The site stays
+# fully static — the script has zero dependencies and the browser never calls Toast.
+#
+# The Toast credential needs the `menus:read` scope.
+#
+# Required repo secrets (Settings > Secrets and variables > Actions):
+#   TOAST_CLIENT_ID        client id from Toast Standard API Access
+#   TOAST_CLIENT_SECRET    client secret (shown once at creation)
+#   TOAST_RESTAURANT_GUID  the location GUID (Toast-Restaurant-External-ID)
+# Optional:
+#   TOAST_HOSTNAME         override prod host (default https://ws-api.toasttab.com)
+#   TOAST_VEG_MARKER       token Kara adds to a description to flag veg (default "(v)")
+#   TOAST_EXCLUDE_GROUPS   comma-separated Toast group names to hide from the site
+
+on:
+  schedule:
+    # Hourly at :10. The standing menu changes rarely, so most runs are a no-op
+    # (nothing committed unless the published menu actually changed). GitHub's
+    # scheduler is best-effort and can lag a few minutes under load.
+    - cron: '10 * * * *'
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Verify only — auth + pull from Toast and log counts, write/commit nothing'
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+  actions: write
+
+concurrency:
+  group: toast-menu-sync
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Pull menu from Toast
+        env:
+          TOAST_CLIENT_ID: ${{ secrets.TOAST_CLIENT_ID }}
+          TOAST_CLIENT_SECRET: ${{ secrets.TOAST_CLIENT_SECRET }}
+          TOAST_RESTAURANT_GUID: ${{ secrets.TOAST_RESTAURANT_GUID }}
+          TOAST_HOSTNAME: ${{ secrets.TOAST_HOSTNAME }}
+          TOAST_VEG_MARKER: ${{ secrets.TOAST_VEG_MARKER }}
+          TOAST_EXCLUDE_GROUPS: ${{ secrets.TOAST_EXCLUDE_GROUPS }}
+          TOAST_DRY_RUN: ${{ inputs.dry_run && '1' || '' }}
+        run: node .github/scripts/toast-sync.mjs
+
+      - name: Commit menu changes
+        id: commit
+        if: ${{ !inputs.dry_run }}
+        run: |
+          set -euo pipefail
+          if git diff --quiet -- assets/menu.json; then
+            echo "No menu changes."
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          git config user.name  "flytrap-menu-bot"
+          git config user.email "bot@theflytrapferndale.com"
+          git add assets/menu.json
+          git commit -m "chore(menu): sync from Toast [skip ci]"
+          git push
+          echo "changed=true" >> "$GITHUB_OUTPUT"
+
+      # GITHUB_TOKEN commits do not trigger other workflows, so kick Pages
+      # explicitly when the menu actually changed.
+      - name: Trigger Pages deploy
+        if: steps.commit.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run "Deploy to GitHub Pages" --ref main
