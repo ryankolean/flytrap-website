@@ -88,7 +88,7 @@ window.FT_DATA = {
     { quote: "A finer diner, in the words of the proprietors — and they're right.", attr: "Molly Abraham · Hour Detroit, 2009" },
     { quote: "There have never been any heartbreaking moments here — just delicious ones.", attr: "Hour Detroit, 2025" },
     { quote: "Not your granddaddy's diner: the inside is sleek, the soundtrack is ska and reggae, and the breakfast is called 'blunch.'", attr: "Food Network Magazine" },
-    { quote: "This diner is as fun to sit in as it is to eat at.", attr: "Islands, 2026" },
+    { quote: "The Fly Trap keeps it classic with their gingerbread waffles, but isn't afraid to travel to the Far East.", attr: "Food Network" },
   ],
   // Verified press only, ranked national-first. Every link is the outlet's live
   // original (paywalled dailies still load for human readers) and was fetch-checked
