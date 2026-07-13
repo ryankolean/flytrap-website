@@ -11,14 +11,44 @@ function VegLeaf() {
 
 const MENU_SPECIALS = "specials";
 
+// Load the full menu from assets/menu.json (kept fresh by the Toast sync). On any
+// fetch/parse failure, fall back to the hand-curated menu inlined in data.js
+// (FT_DATA.menuItems) so the menu is never blank on page load. Returns
+// { cats, items, source } where source is null while loading, then 'live' | 'backup'.
+function useLiveMenu() {
+  const [state, setState] = useState({ cats: null, items: null, source: null });
+  useEffect(() => {
+    let alive = true;
+    const useBackup = (why) => {
+      if (!alive) return;
+      if (why) console.warn("[menu] live menu unavailable, showing saved backup:", why);
+      setState({ cats: window.FT_DATA.menuCategories, items: window.FT_DATA.menuItems, source: "backup" });
+    };
+    fetch("assets/menu.json", { cache: "no-store" })
+      .then((r) => { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
+      .then((j) => {
+        if (!alive) return;
+        if (!j || !Array.isArray(j.categories) || !Array.isArray(j.items) || !j.categories.length) {
+          throw new Error("menu.json empty or malformed");
+        }
+        setState({ cats: j.categories, items: j.items, source: "live" });
+      })
+      .catch((err) => useBackup(err.message));
+    return () => { alive = false; };
+  }, []);
+  return state;
+}
+
 function Menu() {
-  const cats = window.FT_DATA.menuCategories;
-  const items = window.FT_DATA.menuItems;
+  const menu = useLiveMenu();
+  const loading = menu.source === null;
+  const cats = menu.cats || [];
+  const items = menu.items || [];
   const specials = window.FT_DATA.specials || [];
   const muffinSpecial = window.FT_DATA.muffinSpecial;
   const soupSpecial = window.FT_DATA.soupSpecial;
 
-  // Jump-nav sections: Specials first, then every category — all rendered stacked.
+  // Jump-nav sections: Specials first, then every loaded category — all stacked.
   const sections = [{ id: MENU_SPECIALS, title: "Specials" }].concat(
     cats.map((c) => ({ id: c.id, title: c.title }))
   );
@@ -45,7 +75,7 @@ function Menu() {
     );
     secEls.forEach((el) => obs.observe(el));
     return () => obs.disconnect();
-  }, []);
+  }, [cats.length]);
 
   // Follow the active section: slide the sticky tab strip horizontally so the
   // current section's tab stays in view as you scroll (and on click-jump).
@@ -138,7 +168,15 @@ function Menu() {
               ) : null}
             </div>
 
-            {cats.map((c) => (
+            {menu.source === "backup" ? (
+              <p className="menu-backup-note" role="status">
+                Showing our saved menu — the live menu is briefly unavailable.
+              </p>
+            ) : null}
+
+            {loading ? (
+              <p className="menu-loading" role="status">Loading the menu…</p>
+            ) : cats.map((c) => (
               <div className="menu-cat" id={"menu-sec-" + c.id} key={c.id}>
                 <h3>{c.title}</h3>
                 {c.sub ? <p className="sub">{c.sub}</p> : null}

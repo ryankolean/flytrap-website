@@ -1068,6 +1068,19 @@ section { position: relative; }
 }
 .menu-item.hidden { display: none; }
 
+/* Fallback + loading states for the live menu fetch. */
+.menu-backup-note,
+.menu-loading {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 14px;
+  color: var(--color-text-charcoal);
+  text-align: center;
+  padding: 12px 0;
+  margin: 0;
+}
+.menu-loading { padding: 40px 0; }
+
 /* callouts on menu */
 .menu-callout {
   text-align: center;
