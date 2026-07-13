@@ -37,12 +37,17 @@ between the same markers:
   (and including) those markers, and **keep the markers in the output.** Stripping
   them silently breaks the direct-submit form's publisher (`spliceSpecials` throws
   "missing markers"). This is the #1 rule.
-- **Plated specials only — omit soup and muffins.** The Toast "Weekly Specials" group
-  also lists standing add-ons: **Mini Muffins**, **Bowl/Cup of Soup**. These are
-  **not** site specials. The site's soup + pastry live in their own hand-edited
-  `data.js` fields — leave them alone. Pull only the composed plated dishes (the items
-  with both a photo and a descriptive sentence). The extraction snippet keys off the
-  dish photo, so soup/muffins (no photo) fall out automatically.
+- **Two tiers: plated specials vs. flavor extras.** The Toast "Weekly Specials" group
+  holds two kinds of item:
+  - **Plated specials** — composed dishes with a photo (e.g. "The Ali Wong"). These go
+    in the `specials[]` array between the `SPECIALS` markers (Stages 2–6).
+  - **Flavor extras** — **Mini Muffins** and **Cup/Bowl of Soup**. No photo; their Toast
+    *description* is the rotating **flavor** ("Blueberry Lemon", "Chickpea Lemon Rice").
+    These go in the separate `EXTRAS` marker block as `muffinSpecial` / `soupSpecial`
+    (`{ name, flavor }`) — flavor only, **no price** — and render as the muffin+soup pair
+    under the plated specials. `soupSpecial` also drives the Daily Buzz soup board.
+  Pull **both** every run so the site always shows what Toast shows. Pastry is not on
+  Toast — it stays hand-edited.
 - **Photo source: IG-first, Toast-fallback, matched by NAME.** For each Toast special,
   use the Instagram slide **only if** (a) all Toast names appear in the IG caption,
   (b) the match is 1:1 (distinct slide per dish, equal counts), and (c) the IG image's
@@ -105,7 +110,7 @@ https://order.toasttab.com/online/the-fly-trap-ferndale-22950-woodward-avenue
 ### Stage 2 — Extract the "Weekly Specials" group (Toast = source of record)
 Run in the Toast tab (Chrome `javascript_tool`). Keys off each **dish photo**, returns
 one record per plated special — `{ name, price (no $), desc, img }`. Soup/muffins have
-no photo, so they're excluded:
+no photo, so they fall out here — you pull those separately in Stage 2b:
 ```js
 (function(){
   const h=[...document.querySelectorAll('h1,h2,h3,h4,[role=heading]')]
@@ -127,6 +132,33 @@ no photo, so they're excluded:
 `img` is a signed CloudFront URL served at `resize:fit:720:720` (long edge ≈720). Save
 each record — this drives everything downstream. This is the **canonical list, order,
 names, text, and prices.**
+
+### Stage 2b — Extract the flavor extras (muffin + soup)
+Same group, but the **no-photo** items whose Toast description is the rotating flavor.
+Match by name — "Mini Muffin(s)" and "Cup/Bowl of Soup" — and take the description as the
+flavor (drop price; the site shows flavor only):
+```js
+(function(){
+  const heads=[...document.querySelectorAll('h1,h2,h3,h4,[role=heading]')];
+  const start=heads.findIndex(e=>e.textContent.trim()==='Weekly Specials');
+  const end=heads.findIndex((e,i)=>i>start && e.textContent.trim()==='All Things Eggs');
+  const grab=(re)=>{
+    const head=heads.slice(start+1, end<0?start+9:end).find(h=>re.test(h.textContent.trim()));
+    if(!head) return null;
+    let card=head; for(let i=0;i<6;i++){ card=card.parentElement||card; if(/\$\d/.test(card.innerText)) break; }
+    const name=head.textContent.trim();
+    const flavor=card.innerText.split('\n').map(s=>s.trim()).filter(Boolean)
+      .filter(l=>l!==name && !/^\$/.test(l) && !/out of stock/i.test(l) && l.length>2)
+      .sort((a,b)=>b.length-a.length)[0]||'';
+    return {name, flavor};
+  };
+  return { muffin: grab(/mini\s*muffin/i), soup: grab(/^(cup|bowl) of soup/i) };
+})();
+```
+Map to the `EXTRAS` block: `muffinSpecial = { name: "Mini Muffins", flavor: <muffin.flavor> }`
+and `soupSpecial = { name: "Soup of the Day", flavor: <soup.flavor> }`. If Toast has no
+flavor text for one (blank / out of stock with no descriptor), keep the last-known value
+and flag it — don't blank the card.
 
 ### Stage 3 — Parse into N specials
 Per record: **name** (keep curly apostrophes), **desc** (the composed-dish sentence),
@@ -228,7 +260,16 @@ One `{ … }` per special, `special-1`-indexed, photo paths from Stage 5, price 
   ],
   /* SPECIALS:END */
 ```
-Leave `soup` / `pastry` alone.
+Then update the **`EXTRAS` block** (a separate marker pair just after `SPECIALS:END`)
+with the Stage 2b flavors — flavor only, no price. Keep these markers too:
+```js
+  /* EXTRAS:START */
+  muffinSpecial: { name: "Mini Muffins", flavor: "<muffin flavor>" },
+  soupSpecial: { name: "Soup of the Day", flavor: "<soup flavor>" },
+  /* EXTRAS:END */
+```
+Leave `pastry` alone (not on Toast — hand-edited). There is no separate `soup` field
+anymore; `soupSpecial` drives both the menu extras pair and the Daily Buzz soup board.
 
 ### Stage 7 — Verify (REQUIRED before PR)
 `preview_start` the `flytrap` launch config. The specials render inside `Menu.jsx`
@@ -287,7 +328,8 @@ gh pr create --base main --title "feat(specials): Week of <Month Day>" --body-fi
 | IG handle / hashtag | `@theflytrapferndale` / `#flytrapspecials` |
 | Specials data | `data.js` → between `/* SPECIALS:START */` … `/* SPECIALS:END */` |
 | Per special | `{ id: "special-N", name, desc, veg:<bool>, price:"NN.NN" (no $), photo }` |
-| Excluded from specials | Mini Muffins, Bowl/Cup of Soup — site soup/pastry are separate hand-edited fields |
+| Flavor extras | `data.js` → `/* EXTRAS:START */`…`/* EXTRAS:END */` — `muffinSpecial` + `soupSpecial` (`{ name, flavor }`, no price). Pulled from Mini Muffins + Cup/Bowl of Soup |
+| Extras render | `Menu.jsx` `.specials-extras` pair (muffin left, soup right); `soupSpecial` also feeds the Daily Buzz soup board. Pastry stays hand-edited |
 | Photos | `assets/specials/week-<YYYY-MM-DD>-<N>.jpg`, 1080², 1-based, N = Toast order |
 | Toast image res | ≤720px long edge, signed CloudFront (soft after upscale) |
 | IG image res | typically 800–1080px long edge (higher — preferred) |
@@ -305,7 +347,7 @@ gh pr create --base main --title "feat(specials): Week of <Month Day>" --body-fi
 | Page "still loading" on first read | Cloudflare challenge; `wait` 5s and retry until title is "Order Online". |
 | Pairing IG by slide position | Wrong. Match by **name** (Stage 3.5 gates). A reordered/stale post would swap photos. |
 | IG post ≠ this week | `gatesPass:false` → use Toast photos for all, flag to user. Never guess. |
-| Including soup / muffins | Not site specials. Pull only photo'd plated dishes; leave soup/pastry hand-edited. |
+| Soup / muffin as plated specials | Wrong — they're **flavor extras**, not photo'd plated dishes. Keep them out of `specials[]`; put their flavor in the `EXTRAS` block (Stage 2b). Pastry stays hand-edited. |
 | In-page `fetch()` of a Toast photo | CORS-blocked. Read `img.src` in Chrome, `curl` from the shell. (IG embed's own fetch works.) |
 | Bumping Toast `resize:fit:720:720` | Token is signed → 403. 720px is the max. |
 | Reading IG `<img>` tags for res | Logged-out DOM holds only slide 1 + other posts' thumbs. Read `window.__additionalData` (Stage 3.5). |
