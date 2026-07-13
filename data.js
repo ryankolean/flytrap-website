@@ -153,7 +153,10 @@ window.FT_DATA = {
     { id: "special-2", name: "The Lou Costello", desc: "House made Calabrian chili and provolone sausage sitting atop an egg rumble of herby oven dried tomatoes, arugula, caramelized onion and gorgonzola. Browns and toast.", veg: false, photo: "assets/specials/toast-the-lou-costello.jpg", price: "15.95" },
   ],
   /* SPECIALS:END */
-  soup: { name: "Cream of Roasted Tomato & Fennel", desc: "Slow-roasted Roma tomatoes, fennel bulb, basil oil swirl, parmesan crisp on the side. Cup $5 / Bowl $6." },
+  /* EXTRAS:START */
+  muffinSpecial: { name: "Mini Muffins", flavor: "Blueberry Lemon" },
+  soupSpecial: { name: "Soup of the Day", flavor: "Chickpea Lemon Rice" },
+  /* EXTRAS:END */
   pastry: { name: "Brown-Butter Sour Cherry Galette", desc: "From the Sugar Shack — flaky butter dough, Michigan sour cherries, almond frangipane, demerara crust. While they last. $5.95." },
   dishes: [
     { src: "assets/dishes/green-eggs-ham.jpg", label: "Green Eggs & Ham" },

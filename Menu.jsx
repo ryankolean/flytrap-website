@@ -15,6 +15,8 @@ function Menu() {
   const cats = window.FT_DATA.menuCategories;
   const items = window.FT_DATA.menuItems;
   const specials = window.FT_DATA.specials || [];
+  const muffinSpecial = window.FT_DATA.muffinSpecial;
+  const soupSpecial = window.FT_DATA.soupSpecial;
 
   // Jump-nav sections: Specials first, then every category — all rendered stacked.
   const sections = [{ id: MENU_SPECIALS, title: "Specials" }].concat(
@@ -118,6 +120,22 @@ function Menu() {
                   </p>
                 ) : null}
               </div>
+              {(muffinSpecial || soupSpecial) ? (
+                <div className="specials-extras">
+                  {muffinSpecial ? (
+                    <div className="extra-card">
+                      <span className="extra-label">{muffinSpecial.name}</span>
+                      <p className="extra-flavor">{muffinSpecial.flavor}</p>
+                    </div>
+                  ) : null}
+                  {soupSpecial ? (
+                    <div className="extra-card">
+                      <span className="extra-label">{soupSpecial.name}</span>
+                      <p className="extra-flavor">{soupSpecial.flavor}</p>
+                    </div>
+                  ) : null}
+                </div>
+              ) : null}
             </div>
 
             {cats.map((c) => (

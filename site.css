@@ -611,6 +611,48 @@ section { position: relative; }
 .special-ig:hover { color: var(--color-flytrap-red-bright); }
 .special-ig svg { flex: 0 0 auto; }
 
+/* Muffin + soup flavor pair under the main specials. Toast-driven, flavor-forward,
+   no photo, no price. Muffin left, soup right on wide screens; stacked when narrow. */
+.specials-extras {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+  max-width: 940px;
+  margin: 20px auto 0;
+}
+@media (min-width: 768px) {
+  .specials-extras { grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 24px; }
+}
+.extra-card {
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 8px 28px rgba(0,0,0,.10);
+  border-left: 3px solid var(--color-flytrap-red-bright);
+  padding: 16px 22px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.extra-label {
+  font-family: var(--font-sans);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-charcoal);
+  opacity: .7;
+}
+.extra-flavor {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 700;
+  font-size: 22px;
+  line-height: 1.1;
+  color: var(--color-flytrap-red-deep);
+  margin: 0;
+}
+@media (min-width: 768px) { .extra-flavor { font-size: 24px; } }
+
 /* ============================================================
    TODAY'S BUZZING band — under hero
    ============================================================ */
