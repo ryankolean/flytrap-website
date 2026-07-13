@@ -253,7 +253,7 @@ function Press() {
                 <span className="outlet">{it.outlet}</span>
                 <span className="title">{it.title}</span>
               </span>
-              <span className="arrow">↗</span>
+              <img className="press-fly" src="assets/brand/fly-red.png" alt="" aria-hidden="true" loading="lazy" />
             </a>
           )}
         </div>

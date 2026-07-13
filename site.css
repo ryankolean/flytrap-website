@@ -1378,13 +1378,34 @@ section { position: relative; }
   line-height: 1.45;
   opacity: .85;
 }
-.press-item .arrow {
-  font-family: var(--font-serif);
-  font-size: 22px;
-  color: var(--color-flytrap-red-bright);
-  transition: transform 150ms;
+.press-item .press-fly {
+  width: 24px;
+  height: auto;
+  align-self: center;
+  opacity: .55;
+  transform-origin: center;
+  will-change: transform;
+  transition: opacity 200ms var(--ease-out);
 }
-.press-item:hover .arrow { transform: translateX(4px); }
+.press-item:hover .press-fly {
+  opacity: 1;
+  animation: flyInfinity 4.5s ease-in-out infinite;
+}
+/* Red fly drifts through a figure-8 (lemniscate) on hover. */
+@keyframes flyInfinity {
+  0%    { transform: translate(0, 0) rotate(0deg); }
+  12.5% { transform: translate(8px, -5px) rotate(10deg); }
+  25%   { transform: translate(13px, 0) rotate(0deg); }
+  37.5% { transform: translate(8px, 5px) rotate(-10deg); }
+  50%   { transform: translate(0, 0) rotate(0deg); }
+  62.5% { transform: translate(-8px, -5px) rotate(10deg); }
+  75%   { transform: translate(-13px, 0) rotate(0deg); }
+  87.5% { transform: translate(-8px, 5px) rotate(-10deg); }
+  100%  { transform: translate(0, 0) rotate(0deg); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .press-item:hover .press-fly { animation: none; }
+}
 @media (min-width: 768px) {
   .press-item { grid-template-columns: 80px 1fr auto; gap: 24px; }
 }
