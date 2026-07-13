@@ -191,6 +191,50 @@ function Retail() {
 
 }
 
+// Rotating pull-quote — cycles through FT_DATA.pressQuotes. Pauses on hover/focus
+// and respects prefers-reduced-motion (no auto-advance, no motion).
+function PressQuote() {
+  const quotes = window.FT_DATA.pressQuotes || [];
+  const [i, setI] = React.useState(0);
+  const [paused, setPaused] = React.useState(false);
+  const reduce = typeof window.matchMedia === "function" &&
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  React.useEffect(() => {
+    if (reduce || paused || quotes.length < 2) return;
+    const id = setInterval(() => setI((n) => (n + 1) % quotes.length), 6000);
+    return () => clearInterval(id);
+  }, [reduce, paused, quotes.length]);
+  if (!quotes.length) return null;
+  const q = quotes[i];
+  return (
+    <div
+      className="press-quote reveal"
+      aria-live="polite"
+      onMouseEnter={() => setPaused(true)}
+      onMouseLeave={() => setPaused(false)}
+      onFocusCapture={() => setPaused(true)}
+      onBlurCapture={() => setPaused(false)}
+    >
+      <p key={i} className="press-pull">{q.quote}</p>
+      <p key={"a" + i} className="press-pull-attr">— {q.attr}</p>
+      {quotes.length > 1 ? (
+        <div className="press-quote-dots" role="tablist" aria-label="Press quotes">
+          {quotes.map((_, n) => (
+            <button
+              key={n}
+              type="button"
+              className={"press-quote-dot" + (n === i ? " active" : "")}
+              aria-label={"Quote " + (n + 1)}
+              aria-selected={n === i}
+              onClick={() => setI(n)}
+            />
+          ))}
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
 function Press() {
   const items = window.FT_DATA.press;
   return (
@@ -200,8 +244,7 @@ function Press() {
           <div className="eyebrow">In the news</div>
           <h2 className="title">People keep writing about us.</h2>
         </div>
-        <p className="press-pull reveal">"Too gorgeous to eat in the kitchen."</p>
-        <p className="press-pull-attr reveal">— Guy Fieri · Diners, Drive-Ins and Dives</p>
+        <PressQuote />
         <div className="press-list reveal">
           {items.map((it, i) =>
           <a key={i} className="press-item" href={it.url} target="_blank" rel="noopener">

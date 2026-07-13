@@ -1307,6 +1307,37 @@ section { position: relative; }
   padding-left: 24px;
 }
 
+/* Rotating pull-quote — reserve height so cycling doesn't jump the layout,
+   and crossfade each quote in as it mounts. */
+.press-quote { min-height: 150px; }
+@media (min-width: 768px) { .press-quote { min-height: 180px; } }
+.press-quote .press-pull { animation: pressQuoteIn .5s var(--ease-out) both; }
+.press-quote .press-pull-attr { animation: pressAttrIn .5s var(--ease-out) .05s both; }
+@keyframes pressQuoteIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes pressAttrIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: .8; transform: none; }
+}
+.press-quote-dots { display: flex; gap: 8px; padding-left: 24px; margin-top: 18px; }
+.press-quote-dot {
+  width: 8px; height: 8px; padding: 0;
+  border-radius: 50%;
+  border: 1px solid var(--color-flytrap-red-bright);
+  background: transparent;
+  cursor: pointer;
+  transition: background 150ms, transform 150ms;
+}
+.press-quote-dot.active { background: var(--color-flytrap-red-bright); }
+.press-quote-dot:hover { transform: scale(1.25); }
+@media (prefers-reduced-motion: reduce) {
+  .press-quote .press-pull,
+  .press-quote .press-pull-attr { animation: none; opacity: 1; }
+  .press-quote .press-pull-attr { opacity: .8; }
+}
+
 .press-list {
   display: flex;
   flex-direction: column;
