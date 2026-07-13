@@ -82,15 +82,26 @@ window.FT_DATA = {
     { cat: "drinks", nm: "Lil' Can o' V-8", desc: "", price: "2.50" },
     { cat: "drinks", nm: "Grapefruit Juice", desc: "Sm $1.95 · Lg $2.95.", price: "1.95" },
   ],
-  // Verified press only. Every link resolves; titles avoid invented headlines.
-  // Sources: the restaurant's own press page (theflytrapferndale.com) + Islands (2026).
+  // Rotating pull-quotes at the top of the news section. Each is verbatim from a
+  // published piece and attributed. Cycled by the PressQuote component.
+  pressQuotes: [
+    { quote: "A finer diner, in the words of the proprietors — and they're right.", attr: "Molly Abraham · Hour Detroit, 2009" },
+    { quote: "There have never been any heartbreaking moments here — just delicious ones.", attr: "Hour Detroit, 2025" },
+    { quote: "Not your granddaddy's diner: the inside is sleek, the soundtrack is ska and reggae, and the breakfast is called 'blunch.'", attr: "Food Network Magazine" },
+    { quote: "Trade your greasy spoon for chopsticks and get the fattest pho bowl in town.", attr: "Food Network" },
+  ],
+  // Verified press only, ranked national-first. Every link is the outlet's live
+  // original (paywalled dailies still load for human readers) and was fetch-checked
+  // 2026-07-13. Years are the piece's publish year. Titles avoid invented headlines.
   press: [
-    { outlet: "Diners, Drive-Ins and Dives", title: "Guy Fieri features the Fly Trap on Food Network — home of the Red Chili Salmon Burger.", url: "https://www.foodnetwork.com/restaurants/mi/ferndale/the-fly-trap-restaurant" },
+    { year: "2008", outlet: "Food Network", title: "Diners, Drive-Ins and Dives — \"Off the Hook Specials\" (Season 2).", url: "https://www.foodnetwork.com/shows/diners-drive-ins-and-dives/episodes/off-the-hook-specials" },
+    { year: "2017", outlet: "Food Network", title: "The Fly Trap — a 'finer diner' with the fattest pho bowl in town.", url: "https://www.foodnetwork.com/restaurants/mi/ferndale/the-fly-trap-restaurant" },
+    { year: "2010", outlet: "Food Network Magazine", title: "50 States, 50 Breakfasts — Michigan's pick.", url: "https://www.foodnetwork.com/recipes/photos/50-states-50-breakfasts" },
     { year: "2026", outlet: "Islands", title: "Michigan's funky Ferndale diner — a friendly, creative stop featured by Guy Fieri.", url: "https://www.islands.com/2075049/the-fly-trap-ferndale-michigan-funky-diner-friendly-creative-featured-guy-fieri/" },
-    { outlet: "Food Network Magazine", title: "50 States, 50 Breakfasts — Michigan's pick.", url: "https://www.foodnetwork.com/recipes/packages/breakfast/50-states-50-breakfasts.html" },
-    { outlet: "Detroit Free Press", title: "21 Great Breakfasts.", url: "http://www.theflytrapferndale.com/Articles/FreePress.pdf" },
-    { outlet: "The Detroit News", title: "The Fly Trap, a finer diner in Ferndale.", url: "http://www.theflytrapferndale.com/Articles/DetroitNews.pdf" },
-    { outlet: "Metro Times", title: "The Fly Trap in the Metro Times.", url: "http://www.theflytrapferndale.com/Articles/MetroTimes.pdf" },
+    { year: "2009", outlet: "Hour Detroit", title: "Mind, Body & Spirits and The Fly Trap — Molly Abraham's review.", url: "https://www.hourdetroit.com/restaurants-food/mind-body-spirits-and-the-fly-trap/" },
+    { year: "2025", outlet: "Hour Detroit", title: "My Longest Relationship Is With a Restaurant.", url: "https://www.hourdetroit.com/restaurants-bars/culture-convo-my-longest-relationship-is-with-a-restaurant/" },
+    { year: "2024", outlet: "Crain's Detroit Business", title: "Fly Trap founders return to take over the Ferndale diner.", url: "https://www.crainsdetroit.com/restaurants/fly-trap-founders-return-take-over-ferndale-diner/" },
+    { year: "2022", outlet: "The Detroit News", title: "The Fly Trap to reopen with new ownership.", url: "https://www.detroitnews.com/story/entertainment/dining/2022/02/14/fly-trap-restaurant-ferndale-reopen-next-month-new-owner/6782241001/" },
   ],
   // Daily buzz — rotating weekly schedule
   buzz: [
