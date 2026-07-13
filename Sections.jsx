@@ -364,7 +364,7 @@ function DailyBuzzPage({ onBack }) {
   const todayIdx = window.ftTodayIdx(); // 0=Sun..6=Sat, in America/Detroit
   const dayMap = { Sunday: 0, Monday: 1, Tuesday: 2, Wednesday: 3, Thursday: 4, Friday: 5, Saturday: 6 };
   const buzz = window.FT_DATA.buzz;
-  const soup = window.FT_DATA.soup;
+  const soup = window.FT_DATA.soupSpecial;
   const pastry = window.FT_DATA.pastry;
 
   // Build calendar dates for the upcoming week, anchored to Detroit's current
@@ -424,8 +424,7 @@ function DailyBuzzPage({ onBack }) {
           <div className="grid">
             <div className="col">
               <h4>Soup of the day</h4>
-              <h3>{soup.name}</h3>
-              <p>{soup.desc}</p>
+              <h3>{soup.flavor}</h3>
             </div>
             <div className="col">
               <h4>From the Sugar Shack</h4>
