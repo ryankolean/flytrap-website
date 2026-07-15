@@ -1,6 +1,6 @@
 {
   "source": "toast",
-  "lastUpdated": "2026-07-15T16:48:25.836+0000",
+  "lastUpdated": "2026-07-15T18:54:48.052+0000",
   "categories": [
     {
       "id": "all-things-eggs",
@@ -126,7 +126,7 @@
     {
       "cat": "all-things-eggs",
       "nm": "Huevos Rancheros",
-      "desc": "Two Eggs Any Style, Crispy Flour Tortilla, Black Beans, Jack Cheese, Jalapenos, Pico de Gallo & Sour Cream.🥬",
+      "desc": "Two Eggs Any Style, Crispy Flour Tortilla, Black Beans, Jack Cheese, Jalapeños, Pico de Gallo & Sour Cream.🥬",
       "price": "13.95"
     },
     {
@@ -184,18 +184,6 @@
       "price": "13.95"
     },
     {
-      "cat": "all-things-eggs",
-      "nm": "Ready To Rumble",
-      "desc": "",
-      "price": "15.95"
-    },
-    {
-      "cat": "all-things-eggs",
-      "nm": "GR€€K Rumble",
-      "desc": "",
-      "price": "13.95"
-    },
-    {
       "cat": "oh-sugar-shack",
       "nm": "Gingerbread Waffle",
       "desc": "with Sauteed Apples, Cherries & Cinnamon Syrup.",
@@ -221,21 +209,9 @@
     },
     {
       "cat": "green-things",
-      "nm": "Small Chop-NO MEAT",
-      "desc": "a \"Wunder\" not to be missed- Greens, Mushrooms, Provolone, Ceci Beans & Olives Chopped Together with Creamy Herb Dressing.🥬",
-      "price": "11.95"
-    },
-    {
-      "cat": "green-things",
       "nm": "Large Chop",
       "desc": "a \"Wunder\" not to be missed- Greens, Mushrooms, Ham, Salami, Provolone, Ceci Beans & Olives Chopped Together with Creamy Herb Dressing.",
       "price": "15.95"
-    },
-    {
-      "cat": "green-things",
-      "nm": "Large Chop -No Meat",
-      "desc": "a \"Wunder\" not to be missed- Greens, Mushrooms, Provolone, Ceci Beans & Olives Chopped Together with Creamy Herb Dressing.🥬",
-      "price": "14.95"
     },
     {
       "cat": "green-things",
@@ -318,68 +294,20 @@
     {
       "cat": "between-bread",
       "nm": "Red Chili Salmon Burger",
-      "desc": "",
+      "desc": "House Ground with Scallion, Sesame and Sambal Served Up on a House Roll with Lime Aioli, Sliced Cucumber & L,T,O,P.",
       "price": "17.95"
     },
     {
       "cat": "other-stuff",
-      "nm": "Tofu Fried Rice",
+      "nm": "Fried Rice",
       "desc": "",
       "price": "14.95"
     },
     {
       "cat": "other-stuff",
-      "nm": "Chicken Fried Rice",
-      "desc": "",
-      "price": "15.95"
-    },
-    {
-      "cat": "other-stuff",
-      "nm": "Shrimp Fried Rice",
-      "desc": "",
-      "price": "16.95"
-    },
-    {
-      "cat": "other-stuff",
-      "nm": "Tempeh Fried Rice",
-      "desc": "",
-      "price": "15.95"
-    },
-    {
-      "cat": "other-stuff",
-      "nm": "Steak Fried Rice",
-      "desc": "",
-      "price": "22.95"
-    },
-    {
-      "cat": "other-stuff",
-      "nm": "Tofu Faux Bowl",
+      "nm": "Faux Bowl",
       "desc": "",
       "price": "14.95"
-    },
-    {
-      "cat": "other-stuff",
-      "nm": "Chicken Faux Bowl",
-      "desc": "",
-      "price": "15.95"
-    },
-    {
-      "cat": "other-stuff",
-      "nm": "Shrimp Faux Bowl",
-      "desc": "",
-      "price": "16.95"
-    },
-    {
-      "cat": "other-stuff",
-      "nm": "Tempeh Faux Bowl",
-      "desc": "",
-      "price": "15.95"
-    },
-    {
-      "cat": "other-stuff",
-      "nm": "Steak Faux Bowl",
-      "desc": "",
-      "price": "22.95"
     },
     {
       "cat": "other-stuff",
