@@ -1,6 +1,6 @@
 {
   "source": "toast",
-  "lastUpdated": "2026-07-13T13:59:54.461+0000",
+  "lastUpdated": "2026-07-15T16:24:57.533+0000",
   "categories": [
     {
       "id": "all-things-eggs",
@@ -120,7 +120,7 @@
     {
       "cat": "all-things-eggs",
       "nm": "Forager Rumble",
-      "desc": "Mushrooms, Caramelized Onions, Smoked Gouda & Greens Rumbled with Eggs; comes with spuds and toast.",
+      "desc": "Mushrooms, Caramelized Onions, Smoked Gouda & Greens Rumbled with Eggs; comes with spuds and toast.🥬",
       "price": "14.95"
     },
     {
@@ -204,61 +204,61 @@
     {
       "cat": "oh-sugar-shack",
       "nm": "Oatmeal",
-      "desc": "",
+      "desc": "Plain with Sliced Apple, or add Dried Cherries & Vanilla Ice Cream. 🥬",
       "price": "6.00"
     },
     {
       "cat": "oh-sugar-shack",
       "nm": "Granola",
-      "desc": "",
+      "desc": "House Mixed Nuts, Seeds & Honey Rolled Oats with Coconut, Banana & Vanilla Yogurt.🥬",
       "price": "9.95"
     },
     {
       "cat": "green-things",
       "nm": "Small Chop",
-      "desc": "",
+      "desc": "a \"Wunder\" not to be missed- Greens, Mushrooms, Ham, Salami, Provolone, Ceci Beans & Olives Chopped Together with Creamy Herb Dressing.",
       "price": "12.95"
     },
     {
       "cat": "green-things",
+      "nm": "Small Chop-NO MEAT",
+      "desc": "a \"Wunder\" not to be missed- Greens, Mushrooms, Provolone, Ceci Beans & Olives Chopped Together with Creamy Herb Dressing.🥬",
+      "price": "11.95"
+    },
+    {
+      "cat": "green-things",
       "nm": "Large Chop",
-      "desc": "",
+      "desc": "a \"Wunder\" not to be missed- Greens, Mushrooms, Ham, Salami, Provolone, Ceci Beans & Olives Chopped Together with Creamy Herb Dressing.",
       "price": "15.95"
     },
     {
       "cat": "green-things",
-      "nm": "House Salad",
-      "desc": "",
-      "price": "7.95"
+      "nm": "Large Chop -No Meat",
+      "desc": "a \"Wunder\" not to be missed- Greens, Mushrooms, Provolone, Ceci Beans & Olives Chopped Together with Creamy Herb Dressing.🥬",
+      "price": "14.95"
     },
     {
       "cat": "green-things",
       "nm": "Ensalada de Basura",
-      "desc": "",
+      "desc": "Black Beans, Tomatoes, Avocado, Cheddar, Greens, Crispy Tortillas, Sour Cream & Guajillo Dressing.🥬",
       "price": "15.95"
     },
     {
       "cat": "green-things",
       "nm": "The Echo",
-      "desc": "",
+      "desc": "Greens, Feta, Beets, Kalamata Olives, Red Onion, Grape Tomato, Cucumber and Chick Peas with Tomato Vinaigrette.🥬",
       "price": "15.95"
     },
     {
       "cat": "green-things",
-      "nm": "Small Chop-NO MEAT",
-      "desc": "",
-      "price": "11.95"
-    },
-    {
-      "cat": "green-things",
-      "nm": "Large Chop -No Meat",
-      "desc": "",
-      "price": "14.95"
+      "nm": "House Salad",
+      "desc": "Mixed Greens, Shaved Onion, Grape Tomatoes-option of Balsamic Vinaigrette, Creamy Herb, Tomato Vinaigrette or Blue Cheese Balsamic Dressing.🥬",
+      "price": "7.95"
     },
     {
       "cat": "green-things",
       "nm": "Side Salad",
-      "desc": "",
+      "desc": "Mixed Greens, Shaved Onion, Grape Tomatoes-option of Balsamic Vinaigrette, Creamy Herb, Tomato Vinaigrette or Blue Cheese Balsamic Dressing. (no bread)🥬",
       "price": "3.95"
     },
     {
