@@ -1,6 +1,6 @@
 {
   "source": "toast",
-  "lastUpdated": "2026-07-15T18:54:48.052+0000",
+  "lastUpdated": "2026-07-15T19:38:09.248+0000",
   "categories": [
     {
       "id": "all-things-eggs",
@@ -299,21 +299,21 @@
     },
     {
       "cat": "other-stuff",
+      "nm": "Crab Cake App",
+      "desc": "",
+      "price": "13.95"
+    },
+    {
+      "cat": "other-stuff",
       "nm": "Fried Rice",
       "desc": "",
       "price": "14.95"
     },
     {
       "cat": "other-stuff",
-      "nm": "Faux Bowl",
+      "nm": "Fire-Breathing Dragon",
       "desc": "",
-      "price": "14.95"
-    },
-    {
-      "cat": "other-stuff",
-      "nm": "Crab Cake App",
-      "desc": "",
-      "price": "13.95"
+      "price": "15.95"
     },
     {
       "cat": "other-stuff",
@@ -323,9 +323,9 @@
     },
     {
       "cat": "other-stuff",
-      "nm": "Fire-Breathing Dragon",
+      "nm": "Faux Bowl",
       "desc": "",
-      "price": "15.95"
+      "price": "14.95"
     },
     {
       "cat": "other-stuff",
