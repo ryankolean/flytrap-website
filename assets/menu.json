@@ -1,6 +1,6 @@
 {
   "source": "toast",
-  "lastUpdated": "2026-07-15T19:38:09.248+0000",
+  "lastUpdated": "2026-07-15T20:51:46.094+0000",
   "categories": [
     {
       "id": "all-things-eggs",
@@ -204,13 +204,13 @@
     {
       "cat": "green-things",
       "nm": "Small Chop",
-      "desc": "a \"Wunder\" not to be missed- Greens, Mushrooms, Ham, Salami, Provolone, Ceci Beans & Olives Chopped Together with Creamy Herb Dressing.",
+      "desc": "a \"Wunder\" not to be missed- Greens, Mushrooms, Ham, Salami, Provolone, Ceci Beans & Olives Chopped Together with Creamy Herb Dressing. Also Available Sans Meat🥬!",
       "price": "12.95"
     },
     {
       "cat": "green-things",
       "nm": "Large Chop",
-      "desc": "a \"Wunder\" not to be missed- Greens, Mushrooms, Ham, Salami, Provolone, Ceci Beans & Olives Chopped Together with Creamy Herb Dressing.",
+      "desc": "a \"Wunder\" not to be missed- Greens, Mushrooms, Ham, Salami, Provolone, Ceci Beans & Olives Chopped Together with Creamy Herb Dressing. Also Available Sans Meat🥬!",
       "price": "15.95"
     },
     {
@@ -300,37 +300,37 @@
     {
       "cat": "other-stuff",
       "nm": "Crab Cake App",
-      "desc": "",
+      "desc": "Two Crab Chubs, Red Chile Greens, Green Chile Tartar.",
       "price": "13.95"
     },
     {
       "cat": "other-stuff",
       "nm": "Fried Rice",
-      "desc": "",
+      "desc": "Brown Rice, Roasted Mushrooms, Various Veggies, Red Chiles, Tamari & Sesame; pick your protein- Tofu🥬, Chicken, Tempeh🥬, or Shrimp.  Funkify with Some Kimchi!",
       "price": "14.95"
     },
     {
       "cat": "other-stuff",
       "nm": "Fire-Breathing Dragon",
-      "desc": "",
+      "desc": "Chilled Wheat Noodles Tossed in Sambal Peanut Sauce with Snap Peas, Basil & Scallion topped with Pickled Cabbage and Served Alongside Grilled Chicken, Tofu🥬 or Shrimp, Spicy Vinaigrette and a Sprinkle of Peanuts.",
       "price": "15.95"
     },
     {
       "cat": "other-stuff",
       "nm": "Mac Loves Cheese",
-      "desc": "",
+      "desc": "Cheddar, Smoked Gouda & Blue with Cavatappi Pasta, Caramelized Onion, Breadcrumbs & Herbs.🥬",
       "price": "13.95"
     },
     {
       "cat": "other-stuff",
       "nm": "Faux Bowl",
-      "desc": "",
+      "desc": "Lemongrass and Thai Chile Infused Broth with Wheat Noodles, Sesame, Roasted Mushrooms, Various Veggies & a Choice of Chicken, Tofu🥬, Shrimp or Tempeh🥬.",
       "price": "14.95"
     },
     {
       "cat": "other-stuff",
       "nm": "Howie’s Noodles",
-      "desc": "",
+      "desc": "Shrimp, Fettuccini, Cajun Cream, Tomatoes, Scallions and Parmesan.",
       "price": "16.95"
     },
     {
