@@ -19,16 +19,16 @@ const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
 // collides with the header. Sized to ~half the header text; transform/opacity eased.
 function BackFly() {
   const ref = uR(null);
-  const trailRef = uR(null);   // SVG overlay that draws the fly's comet trail
-  const lineRef = uR(null);    // <polyline> through the fly's recent positions
-  const gradRef = uR(null);    // <linearGradient>: opaque at the fly, clear at the tail
+  const trailRef = uR(null);   // fixed SVG overlay that holds the trail dashes
+  const dashesRef = uR(null);  // <g> pool of dash <line>s laid along the fly's path
+  const POOL = 48;             // max simultaneous dashes (covers 15% of a wide screen)
 
   uE(() => {
     const el = ref.current;
     if (!el) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
-    const svg = trailRef.current, line = lineRef.current, grad = gradRef.current;
+    const svg = trailRef.current, dashesG = dashesRef.current;
 
     // sec: section whose header the fly rides; dir: 1 = L->R, -1 = R->L;
     // park: end beside the header instead of sweeping across. Always the red glyph.
@@ -47,16 +47,24 @@ function BackFly() {
     };
     const clamp01 = (v) => Math.min(1, Math.max(0, v));
 
-    // --- Comet trail: a dashed tail that follows the fly, capped to 15% of the
-    // viewport width, coloured for contrast against whatever section it crosses
-    // (light on dark, dark on light), fading out ~500ms after the fly stops. ---
-    const TRAIL_MS = 500;            // a point lives this long, then expires
-    const TRAIL_CAP = 0.15;          // trail's horizontal span never exceeds 15% vw
-    const TRAIL_STEP = 3;            // min px the fly must move to drop a new point
-    const pts = [];                  // recent fly centres: { x, y, t }
+    // --- Fly trail: short dashes laid at fixed points along the fly's path. Each
+    // dash stays where it was dropped, eases in behind the fly, holds, then eases
+    // out — so the trail calmly traces the path instead of streaking. The visible
+    // run is capped to 15% of the viewport width behind the fly, and coloured for
+    // contrast against whatever section it crosses (light on dark, dark on light). ---
+    const DASH_LIFE = 1400;          // ms a dash lives (slow appear + slow fade)
+    const DASH_APPEAR = 0.26;        // life fraction spent easing in
+    const DASH_FADE = 0.55;          // life fraction after which it eases out
+    const DASH_GAP = 13;             // px of path between dashes (even spacing)
+    const DASH_LEN = 7;              // px length of each dash
+    const TRAIL_CAP = 0.15;          // visible trail spans <= 15% vw behind the fly
+    const DASH_PEAK = 0.85;          // max dash opacity
+    const dashes = [];               // { x, y, ang, born } laid along the path
+    let lastX = null, lastY = null, acc = 0;   // path-distance accumulator
     let colorSel = null;             // section the trail colour was last sampled for
     let trailColor = "245,238,220";  // "r,g,b"; cream by default (assumes a dark bg)
     const nowMs = () => (window.performance && performance.now) ? performance.now() : Date.now();
+    const smooth01 = (v) => { v = clamp01(v); return v * v * (3 - 2 * v); };
     // Sample the background under the fly and return a contrasting dash colour.
     const pickTrailColor = (x, y) => {
       let node = document.elementFromPoint(x, y), bg = null;
@@ -68,28 +76,40 @@ function BackFly() {
       const L = bg ? (0.2126 * bg[0] + 0.7152 * bg[1] + 0.0722 * bg[2]) / 255 : 0;
       return L < 0.5 ? "245,238,220" : "34,34,34";   // cream on dark, ink on light
     };
-    const drawTrail = (t) => {
-      // Expire old points, then trim the tail so its horizontal span stays <= 15% vw.
-      while (pts.length && (t - pts[0].t) > TRAIL_MS) pts.shift();
-      if (pts.length > 1) {
-        const cap = vw * TRAIL_CAP;
-        let lo, hi;
-        const span = () => { lo = hi = pts[0].x; for (const p of pts) { if (p.x < lo) lo = p.x; if (p.x > hi) hi = p.x; } return hi - lo; };
-        while (pts.length > 2 && span() > cap) pts.shift();
+    // Lay evenly-spaced dashes along the path the fly just travelled.
+    const layDashes = (x, y, t) => {
+      if (lastX === null) { lastX = x; lastY = y; return; }
+      const dx = x - lastX, dy = y - lastY, d = Math.hypot(dx, dy);
+      if (d < 0.01) return;
+      const ux = dx / d, uy = dy / d, ang = Math.atan2(dy, dx);
+      acc += d;
+      while (acc >= DASH_GAP) {
+        acc -= DASH_GAP;
+        dashes.push({ x: x - ux * acc, y: y - uy * acc, ang: ang, born: t });   // fixed spot along the path
       }
-      if (!line || !grad) return;
-      if (pts.length >= 2) {
-        const head = pts[pts.length - 1], tail = pts[0];
-        line.setAttribute("points", pts.map((p) => p.x.toFixed(1) + "," + p.y.toFixed(1)).join(" "));
-        grad.setAttribute("x1", tail.x.toFixed(1)); grad.setAttribute("y1", tail.y.toFixed(1));
-        grad.setAttribute("x2", head.x.toFixed(1)); grad.setAttribute("y2", head.y.toFixed(1));
-        const st = grad.querySelectorAll("stop");
-        st[0].setAttribute("stop-color", "rgba(" + trailColor + ",0)");
-        st[1].setAttribute("stop-color", "rgba(" + trailColor + ",0.85)");
-        line.style.opacity = clamp01(1 - (t - head.t) / TRAIL_MS).toFixed(3);   // fade once the fly stops feeding it
-      } else {
-        line.setAttribute("points", "");
-        line.style.opacity = "0";
+      if (dashes.length > POOL) dashes.splice(0, dashes.length - POOL);
+      lastX = x; lastY = y;
+    };
+    // Cull expired / out-of-cap dashes, then paint the pool with eased opacity.
+    const drawTrail = (t, flyX) => {
+      if (!dashesG) return;
+      const cap = vw * TRAIL_CAP;
+      for (let i = dashes.length - 1; i >= 0; i--) {
+        if ((t - dashes[i].born) > DASH_LIFE || Math.abs(flyX - dashes[i].x) > cap) dashes.splice(i, 1);
+      }
+      const lines = dashesG.children;
+      for (let i = 0; i < lines.length; i++) {
+        const ln = lines[i], dsh = dashes[i];
+        if (!dsh) { ln.setAttribute("stroke-opacity", "0"); continue; }
+        const p = (t - dsh.born) / DASH_LIFE;
+        const ein = smooth01(p / DASH_APPEAR);                        // slow in
+        const eout = 1 - smooth01((p - DASH_FADE) / (1 - DASH_FADE)); // slow out
+        const scap = 1 - smooth01((Math.abs(flyX - dsh.x) - cap * 0.55) / (cap * 0.45)); // gentle at the 15% edge
+        const cx = Math.cos(dsh.ang) * DASH_LEN / 2, cy = Math.sin(dsh.ang) * DASH_LEN / 2;
+        ln.setAttribute("x1", (dsh.x - cx).toFixed(1)); ln.setAttribute("y1", (dsh.y - cy).toFixed(1));
+        ln.setAttribute("x2", (dsh.x + cx).toFixed(1)); ln.setAttribute("y2", (dsh.y + cy).toFixed(1));
+        ln.setAttribute("stroke", "rgb(" + trailColor + ")");
+        ln.setAttribute("stroke-opacity", (DASH_PEAK * ein * clamp01(eout) * clamp01(scap)).toFixed(3));
       }
     };
 
@@ -184,24 +204,23 @@ function BackFly() {
       el.style.transform = "translate(" + (dispX - el.offsetWidth / 2).toFixed(1) + "px," + (dispY - el.offsetHeight / 2).toFixed(1) + "px)";
       el.style.opacity = dispO.toFixed(3);
 
-      // Feed the comet trail: drop a point where the fly is (once it moves enough),
-      // clear it while the fly is invisible so it never streaks across a teleport,
-      // and resample the colour whenever the active section changes.
+      // Lay the trail: drop fixed dashes where the fly has been while it's visible,
+      // pause extending while it fades (existing dashes keep easing out), and clear
+      // everything on a teleport so nothing streaks across a jump. Resample the
+      // colour whenever the active section changes.
       const tnow = nowMs();
       if (dispO < 0.05) {
-        pts.length = 0;
+        dashes.length = 0; lastX = null; lastY = null; acc = 0;
       } else if (dispO > 0.1) {
-        const last = pts[pts.length - 1];
-        if (!last || (Math.abs(dispX - last.x) + Math.abs(dispY - last.y)) >= TRAIL_STEP) {
-          if (curSel !== colorSel) { colorSel = curSel; trailColor = pickTrailColor(dispX, dispY); }
-          pts.push({ x: dispX, y: dispY, t: tnow });
-          if (pts.length > 160) pts.shift();
-        }
+        if (curSel !== colorSel) { colorSel = curSel; trailColor = pickTrailColor(dispX, dispY); }
+        layDashes(dispX, dispY, tnow);
+      } else {
+        lastX = null; lastY = null;   // faint but not gone: stop extending, let dashes ease out
       }
-      drawTrail(tnow);
+      drawTrail(tnow, dispX);
 
       const flySettled = Math.abs(tgtX - dispX) < 0.3 && Math.abs(tgtY - dispY) < 0.3 && Math.abs(tgtO - dispO) < 0.01;
-      const settled = flySettled && pts.length === 0;   // keep the loop alive while the tail fades out
+      const settled = flySettled && dashes.length === 0;   // keep the loop alive while the dashes ease out
       if (!settled) raf = requestAnimationFrame(frame);
     };
 
@@ -226,13 +245,11 @@ function BackFly() {
   return (
     <React.Fragment>
       <svg ref={trailRef} className="fly-trail" aria-hidden="true">
-        <defs>
-          <linearGradient ref={gradRef} id="fly-trail-grad" gradientUnits="userSpaceOnUse">
-            <stop offset="0" stopColor="rgba(245,238,220,0)" />
-            <stop offset="1" stopColor="rgba(245,238,220,0.85)" />
-          </linearGradient>
-        </defs>
-        <polyline ref={lineRef} points="" fill="none" stroke="url(#fly-trail-grad)" />
+        <g ref={dashesRef}>
+          {Array.from({ length: POOL }).map((_, i) =>
+          <line key={i} x1="0" y1="0" x2="0" y2="0" strokeOpacity="0" />
+          )}
+        </g>
       </svg>
       <img ref={ref} className="back-fly" src="assets/brand/fly-red.png" alt="" aria-hidden="true" />
     </React.Fragment>);
