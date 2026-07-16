@@ -65,6 +65,10 @@ function BackFly() {
     let trailColor = "245,238,220";  // "r,g,b"; cream by default (assumes a dark bg)
     const nowMs = () => (window.performance && performance.now) ? performance.now() : Date.now();
     const smooth01 = (v) => { v = clamp01(v); return v * v * (3 - 2 * v); };
+    // Dashes are anchored in PAGE space (y + scroll) and drawn back into the fixed
+    // overlay minus the live scroll, so they ride the content — locked to the fly's
+    // flight path — instead of hanging at a fixed viewport height as the page moves.
+    const scrollTop = () => window.pageYOffset || document.documentElement.scrollTop || 0;
     // Sample the background under the fly and return a contrasting dash colour.
     const pickTrailColor = (x, y) => {
       let node = document.elementFromPoint(x, y), bg = null;
@@ -85,7 +89,7 @@ function BackFly() {
       acc += d;
       while (acc >= DASH_GAP) {
         acc -= DASH_GAP;
-        dashes.push({ x: x - ux * acc, y: y - uy * acc, ang: ang, born: t });   // fixed spot along the path
+        dashes.push({ x: x - ux * acc, py: (y - uy * acc) + scrollTop(), ang: ang, born: t });   // page-anchored spot on the path
       }
       if (dashes.length > POOL) dashes.splice(0, dashes.length - POOL);
       lastX = x; lastY = y;
@@ -106,8 +110,9 @@ function BackFly() {
         const eout = 1 - smooth01((p - DASH_FADE) / (1 - DASH_FADE)); // slow out
         const scap = 1 - smooth01((Math.abs(flyX - dsh.x) - cap * 0.55) / (cap * 0.45)); // gentle at the 15% edge
         const cx = Math.cos(dsh.ang) * DASH_LEN / 2, cy = Math.sin(dsh.ang) * DASH_LEN / 2;
-        ln.setAttribute("x1", (dsh.x - cx).toFixed(1)); ln.setAttribute("y1", (dsh.y - cy).toFixed(1));
-        ln.setAttribute("x2", (dsh.x + cx).toFixed(1)); ln.setAttribute("y2", (dsh.y + cy).toFixed(1));
+        const ry = dsh.py - scrollTop();   // page space back to the fixed overlay's viewport space
+        ln.setAttribute("x1", (dsh.x - cx).toFixed(1)); ln.setAttribute("y1", (ry - cy).toFixed(1));
+        ln.setAttribute("x2", (dsh.x + cx).toFixed(1)); ln.setAttribute("y2", (ry + cy).toFixed(1));
         ln.setAttribute("stroke", "rgb(" + trailColor + ")");
         ln.setAttribute("stroke-opacity", (DASH_PEAK * ein * clamp01(eout) * clamp01(scap)).toFixed(3));
       }
