@@ -13,8 +13,9 @@
 // Flow: auth -> GET /menus/v2/menus -> find the "Weekly Specials" group ->
 // keep only items that carry a Toast photo -> download each photo into
 // assets/specials/ -> rewrite the /* SPECIALS:START..END */ block in data.js.
-// Also reads the "Soup of the Day" item's Cup/Bowl modifier prices and writes
-// them into soupSpecial (flavor stays hand-set); missing soup = soup left as-is.
+// Also reads the "Cup of Soup" + "Bowl of Soup" items (each item's price plus
+// their shared description as the flavor) and writes them into soupSpecial;
+// missing soup = soup left as-is.
 //
 // Fallback: ANY auth/API/download error throws before writing, so the last-good
 // specials committed in data.js stay live. An empty/photo-less group is also a
@@ -46,13 +47,13 @@ const SPECIALS_GROUP = process.env.TOAST_SPECIALS_GROUP || 'Weekly Specials'
 const VEG_MARKER = process.env.TOAST_VEG_MARKER || '(v)'
 const DRY_RUN = !!process.env.TOAST_DRY_RUN
 
-// Soup of the Day: a standing Toast item that carries Cup + Bowl as modifiers.
-// We read those two modifier prices and write them into soupSpecial in data.js
-// (the flavor stays hand-set). Item + option names are matched case-insensitively;
-// override via env if Kara names them differently.
-const SOUP_ITEM = process.env.TOAST_SOUP_ITEM || 'Soup of the Day'
-const SOUP_CUP_MARKER = process.env.TOAST_SOUP_CUP || 'cup'
-const SOUP_BOWL_MARKER = process.env.TOAST_SOUP_BOWL || 'bowl'
+// Soup of the Day: Toast has it as two separate items — "Cup of Soup" and
+// "Bowl of Soup" — that share a description (the day's flavor). We pull each
+// item's price plus that shared description and write them into soupSpecial in
+// data.js. Names are matched case-insensitively; override via env if Kara
+// renames them.
+const SOUP_CUP_ITEM = process.env.TOAST_SOUP_CUP_ITEM || 'Cup of Soup'
+const SOUP_BOWL_ITEM = process.env.TOAST_SOUP_BOWL_ITEM || 'Bowl of Soup'
 
 const slug = (s) => String(s).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
 const exists = (p) => access(p).then(() => true, () => false)
@@ -160,55 +161,51 @@ function extractSpecials(payload) {
   })
 }
 
-// Flatten the modifier options on a Toast menu item. Toast's Menus v2 nests
-// option items under modifierGroups[].modifierOptions[]; we also accept the
-// optionGroups/options aliases and recurse nested groups so a small schema drift
-// (or Kara's exact modifier layout) still resolves. Returns [{ name, price }].
-function collectModifierOptions(item) {
-  const out = []
-  const visit = (groups) => {
-    for (const g of (groups || [])) {
-      for (const o of (g.modifierOptions || g.options || g.items || [])) {
-        if (o && o.name != null) out.push({ name: String(o.name), price: o.price })
-      }
-      if (g.modifierGroups || g.optionGroups) visit(g.modifierGroups || g.optionGroups)
-    }
-  }
-  visit(item.modifierGroups || item.optionGroups || item.modifiers || [])
-  return out
-}
-
-// Find the "Soup of the Day" item anywhere in the Toast menu tree and read its
-// Cup / Bowl modifier prices. Returns { cup?, bowl? }, or null when the item or
-// both modifiers are missing — in which case the caller leaves the hand-set
-// soupSpecial untouched (never blanks it). Exported for tests.
-export function extractSoup(payload, opts = {}) {
-  const needle = String(opts.soupItem || SOUP_ITEM).toLowerCase()
-  const cupRe = new RegExp(opts.cupMarker || SOUP_CUP_MARKER, 'i')
-  const bowlRe = new RegExp(opts.bowlMarker || SOUP_BOWL_MARKER, 'i')
+// Find the first Toast menu item whose name matches `needle` (case-insensitive
+// substring) anywhere in the menu tree. Returns the item, or null.
+function findMenuItem(payload, needle) {
+  const want = String(needle).toLowerCase()
   let found = null
   const walk = (group) => {
     if (!group || found) return
     for (const it of (group.menuItems || [])) {
-      if (String(it.name || '').toLowerCase().includes(needle)) { found = it; return }
+      if (String(it.name || '').toLowerCase().includes(want)) { found = it; return }
     }
     for (const sub of (group.menuGroups || [])) { walk(sub); if (found) return }
   }
   for (const menu of (payload.menus || [])) {
     for (const group of (menu.menuGroups || [])) { walk(group); if (found) break }
   }
-  if (!found) return null
-  const options = collectModifierOptions(found)
-  const priceFor = (re) => {
-    const o = options.find((x) => re.test(x.name))
-    return o && o.price != null ? o.price : null
-  }
-  const cup = priceFor(cupRe)
-  const bowl = priceFor(bowlRe)
-  if (cup == null && bowl == null) return null
+  return found
+}
+
+// Toast carries the soup as two separate items — "Cup of Soup" and "Bowl of
+// Soup" — that share a description (the day's flavor). Pull each item's price and
+// the shared description. Returns { cup?, bowl?, flavor? }, or null when neither
+// item is found — in which case the caller leaves the hand-set soupSpecial
+// untouched (never blanks it). Flavor is only taken when the two descriptions
+// agree (or only one item exists); a blank or mismatched Toast description leaves
+// the hand-set flavor in place. Exported for tests.
+export function extractSoup(payload, opts = {}) {
+  const cupItem = findMenuItem(payload, opts.cupItem || SOUP_CUP_ITEM)
+  const bowlItem = findMenuItem(payload, opts.bowlItem || SOUP_BOWL_ITEM)
+  if (!cupItem && !bowlItem) return null
+
   const soup = {}
-  if (cup != null) soup.cup = cup
-  if (bowl != null) soup.bowl = bowl
+  if (cupItem && cupItem.price != null) soup.cup = cupItem.price
+  if (bowlItem && bowlItem.price != null) soup.bowl = bowlItem.price
+
+  const clean = (d) => String(d == null ? '' : d).replace(/\s+/g, ' ').trim()
+  const cupDesc = clean(cupItem && cupItem.description)
+  const bowlDesc = clean(bowlItem && bowlItem.description)
+  if (cupDesc && bowlDesc) {
+    if (cupDesc === bowlDesc) soup.flavor = cupDesc
+    else console.warn(`[soup] Cup/Bowl descriptions differ — leaving flavor hand-set. cup=${JSON.stringify(cupDesc)} bowl=${JSON.stringify(bowlDesc)}`)
+  } else if (cupDesc || bowlDesc) {
+    soup.flavor = cupDesc || bowlDesc
+  }
+
+  if (soup.cup == null && soup.bowl == null && soup.flavor == null) return null
   return soup
 }
 
@@ -247,7 +244,7 @@ async function main() {
 
   if (DRY_RUN) {
     console.log(`[dry-run] ${specials.length} specials: ${specials.map((s) => s.name).join(', ') || '(none)'}`)
-    if (soup) console.log(`[dry-run] soup cup/bowl: cup=${soup.cup ?? '-'} bowl=${soup.bowl ?? '-'}`)
+    if (soup) console.log(`[dry-run] soup: cup=${soup.cup ?? '-'} bowl=${soup.bowl ?? '-'} flavor=${soup.flavor ?? '(unchanged)'}`)
     return
   }
 
