@@ -190,6 +190,13 @@ function Menu() {
                     <div className="extra-card">
                       <span className="extra-label">{soupSpecial.name}</span>
                       <p className="extra-flavor">{soupSpecial.flavor}</p>
+                      {(soupSpecial.cup || soupSpecial.bowl) ? (
+                        <p className="extra-price">
+                          {soupSpecial.cup ? "Cup $" + soupSpecial.cup : null}
+                          {soupSpecial.cup && soupSpecial.bowl ? " · " : null}
+                          {soupSpecial.bowl ? "Bowl $" + soupSpecial.bowl : null}
+                        </p>
+                      ) : null}
                     </div>
                   ) : null}
                 </div>

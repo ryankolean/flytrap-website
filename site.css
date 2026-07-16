@@ -612,7 +612,8 @@ section { position: relative; }
 .special-ig svg { flex: 0 0 auto; }
 
 /* Muffin + soup flavor pair under the main specials. Toast-driven, flavor-forward,
-   no photo, no price. Muffin left, soup right on wide screens; stacked when narrow. */
+   no photo. Soup shows its cup/bowl prices; muffin stays price-free. Muffin left,
+   soup right on wide screens; stacked when narrow. */
 .specials-extras {
   display: grid;
   grid-template-columns: 1fr;
@@ -652,6 +653,13 @@ section { position: relative; }
   margin: 0;
 }
 @media (min-width: 768px) { .extra-flavor { font-size: 24px; } }
+.extra-price {
+  font-family: var(--font-serif);
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--color-checker-black);
+  margin: 2px 0 0;
+}
 
 /* ============================================================
    TODAY'S BUZZING band — under hero

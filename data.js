@@ -155,7 +155,7 @@ window.FT_DATA = {
   /* SPECIALS:END */
   /* EXTRAS:START */
   muffinSpecial: { name: "Mini Muffins", flavor: "Blueberry Lemon" },
-  soupSpecial: { name: "Soup of the Day", flavor: "Chickpea Lemon Rice" },
+  soupSpecial: { name: "Soup of the Day", flavor: "Chickpea Lemon Rice", cup: "5.00", bowl: "6.00" },
   /* EXTRAS:END */
   pastry: { name: "Brown-Butter Sour Cherry Galette", desc: "From the Sugar Shack — flaky butter dough, Michigan sour cherries, almond frangipane, demerara crust. While they last. $5.95." },
   dishes: [
