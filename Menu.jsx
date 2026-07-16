@@ -11,6 +11,14 @@ function VegLeaf() {
 
 const MENU_SPECIALS = "specials";
 
+// Format an extras price: under $1 shows in cents (0.99 -> "99¢"), $1+ in dollars
+// (5 -> "$5.00"). Blank/invalid -> "".
+function fmtExtraPrice(p) {
+  const n = Number(p);
+  if (!isFinite(n) || n <= 0) return "";
+  return n < 1 ? Math.round(n * 100) + "¢" : "$" + n.toFixed(2);
+}
+
 // Categories hidden from the public menu — everything after "Other Stuff": all
 // sides, the kid's menu, and the full drink/liquor list. Kara wants only the food
 // categories on the site; the bar + sides stay in Toast for in-house use. Matches
@@ -184,6 +192,7 @@ function Menu() {
                     <div className="extra-card">
                       <span className="extra-label">{muffinSpecial.name}</span>
                       <p className="extra-flavor">{muffinSpecial.flavor}</p>
+                      {muffinSpecial.price ? <p className="extra-price">{fmtExtraPrice(muffinSpecial.price)}</p> : null}
                     </div>
                   ) : null}
                   {soupSpecial ? (
@@ -192,9 +201,9 @@ function Menu() {
                       <p className="extra-flavor">{soupSpecial.flavor}</p>
                       {(soupSpecial.cup || soupSpecial.bowl) ? (
                         <p className="extra-price">
-                          {soupSpecial.cup ? "Cup $" + soupSpecial.cup : null}
+                          {soupSpecial.cup ? "Cup " + fmtExtraPrice(soupSpecial.cup) : null}
                           {soupSpecial.cup && soupSpecial.bowl ? " · " : null}
-                          {soupSpecial.bowl ? "Bowl $" + soupSpecial.bowl : null}
+                          {soupSpecial.bowl ? "Bowl " + fmtExtraPrice(soupSpecial.bowl) : null}
                         </p>
                       ) : null}
                     </div>

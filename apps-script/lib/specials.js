@@ -57,30 +57,47 @@ function fmtMoney(v) {
   return isFinite(n) ? n.toFixed(2) : '';
 }
 
-// Update the hand-maintained soupSpecial object in data.js with Toast-sourced
-// cup/bowl prices. name + flavor stay hand-curated: they are preserved unless a
-// value is explicitly passed in `soup`. cup/bowl are money-formatted; an empty
-// one is dropped so the object never carries an empty price. Only the
-// soupSpecial object is touched — muffinSpecial and the rest of data.js are
-// left byte-for-byte. Throws if soupSpecial is absent (structural invariant).
-function updateSoupSpecial(dataJsText, soup) {
-  soup = soup || {};
-  var m = /soupSpecial:\s*\{[^}]*\}/.exec(dataJsText);
-  if (!m) throw new Error('data.js is missing the soupSpecial object');
+// Read a double-quoted string field out of an object-literal snippet.
+function pickField(objText, key) {
+  var mm = new RegExp(key + ':\\s*"((?:[^"\\\\]|\\\\.)*)"').exec(objText);
+  return mm ? mm[1] : '';
+}
+
+// Rewrite one hand-maintained EXTRAS object (soupSpecial / muffinSpecial) in
+// data.js, merging Toast-sourced `fields` over the existing values. `keys` lists
+// the object's fields in output order and tags each as text or money; a field not
+// in `fields` is preserved from the current object, and an empty money field is
+// dropped so the object never carries an empty price. Only the matched object is
+// touched. Throws if it is absent (structural invariant).
+function updateExtra(dataJsText, objKey, keys, fields) {
+  fields = fields || {};
+  var m = new RegExp(objKey + ':\\s*\\{[^}]*\\}').exec(dataJsText);
+  if (!m) throw new Error('data.js is missing the ' + objKey + ' object');
   var cur = m[0];
-  var pick = function (key) {
-    var mm = new RegExp(key + ':\\s*"((?:[^"\\\\]|\\\\.)*)"').exec(cur);
-    return mm ? mm[1] : '';
-  };
-  var name = soup.name != null ? String(soup.name) : pick('name');
-  var flavor = soup.flavor != null ? String(soup.flavor) : pick('flavor');
-  var cup = fmtMoney(soup.cup != null ? soup.cup : pick('cup'));
-  var bowl = fmtMoney(soup.bowl != null ? soup.bowl : pick('bowl'));
-  var parts = ['name: "' + jsStr(name) + '"', 'flavor: "' + jsStr(flavor) + '"'];
-  if (cup) parts.push('cup: "' + jsStr(cup) + '"');
-  if (bowl) parts.push('bowl: "' + jsStr(bowl) + '"');
-  var rebuilt = 'soupSpecial: { ' + parts.join(', ') + ' }';
+  var parts = [];
+  keys.forEach(function (k) {
+    var raw = fields[k.name] != null ? fields[k.name] : pickField(cur, k.name);
+    var val = k.money ? fmtMoney(raw) : String(raw == null ? '' : raw);
+    if (k.money && !val) return; // drop empty prices
+    parts.push(k.name + ': "' + jsStr(val) + '"');
+  });
+  var rebuilt = objKey + ': { ' + parts.join(', ') + ' }';
   return dataJsText.slice(0, m.index) + rebuilt + dataJsText.slice(m.index + cur.length);
+}
+
+// soupSpecial: name + flavor preserved unless passed; cup/bowl money-formatted.
+function updateSoupSpecial(dataJsText, soup) {
+  return updateExtra(dataJsText, 'soupSpecial', [
+    { name: 'name' }, { name: 'flavor' }, { name: 'cup', money: true }, { name: 'bowl', money: true },
+  ], soup);
+}
+
+// muffinSpecial: name (site label) + flavor preserved unless passed; price money-
+// formatted and dropped when empty.
+function updateMuffinSpecial(dataJsText, muffin) {
+  return updateExtra(dataJsText, 'muffinSpecial', [
+    { name: 'name' }, { name: 'flavor' }, { name: 'price', money: true },
+  ], muffin);
 }
 
 if (typeof module !== 'undefined' && module.exports) {
@@ -88,5 +105,6 @@ if (typeof module !== 'undefined' && module.exports) {
     buildSpecialsBlock: buildSpecialsBlock,
     spliceSpecials: spliceSpecials,
     updateSoupSpecial: updateSoupSpecial,
+    updateMuffinSpecial: updateMuffinSpecial,
   };
 }
