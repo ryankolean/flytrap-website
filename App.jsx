@@ -60,7 +60,7 @@ function BackFly() {
     const TRAIL_CAP = 0.15;          // visible trail spans <= 15% vw behind the fly
     const DASH_PEAK = 0.85;          // max dash opacity
     const dashes = [];               // { x, y, ang, born } laid along the path
-    let lastX = null, lastY = null, acc = 0;   // path-distance accumulator
+    let lastX = null, lastPy = null, acc = 0;   // last fly PAGE position + path-distance accumulator
     let colorSel = null;             // section the trail colour was last sampled for
     let trailColor = "245,238,220";  // "r,g,b"; cream by default (assumes a dark bg)
     const nowMs = () => (window.performance && performance.now) ? performance.now() : Date.now();
@@ -82,17 +82,21 @@ function BackFly() {
     };
     // Lay evenly-spaced dashes along the path the fly just travelled.
     const layDashes = (x, y, t) => {
-      if (lastX === null) { lastX = x; lastY = y; return; }
-      const dx = x - lastX, dy = y - lastY, d = Math.hypot(dx, dy);
+      const px = x, py = y + scrollTop();   // page coords (no horizontal page scroll, so px = x)
+      if (lastX === null) { lastX = px; lastPy = py; return; }
+      const dx = px - lastX, dpy = py - lastPy, d = Math.hypot(dx, dpy);
       if (d < 0.01) return;
-      const ux = dx / d, uy = dy / d, ang = Math.atan2(dy, dx);
+      // Angle is the tangent of the PAGE-space path, so each dash lines up with the
+      // content-locked trail it forms — not the fly's on-screen direction, which the
+      // scroll skews.
+      const ux = dx / d, uy = dpy / d, ang = Math.atan2(dpy, dx);
       acc += d;
       while (acc >= DASH_GAP) {
         acc -= DASH_GAP;
-        dashes.push({ x: x - ux * acc, py: (y - uy * acc) + scrollTop(), ang: ang, born: t });   // page-anchored spot on the path
+        dashes.push({ x: px - ux * acc, py: py - uy * acc, ang: ang, born: t });   // page-anchored spot on the path
       }
       if (dashes.length > POOL) dashes.splice(0, dashes.length - POOL);
-      lastX = x; lastY = y;
+      lastX = px; lastPy = py;
     };
     // Cull expired / out-of-cap dashes, then paint the pool with eased opacity.
     const drawTrail = (t, flyX) => {
@@ -215,12 +219,12 @@ function BackFly() {
       // colour whenever the active section changes.
       const tnow = nowMs();
       if (dispO < 0.05) {
-        dashes.length = 0; lastX = null; lastY = null; acc = 0;
+        dashes.length = 0; lastX = null; lastPy = null; acc = 0;
       } else if (dispO > 0.1) {
         if (curSel !== colorSel) { colorSel = curSel; trailColor = pickTrailColor(dispX, dispY); }
         layDashes(dispX, dispY, tnow);
       } else {
-        lastX = null; lastY = null;   // faint but not gone: stop extending, let dashes ease out
+        lastX = null; lastPy = null;   // faint but not gone: stop extending, let dashes ease out
       }
       drawTrail(tnow, dispX);
 
