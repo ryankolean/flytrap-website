@@ -122,7 +122,6 @@ function Menu() {
                   </button>
                 ))}
               </nav>
-              <p className="veg-legend"><VegLeaf /> = Vegetarian. All dishes can also be made vegan with modifications (except the Mac).</p>
             </div>
 
             <div className="menu-cat" id="menu-sec-specials">
@@ -200,6 +199,7 @@ function Menu() {
             </p>
 
             <div className="menu-foot">
+              <span className="veg-legend"><VegLeaf /> = Vegetarian. All dishes can also be made vegan with modifications (except the Mac).</span><br />
               All menu items available for carry out.<br />
               Consuming raw or undercooked meats, shellfish, or eggs may increase the risk of foodborne illness.
             </div>

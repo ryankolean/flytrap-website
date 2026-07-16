@@ -966,8 +966,8 @@ section { position: relative; }
 }
 .menu-jumpnav .menu-tabs::-webkit-scrollbar { display: none; }
 .menu-jumpnav .menu-tabs button { flex: 0 0 auto; }
-.menu-jumpnav .veg-legend {
-  display: flex;
+.menu-foot .veg-legend {
+  display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 5px;
