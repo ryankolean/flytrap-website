@@ -113,37 +113,13 @@ window.FT_DATA = {
     { day: "Sunday",    name: "Stevie Wonder",    desc: "Eggs in a basket of buttery sourdough, signed-sealed-delivered hollandaise, country ham, garlic spuds.", veg: false, price: "16.95" },
   ],
   // ===========================================================================
-  // THIS WEEK'S SPECIALS — two per week, posted to Instagram, photo-forward.
-  //
-  // SOURCE OF TRUTH: the weekly Instagram post on @theflytrapferndale.
-  // Current week's post: https://www.instagram.com/p/DZzyepcE7cT/
-  //
-  // ---------------------------------------------------------------------------
-  // TODO (Claude Code) — AUTOMATE THIS. See AUTOMATION.md "Weekly specials sync".
-  //
-  // Right now this `specials` array + the two photos in /assets/retail are
-  // updated BY HAND each week from the Instagram post. We want this automated.
-  //
-  // Proposed implementation (Phase B — no live calls until handoff, per CLAUDE.md):
-  //   1. A scheduled job (Vercel Cron, weekly Mon 6am ET) hits the Instagram
-  //      Graph API (Business/Creator account + Meta app) for the latest post
-  //      tagged #flytrapspecials (or the most recent feed post).
-  //   2. Parse the caption into two specials. Convention to enforce in the
-  //      caption so parsing is deterministic:
-  //         SAVORY: <name> — <description> — $<price>
-  //         SWEET:  <name> — <description> — $<price>
-  //      (vegetarian flagged with a trailing "(v)").
-  //   3. Download the carousel images (img_index 1 = savory, 2 = sweet),
-  //      crop/resize to 1080x1080 (Instagram square — matches .special-photo),
-  //      write to /assets/specials/week-<ISO>.jpg, and update `photo` below.
-  //   4. Rewrite this `specials` array + `weekOf` + `sourcePost` and commit,
-  //      OR move specials into the Sanity CMS so non-devs can edit without a deploy.
-  //   5. Fallback: if the fetch fails or the caption can't be parsed, KEEP the
-  //      last good specials (do not blank the section) and alert via ntfy.sh.
-  //
-  // Until automation lands: paste the two specials below and drag the two
-  // photos onto the slots (they persist), or set `photo` to a committed file.
-  // ---------------------------------------------------------------------------
+  // THIS WEEK'S SPECIALS + soup/muffin EXTRAS — auto-synced from Toast (the
+  // source of truth) by the Toast sync workflow. Do NOT hand-edit the
+  // SPECIALS/EXTRAS blocks below: every sync run rewrites them from Toast, so
+  // manual edits get overwritten. To change a special, edit it in Toast.
+  // See docs/SPECIALS_SYNC.md. The tweaks-panel form is the manual override /
+  // emergency path.
+  // ===========================================================================
   /* SPECIALS:START */
   sourcePost: "",
   weekOf: "Week of July 6",

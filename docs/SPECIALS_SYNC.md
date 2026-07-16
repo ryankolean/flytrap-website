@@ -1,8 +1,10 @@
 # Automated specials sync (Toast → site)
 
-The standing menu stays hand-curated. Only the **weekly specials** — the part
-that actually turns over — are pulled from Toast automatically, so nobody has to
-edit the codebase each week. Toast is the source of truth.
+The **weekly specials** plus the **soup of the day** and the **mini-muffin** —
+the parts that turn over — are pulled from Toast automatically, so nobody
+hand-edits the codebase. Toast is the source of truth. (The full standing menu
+is pulled by a sibling script into `assets/menu.json`; see
+[TOAST_MENU_SYNC.md](TOAST_MENU_SYNC.md). Both run in one workflow.)
 
 ## How it works
 
@@ -11,23 +13,29 @@ tested `apps-script/lib/specials.js` block builder):
 
 1. Auth → `GET /menus/v2/menus`.
 2. Find the **"Weekly Specials"** Toast group; keep only items that carry a
-   **photo** (that's how the featured dishes are distinguished from standing
-   items like soup/muffins that also live in that group).
+   **photo** (that's how the featured dishes are distinguished from the other
+   items in the group).
 3. Download each photo into `assets/specials/toast-<slug>.jpg` (self-hosted —
    `.special-photo` is `aspect-ratio: 1/1; object-fit: cover`, so any aspect
    crops cleanly).
-4. Rewrite only the `/* SPECIALS:START … END */` block of `data.js`.
+4. Read the **soup** ("Cup of Soup" + "Bowl of Soup" — each item's price plus
+   their shared description as the flavor) and the **mini-muffin** (price +
+   description as the flavor) from anywhere in the menu.
+5. Rewrite the `/* SPECIALS:START … END */` block **and** the
+   `/* EXTRAS:START … END */` block (soup + muffin) of `data.js`.
 
-`.github/workflows/specials-sync.yml` runs it a few times a day + on manual
-dispatch, commits `data.js` + the images on change, and triggers the Pages
-deploy.
+`.github/workflows/toast-sync.yml` runs this **and** the menu pull every 15
+minutes (+ manual dispatch) in a single job: it makes one commit of `data.js` +
+`assets/menu.json` + the images when anything changed (skips otherwise), rebases
+onto `main` before pushing, and triggers the Pages deploy.
 
 ## Fallback (no blank specials, ever)
 
 Any auth / API / image-download error throws **before** anything is written, so
 the last-good specials committed in `data.js` stay live. An empty or photo-less
-Weekly Specials group is also a no-op. The standing menu is never pulled, so a
-Toast outage can't affect it at all — its committed state is the fallback.
+Weekly Specials group is also a no-op, as is a missing soup or muffin item (that
+card is left exactly as it was). A Toast outage can't blank the site — every
+block keeps its own last-good committed state as the fallback.
 
 ## What Toast needs (already satisfied)
 
@@ -42,9 +50,13 @@ Toast outage can't affect it at all — its committed state is the fallback.
 
 ## Conventions Kara controls in Toast
 
-- **Which items show:** anything in the "Weekly Specials" group **with a photo**.
-  Soup/muffins (no photo) are ignored. To feature a special, give it a photo in
-  Toast; to pull it, remove the photo or move it out of the group.
+- **Which specials show:** anything in the "Weekly Specials" group **with a
+  photo**. To feature a special, give it a photo in Toast; to pull it, remove the
+  photo or move it out of the group.
+- **Soup + muffin:** matched by item name anywhere in the menu — "Cup of Soup" /
+  "Bowl of Soup" for the two soup prices + shared flavor, and the "Muffin" item
+  for the muffin price + flavor. Item names are overridable at the script level
+  via `TOAST_SOUP_CUP_ITEM`, `TOAST_SOUP_BOWL_ITEM`, `TOAST_MUFFIN_ITEM`.
 - **Vegetarian leaf:** append the veg marker (default `(v)`) to the item's Toast
   description. It's stripped from the shown text and turns on the green leaf.
 
@@ -67,6 +79,7 @@ Prints the specials it would publish; writes nothing, downloads nothing.
 
 ## Relationship to the manual flow
 
-The `flytrap-specials` skill + the tweaks-panel form publisher still write the
-same block, so they remain available as a manual override / emergency path — but
-they are no longer the weekly routine. Toast is.
+The tweaks-panel form publisher still writes the same block, so it remains
+available as a manual override / emergency path — but it is no longer the weekly
+routine. Toast is. (The old Instagram-based `flytrap-specials` skill was retired
+when Toast became the sole source.)

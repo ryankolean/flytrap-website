@@ -13,7 +13,7 @@ it changes.
 ## How it works
 
 ```
-Toast  ──[hourly-ish GitHub Action]──▶  assets/menu.json (committed)
+Toast  ──[GitHub Action, every 15 min]──▶  assets/menu.json (committed)
                                               │
                                    page load: fetch(assets/menu.json)
                                               │  success → live menu
@@ -25,8 +25,10 @@ Toast  ──[hourly-ish GitHub Action]──▶  assets/menu.json (committed)
   2. Walk every menu group (except the excluded ones) into `{ categories, items }`
      and write **`assets/menu.json`** — only when the content actually changed, so
      most runs commit nothing.
-- **`.github/workflows/toast-menu-sync.yml`** runs it hourly + on manual dispatch,
-  commits `assets/menu.json` on change, and triggers the Pages deploy.
+- **`.github/workflows/toast-sync.yml`** runs this **and** the specials / soup /
+  muffin pull every 15 minutes (+ manual dispatch) in one job. It makes a single
+  commit of `assets/menu.json` (plus `data.js` + specials images) when anything
+  changed, rebases onto `main` before pushing, and triggers the Pages deploy.
 - **The site** (`Menu.jsx` → `useLiveMenu`) fetches `assets/menu.json` at page
   load and renders it. The browser never talks to Toast directly.
 

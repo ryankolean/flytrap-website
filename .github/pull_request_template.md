@@ -43,9 +43,8 @@ Ran the site locally and checked at **375 / 768 / 1280**:
 
 ## Specials (only if this touches the specials section)
 
-- [ ] Images pulled from Instagram carousel children, verified to match captions
-- [ ] No price rendered unless it was in the IG caption
-- [ ] No SAVORY/SWEET badge or `eyebrow` field (identity is positional: 0=savory, 1=sweet)
+- [ ] `SPECIALS` / `EXTRAS` blocks in `data.js` still reflect Toast (not hand-edited)
+- [ ] No SAVORY/SWEET badge or `eyebrow` field
 - [ ] Every `photo:` path in `data.js` is committed
 
 ## Notes
