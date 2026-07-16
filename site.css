@@ -291,6 +291,26 @@ button { font-family: inherit; }
 }
 @media (prefers-reduced-motion: reduce) { .back-fly { display: none; } }
 
+/* Comet trail for the back-fly — a fixed SVG overlay whose dashed polyline is
+   driven per frame by BackFly in App.jsx. Sits just under the fly (z 49). Colour
+   + geometry are set inline; only the static dash cadence lives here. */
+.fly-trail {
+  position: fixed;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  z-index: 49;
+  overflow: visible;
+}
+.fly-trail polyline {
+  fill: none;
+  stroke-width: 2;
+  stroke-dasharray: 6 7;      /* evenly spaced medium dashes */
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+@media (prefers-reduced-motion: reduce) { .fly-trail { display: none; } }
+
 
 .hero-actions {
   display: flex;
