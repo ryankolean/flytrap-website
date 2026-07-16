@@ -1132,7 +1132,7 @@ section { position: relative; }
 .dish-track::-webkit-scrollbar { display: none; }
 @media (min-width: 768px) { .dish-track { gap: 18px; padding: 4px 56px 8px; } }
 .dish-card {
-  flex: 0 0 78%; max-width: 340px;
+  flex: 0 0 auto;   /* width follows the image so mixed aspect ratios aren't cropped */
   margin: 0;
   scroll-snap-align: start;
   position: relative;
@@ -1141,8 +1141,8 @@ section { position: relative; }
   background: var(--color-checker-black);
   box-shadow: 0 8px 22px rgba(0,0,0,.35);
 }
-@media (min-width: 768px) { .dish-card { flex-basis: 320px; } }
-.dish-card img { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; display: block; }
+.dish-card img { height: 180px; width: auto; display: block; }   /* uniform height, natural width — no crop, no letterbox */
+@media (min-width: 768px) { .dish-card img { height: 240px; } }
 .dish-card .label {
   position: absolute;
   bottom: 8px; left: 8px; right: 8px;
@@ -1204,7 +1204,7 @@ section { position: relative; }
 }
 .retail-card:hover { transform: translateY(-3px); box-shadow: 0 12px 28px rgba(0,0,0,.1); }
 .retail-card .ph {
-  aspect-ratio: 4/3;
+  aspect-ratio: 3/4;   /* portrait — the product photos are ~3:4 (1100x1461); a landscape box cropped ~44% off top+bottom */
   position: relative;
   display: flex;
   align-items: center;
