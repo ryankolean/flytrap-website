@@ -50,6 +50,43 @@ function spliceSpecials(dataJsText, newBlock) {
   return dataJsText.slice(0, lineStart) + newBlock + dataJsText.slice(end);
 }
 
+// "$5" / 5 / "6.0" -> "5.00" / "5.00" / "6.00". Blank/non-numeric -> "".
+function fmtMoney(v) {
+  if (v == null || v === '') return '';
+  var n = Number(String(v).replace(/^\$+/, '').trim());
+  return isFinite(n) ? n.toFixed(2) : '';
+}
+
+// Update the hand-maintained soupSpecial object in data.js with Toast-sourced
+// cup/bowl prices. name + flavor stay hand-curated: they are preserved unless a
+// value is explicitly passed in `soup`. cup/bowl are money-formatted; an empty
+// one is dropped so the object never carries an empty price. Only the
+// soupSpecial object is touched — muffinSpecial and the rest of data.js are
+// left byte-for-byte. Throws if soupSpecial is absent (structural invariant).
+function updateSoupSpecial(dataJsText, soup) {
+  soup = soup || {};
+  var m = /soupSpecial:\s*\{[^}]*\}/.exec(dataJsText);
+  if (!m) throw new Error('data.js is missing the soupSpecial object');
+  var cur = m[0];
+  var pick = function (key) {
+    var mm = new RegExp(key + ':\\s*"((?:[^"\\\\]|\\\\.)*)"').exec(cur);
+    return mm ? mm[1] : '';
+  };
+  var name = soup.name != null ? String(soup.name) : pick('name');
+  var flavor = soup.flavor != null ? String(soup.flavor) : pick('flavor');
+  var cup = fmtMoney(soup.cup != null ? soup.cup : pick('cup'));
+  var bowl = fmtMoney(soup.bowl != null ? soup.bowl : pick('bowl'));
+  var parts = ['name: "' + jsStr(name) + '"', 'flavor: "' + jsStr(flavor) + '"'];
+  if (cup) parts.push('cup: "' + jsStr(cup) + '"');
+  if (bowl) parts.push('bowl: "' + jsStr(bowl) + '"');
+  var rebuilt = 'soupSpecial: { ' + parts.join(', ') + ' }';
+  return dataJsText.slice(0, m.index) + rebuilt + dataJsText.slice(m.index + cur.length);
+}
+
 if (typeof module !== 'undefined' && module.exports) {
-  module.exports = { buildSpecialsBlock: buildSpecialsBlock, spliceSpecials: spliceSpecials };
+  module.exports = {
+    buildSpecialsBlock: buildSpecialsBlock,
+    spliceSpecials: spliceSpecials,
+    updateSoupSpecial: updateSoupSpecial,
+  };
 }

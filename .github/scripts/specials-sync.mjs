@@ -13,6 +13,8 @@
 // Flow: auth -> GET /menus/v2/menus -> find the "Weekly Specials" group ->
 // keep only items that carry a Toast photo -> download each photo into
 // assets/specials/ -> rewrite the /* SPECIALS:START..END */ block in data.js.
+// Also reads the "Soup of the Day" item's Cup/Bowl modifier prices and writes
+// them into soupSpecial (flavor stays hand-set); missing soup = soup left as-is.
 //
 // Fallback: ANY auth/API/download error throws before writing, so the last-good
 // specials committed in data.js stay live. An empty/photo-less group is also a
@@ -29,7 +31,7 @@ import { fileURLToPath, pathToFileURL } from 'node:url'
 import { dirname, resolve } from 'node:path'
 import specialsLib from '../../apps-script/lib/specials.js'
 
-const { buildSpecialsBlock, spliceSpecials } = specialsLib
+const { buildSpecialsBlock, spliceSpecials, updateSoupSpecial } = specialsLib
 
 const HERE = dirname(fileURLToPath(import.meta.url))
 const REPO_ROOT = resolve(HERE, '..', '..')
@@ -43,6 +45,14 @@ const RESTAURANT_GUID = process.env.TOAST_RESTAURANT_GUID
 const SPECIALS_GROUP = process.env.TOAST_SPECIALS_GROUP || 'Weekly Specials'
 const VEG_MARKER = process.env.TOAST_VEG_MARKER || '(v)'
 const DRY_RUN = !!process.env.TOAST_DRY_RUN
+
+// Soup of the Day: a standing Toast item that carries Cup + Bowl as modifiers.
+// We read those two modifier prices and write them into soupSpecial in data.js
+// (the flavor stays hand-set). Item + option names are matched case-insensitively;
+// override via env if Kara names them differently.
+const SOUP_ITEM = process.env.TOAST_SOUP_ITEM || 'Soup of the Day'
+const SOUP_CUP_MARKER = process.env.TOAST_SOUP_CUP || 'cup'
+const SOUP_BOWL_MARKER = process.env.TOAST_SOUP_BOWL || 'bowl'
 
 const slug = (s) => String(s).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
 const exists = (p) => access(p).then(() => true, () => false)
@@ -150,6 +160,58 @@ function extractSpecials(payload) {
   })
 }
 
+// Flatten the modifier options on a Toast menu item. Toast's Menus v2 nests
+// option items under modifierGroups[].modifierOptions[]; we also accept the
+// optionGroups/options aliases and recurse nested groups so a small schema drift
+// (or Kara's exact modifier layout) still resolves. Returns [{ name, price }].
+function collectModifierOptions(item) {
+  const out = []
+  const visit = (groups) => {
+    for (const g of (groups || [])) {
+      for (const o of (g.modifierOptions || g.options || g.items || [])) {
+        if (o && o.name != null) out.push({ name: String(o.name), price: o.price })
+      }
+      if (g.modifierGroups || g.optionGroups) visit(g.modifierGroups || g.optionGroups)
+    }
+  }
+  visit(item.modifierGroups || item.optionGroups || item.modifiers || [])
+  return out
+}
+
+// Find the "Soup of the Day" item anywhere in the Toast menu tree and read its
+// Cup / Bowl modifier prices. Returns { cup?, bowl? }, or null when the item or
+// both modifiers are missing — in which case the caller leaves the hand-set
+// soupSpecial untouched (never blanks it). Exported for tests.
+export function extractSoup(payload, opts = {}) {
+  const needle = String(opts.soupItem || SOUP_ITEM).toLowerCase()
+  const cupRe = new RegExp(opts.cupMarker || SOUP_CUP_MARKER, 'i')
+  const bowlRe = new RegExp(opts.bowlMarker || SOUP_BOWL_MARKER, 'i')
+  let found = null
+  const walk = (group) => {
+    if (!group || found) return
+    for (const it of (group.menuItems || [])) {
+      if (String(it.name || '').toLowerCase().includes(needle)) { found = it; return }
+    }
+    for (const sub of (group.menuGroups || [])) { walk(sub); if (found) return }
+  }
+  for (const menu of (payload.menus || [])) {
+    for (const group of (menu.menuGroups || [])) { walk(group); if (found) break }
+  }
+  if (!found) return null
+  const options = collectModifierOptions(found)
+  const priceFor = (re) => {
+    const o = options.find((x) => re.test(x.name))
+    return o && o.price != null ? o.price : null
+  }
+  const cup = priceFor(cupRe)
+  const bowl = priceFor(bowlRe)
+  if (cup == null && bowl == null) return null
+  const soup = {}
+  if (cup != null) soup.cup = cup
+  if (bowl != null) soup.bowl = bowl
+  return soup
+}
+
 async function main() {
   const fixture = process.env.TOAST_MENUS_FIXTURE
   let payload
@@ -166,36 +228,42 @@ async function main() {
   }
 
   const specials = extractSpecials(payload)
-  if (!specials.length) {
-    console.log(`No photo'd specials in "${SPECIALS_GROUP}" — leaving last-good specials untouched.`)
+  const soup = extractSoup(payload)
+  if (!specials.length && !soup) {
+    console.log(`No photo'd specials in "${SPECIALS_GROUP}" and no soup cup/bowl modifiers — leaving data.js untouched.`)
     return
   }
 
   const src = await readFile(DATA_JS, 'utf8')
-  const block = buildSpecialsBlock({
-    weekOf: currentWeekOf(src),
-    specials: specials.map(({ image, ...s }) => s),
-  })
-  const next = spliceSpecials(src, block)
+  let next = src
+  if (specials.length) {
+    const block = buildSpecialsBlock({
+      weekOf: currentWeekOf(src),
+      specials: specials.map(({ image, ...s }) => s),
+    })
+    next = spliceSpecials(next, block)
+  }
+  if (soup) next = updateSoupSpecial(next, soup)
 
   if (DRY_RUN) {
-    console.log(`[dry-run] ${specials.length} specials: ${specials.map((s) => s.name).join(', ')}`)
-    console.log(block)
+    console.log(`[dry-run] ${specials.length} specials: ${specials.map((s) => s.name).join(', ') || '(none)'}`)
+    if (soup) console.log(`[dry-run] soup cup/bowl: cup=${soup.cup ?? '-'} bowl=${soup.bowl ?? '-'}`)
     return
   }
 
   const imagesReady = fixture || (await Promise.all(specials.map((s) => exists(resolve(REPO_ROOT, s.photo))))).every(Boolean)
   if (next === src && imagesReady) {
-    console.log('Specials unchanged — nothing to do.')
+    console.log('Specials + soup unchanged — nothing to do.')
     return
   }
 
-  if (!fixture) {
+  if (!fixture && specials.length) {
     await mkdir(ASSETS_DIR, { recursive: true })
     for (const s of specials) await downloadImage(s.image, resolve(REPO_ROOT, s.photo))
   }
   await writeFile(DATA_JS, next)
-  console.log(`Wrote ${specials.length} specials to data.js${fixture ? ' [fixture, images skipped]' : ' (+ images)'}.`)
+  const wrote = [specials.length ? `${specials.length} specials` : '', soup ? 'soup cup/bowl' : ''].filter(Boolean).join(' + ')
+  console.log(`Wrote ${wrote} to data.js${fixture ? ' [fixture, images skipped]' : (specials.length ? ' (+ images)' : '')}.`)
 }
 
 // Only run when executed directly (not when imported by tests).
