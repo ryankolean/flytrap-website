@@ -302,9 +302,11 @@ button { font-family: inherit; }
   z-index: 49;
   overflow: visible;
 }
-.fly-trail line {
-  stroke-width: 2;
-  stroke-linecap: round;      /* each dash is a short round-capped segment */
+.fly-trail polyline {
+  fill: none;
+  stroke-width: 1.2;          /* thin */
+  stroke-linecap: round;
+  stroke-linejoin: round;     /* each dash is a short curved segment along the path */
 }
 @media (prefers-reduced-motion: reduce) { .fly-trail { display: none; } }
 

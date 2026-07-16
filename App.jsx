@@ -21,7 +21,7 @@ function BackFly() {
   const ref = uR(null);
   const trailRef = uR(null);   // fixed SVG overlay that holds the trail dashes
   const dashesRef = uR(null);  // <g> pool of dash <line>s laid along the fly's path
-  const POOL = 48;             // max simultaneous dashes (covers 15% of a wide screen)
+  const POOL = 96;             // max simultaneous dashes (covers the longer trail on a wide screen)
 
   uE(() => {
     const el = ref.current;
@@ -52,12 +52,13 @@ function BackFly() {
     // out — so the trail calmly traces the path instead of streaking. The visible
     // run is capped to 15% of the viewport width behind the fly, and coloured for
     // contrast against whatever section it crosses (light on dark, dark on light). ---
-    const DASH_LIFE = 1400;          // ms a dash lives (slow appear + slow fade)
-    const DASH_APPEAR = 0.26;        // life fraction spent easing in
-    const DASH_FADE = 0.55;          // life fraction after which it eases out
-    const DASH_GAP = 13;             // px of path between dashes (even spacing)
-    const DASH_LEN = 7;              // px length of each dash
-    const TRAIL_CAP = 0.15;          // visible trail spans <= 15% vw behind the fly
+    const DASH_LIFE = 1800;          // ms a dash lives (slow appear + slow fade)
+    const DASH_APPEAR = 0.24;        // life fraction spent easing in
+    const DASH_FADE = 0.5;           // life fraction after which it eases out
+    const DASH_GAP = 12;             // px of path between dashes (even spacing)
+    const DASH_LEN = 7;              // px length of a dash (straight fallback at the ends)
+    const DASH_BOW = 0.22;           // half-span (in segment param) of each curved dash
+    const TRAIL_CAP = 0.32;          // visible trail spans <= 32% vw behind the fly (longer)
     const DASH_PEAK = 0.85;          // max dash opacity
     const dashes = [];               // { x, y, ang, born } laid along the path
     let lastX = null, lastPy = null, acc = 0;   // last fly PAGE position + path-distance accumulator
@@ -101,24 +102,37 @@ function BackFly() {
     // Cull expired / out-of-cap dashes, then paint the pool with eased opacity.
     const drawTrail = (t, flyX) => {
       if (!dashesG) return;
+      dashesG.setAttribute("transform", "translate(0," + (-scrollTop()).toFixed(1) + ")");  // page space -> viewport
       const cap = vw * TRAIL_CAP;
       for (let i = dashes.length - 1; i >= 0; i--) {
         if ((t - dashes[i].born) > DASH_LIFE || Math.abs(flyX - dashes[i].x) > cap) dashes.splice(i, 1);
       }
-      const lines = dashesG.children;
-      for (let i = 0; i < lines.length; i++) {
-        const ln = lines[i], dsh = dashes[i];
-        if (!dsh) { ln.setAttribute("stroke-opacity", "0"); continue; }
+      const polys = dashesG.children;
+      for (let i = 0; i < polys.length; i++) {
+        const pl = polys[i], dsh = dashes[i];
+        if (!dsh) { pl.setAttribute("points", ""); pl.setAttribute("stroke-opacity", "0"); continue; }
+        // Curve each dash to the path: a quadratic through the neighbour midpoints with
+        // this dash as the control point, sampled over its middle span. Ends fall back
+        // to a straight segment along the stored tangent.
+        const prev = dashes[i - 1], next = dashes[i + 1];
+        let d3;
+        if (prev && next) {
+          const ax = (prev.x + dsh.x) / 2, ay = (prev.py + dsh.py) / 2;
+          const bx = (dsh.x + next.x) / 2, by = (dsh.py + next.py) / 2;
+          const q = (u) => { const m = 1 - u; return [m*m*ax + 2*m*u*dsh.x + u*u*bx, m*m*ay + 2*m*u*dsh.py + u*u*by]; };
+          const a = q(0.5 - DASH_BOW), b = q(0.5), c = q(0.5 + DASH_BOW);
+          d3 = a[0].toFixed(1)+","+a[1].toFixed(1)+" "+b[0].toFixed(1)+","+b[1].toFixed(1)+" "+c[0].toFixed(1)+","+c[1].toFixed(1);
+        } else {
+          const cx = Math.cos(dsh.ang) * DASH_LEN / 2, cy = Math.sin(dsh.ang) * DASH_LEN / 2;
+          d3 = (dsh.x - cx).toFixed(1)+","+(dsh.py - cy).toFixed(1)+" "+(dsh.x + cx).toFixed(1)+","+(dsh.py + cy).toFixed(1);
+        }
         const p = (t - dsh.born) / DASH_LIFE;
         const ein = smooth01(p / DASH_APPEAR);                        // slow in
         const eout = 1 - smooth01((p - DASH_FADE) / (1 - DASH_FADE)); // slow out
-        const scap = 1 - smooth01((Math.abs(flyX - dsh.x) - cap * 0.55) / (cap * 0.45)); // gentle at the 15% edge
-        const cx = Math.cos(dsh.ang) * DASH_LEN / 2, cy = Math.sin(dsh.ang) * DASH_LEN / 2;
-        const ry = dsh.py - scrollTop();   // page space back to the fixed overlay's viewport space
-        ln.setAttribute("x1", (dsh.x - cx).toFixed(1)); ln.setAttribute("y1", (ry - cy).toFixed(1));
-        ln.setAttribute("x2", (dsh.x + cx).toFixed(1)); ln.setAttribute("y2", (ry + cy).toFixed(1));
-        ln.setAttribute("stroke", "rgb(" + trailColor + ")");
-        ln.setAttribute("stroke-opacity", (DASH_PEAK * ein * clamp01(eout) * clamp01(scap)).toFixed(3));
+        const scap = 1 - smooth01((Math.abs(flyX - dsh.x) - cap * 0.6) / (cap * 0.4)); // gentle at the far edge
+        pl.setAttribute("points", d3);
+        pl.setAttribute("stroke", "rgb(" + trailColor + ")");
+        pl.setAttribute("stroke-opacity", (DASH_PEAK * ein * clamp01(eout) * clamp01(scap)).toFixed(3));
       }
     };
 
@@ -256,7 +270,7 @@ function BackFly() {
       <svg ref={trailRef} className="fly-trail" aria-hidden="true">
         <g ref={dashesRef}>
           {Array.from({ length: POOL }).map((_, i) =>
-          <line key={i} x1="0" y1="0" x2="0" y2="0" strokeOpacity="0" />
+          <polyline key={i} points="" strokeOpacity="0" />
           )}
         </g>
       </svg>
