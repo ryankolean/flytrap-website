@@ -14,8 +14,9 @@
 // keep only items that carry a Toast photo -> download each photo into
 // assets/specials/ -> rewrite the /* SPECIALS:START..END */ block in data.js.
 // Also reads the "Cup of Soup" + "Bowl of Soup" items (each item's price plus
-// their shared description as the flavor) and writes them into soupSpecial;
-// missing soup = soup left as-is.
+// their shared description as the flavor) into soupSpecial, and the mini-muffin
+// item (price + its description as the flavor) into muffinSpecial. Missing
+// soup/muffin = that card left as-is.
 //
 // Fallback: ANY auth/API/download error throws before writing, so the last-good
 // specials committed in data.js stay live. An empty/photo-less group is also a
@@ -32,7 +33,7 @@ import { fileURLToPath, pathToFileURL } from 'node:url'
 import { dirname, resolve } from 'node:path'
 import specialsLib from '../../apps-script/lib/specials.js'
 
-const { buildSpecialsBlock, spliceSpecials, updateSoupSpecial } = specialsLib
+const { buildSpecialsBlock, spliceSpecials, updateSoupSpecial, updateMuffinSpecial } = specialsLib
 
 const HERE = dirname(fileURLToPath(import.meta.url))
 const REPO_ROOT = resolve(HERE, '..', '..')
@@ -54,6 +55,10 @@ const DRY_RUN = !!process.env.TOAST_DRY_RUN
 // renames them.
 const SOUP_CUP_ITEM = process.env.TOAST_SOUP_CUP_ITEM || 'Cup of Soup'
 const SOUP_BOWL_ITEM = process.env.TOAST_SOUP_BOWL_ITEM || 'Bowl of Soup'
+
+// Mini muffin: one Toast item (matched loosely on "muffin") whose description is
+// the day's flavor and whose price feeds the muffin card. name stays hand-set.
+const MUFFIN_ITEM = process.env.TOAST_MUFFIN_ITEM || 'Muffin'
 
 const slug = (s) => String(s).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
 const exists = (p) => access(p).then(() => true, () => false)
@@ -209,6 +214,20 @@ export function extractSoup(payload, opts = {}) {
   return soup
 }
 
+// Read the mini-muffin item's price + flavor (its description) from Toast. Returns
+// { price?, flavor? } or null when the item is missing — caller then leaves the
+// hand-set muffinSpecial untouched (never blanks it). Exported for tests.
+export function extractMuffin(payload, opts = {}) {
+  const item = findMenuItem(payload, opts.muffinItem || MUFFIN_ITEM)
+  if (!item) return null
+  const muffin = {}
+  if (item.price != null) muffin.price = item.price
+  const flavor = String(item.description == null ? '' : item.description).replace(/\s+/g, ' ').trim()
+  if (flavor) muffin.flavor = flavor
+  if (muffin.price == null && muffin.flavor == null) return null
+  return muffin
+}
+
 async function main() {
   const fixture = process.env.TOAST_MENUS_FIXTURE
   let payload
@@ -226,8 +245,9 @@ async function main() {
 
   const specials = extractSpecials(payload)
   const soup = extractSoup(payload)
-  if (!specials.length && !soup) {
-    console.log(`No photo'd specials in "${SPECIALS_GROUP}" and no soup cup/bowl modifiers — leaving data.js untouched.`)
+  const muffin = extractMuffin(payload)
+  if (!specials.length && !soup && !muffin) {
+    console.log(`No photo'd specials in "${SPECIALS_GROUP}" and no soup/muffin items — leaving data.js untouched.`)
     return
   }
 
@@ -241,16 +261,18 @@ async function main() {
     next = spliceSpecials(next, block)
   }
   if (soup) next = updateSoupSpecial(next, soup)
+  if (muffin) next = updateMuffinSpecial(next, muffin)
 
   if (DRY_RUN) {
     console.log(`[dry-run] ${specials.length} specials: ${specials.map((s) => s.name).join(', ') || '(none)'}`)
     if (soup) console.log(`[dry-run] soup: cup=${soup.cup ?? '-'} bowl=${soup.bowl ?? '-'} flavor=${soup.flavor ?? '(unchanged)'}`)
+    if (muffin) console.log(`[dry-run] muffin: price=${muffin.price ?? '-'} flavor=${muffin.flavor ?? '(unchanged)'}`)
     return
   }
 
   const imagesReady = fixture || (await Promise.all(specials.map((s) => exists(resolve(REPO_ROOT, s.photo))))).every(Boolean)
   if (next === src && imagesReady) {
-    console.log('Specials + soup unchanged — nothing to do.')
+    console.log('Specials + extras unchanged — nothing to do.')
     return
   }
 
@@ -259,7 +281,7 @@ async function main() {
     for (const s of specials) await downloadImage(s.image, resolve(REPO_ROOT, s.photo))
   }
   await writeFile(DATA_JS, next)
-  const wrote = [specials.length ? `${specials.length} specials` : '', soup ? 'soup cup/bowl' : ''].filter(Boolean).join(' + ')
+  const wrote = [specials.length ? `${specials.length} specials` : '', soup ? 'soup' : '', muffin ? 'muffin' : ''].filter(Boolean).join(' + ')
   console.log(`Wrote ${wrote} to data.js${fixture ? ' [fixture, images skipped]' : (specials.length ? ' (+ images)' : '')}.`)
 }
 

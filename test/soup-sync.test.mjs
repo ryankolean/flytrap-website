@@ -3,8 +3,8 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { dirname, resolve } from 'node:path';
-import { extractSoup } from '../.github/scripts/specials-sync.mjs';
-import { updateSoupSpecial } from '../apps-script/lib/specials.js';
+import { extractSoup, extractMuffin } from '../.github/scripts/specials-sync.mjs';
+import { updateSoupSpecial, updateMuffinSpecial } from '../apps-script/lib/specials.js';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 
@@ -83,4 +83,48 @@ test('updateSoupSpecial money-formats numbers and strips a leading $', () => {
 
 test('updateSoupSpecial throws when soupSpecial is absent', () => {
   assert.throws(() => updateSoupSpecial('window.FT_DATA = {};', { cup: 5 }), /soupSpecial/);
+});
+
+// --- extractMuffin: one item's price + its description as the flavor ---
+test('extractMuffin reads the muffin item price + description flavor', () => {
+  assert.deepEqual(
+    extractMuffin(menu([{ name: 'Mini Muffin', price: 0.99, description: 'Blueberry Lemon' }])),
+    { price: 0.99, flavor: 'Blueberry Lemon' },
+  );
+});
+
+test('extractMuffin matches loosely on "muffin", case-insensitive', () => {
+  assert.deepEqual(
+    extractMuffin(menu([{ name: 'MINI-MUFFIN', price: 1.25, description: 'Corn' }])),
+    { price: 1.25, flavor: 'Corn' },
+  );
+});
+
+test('extractMuffin omits flavor when the description is blank (preserve hand-set)', () => {
+  assert.deepEqual(extractMuffin(menu([{ name: 'Mini Muffin', price: 0.99, description: '' }])), { price: 0.99 });
+});
+
+test('extractMuffin returns null when no muffin item exists', () => {
+  assert.equal(extractMuffin(menu([{ name: 'Bagel', price: 2 }])), null);
+});
+
+test('extractMuffin works against the committed fixture', async () => {
+  const payload = JSON.parse(await readFile(resolve(HERE, '../.github/scripts/fixtures/soup.sample.json'), 'utf8'));
+  assert.deepEqual(extractMuffin(payload), { price: 0.99, flavor: 'Blueberry Lemon' });
+});
+
+// --- updateMuffinSpecial: writes price/flavor, preserves name + soup ---
+test('updateMuffinSpecial writes price + flavor, preserves name and soup', () => {
+  const out = updateMuffinSpecial(DATA, { price: 0.99, flavor: 'Pumpkin Spice' });
+  assert.match(out, /muffinSpecial: \{ name: "Mini Muffins", flavor: "Pumpkin Spice", price: "0\.99" \}/);
+  assert.match(out, /soupSpecial: \{ name: "Soup of the Day", flavor: "Chickpea Lemon Rice", cup: "5\.00", bowl: "6\.00" \}/);
+});
+
+test('updateMuffinSpecial preserves the hand-set flavor when none is provided', () => {
+  const out = updateMuffinSpecial(DATA, { price: 1.5 });
+  assert.match(out, /muffinSpecial: \{ name: "Mini Muffins", flavor: "Blueberry Lemon", price: "1\.50" \}/);
+});
+
+test('updateMuffinSpecial throws when muffinSpecial is absent', () => {
+  assert.throws(() => updateMuffinSpecial('window.FT_DATA = {};', { price: 1 }), /muffinSpecial/);
 });
