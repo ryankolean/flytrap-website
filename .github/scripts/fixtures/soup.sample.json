@@ -8,7 +8,8 @@
           "menuItems": [
             { "name": "The Karen Gillan", "price": 12.95, "description": "Lemon poundcake French toast, macerated Michigan strawberries, burnt butter cream cheese.", "image": "https://cdn.toasttab.com/sample/karen-gillan.jpg" },
             { "name": "Cup of Soup", "price": 5.0, "description": "Chickpea Lemon Rice" },
-            { "name": "Bowl of Soup", "price": 6.0, "description": "Chickpea Lemon Rice" }
+            { "name": "Bowl of Soup", "price": 6.0, "description": "Chickpea Lemon Rice" },
+            { "name": "Mini Muffin", "price": 0.99, "description": "Blueberry Lemon" }
           ]
         }
       ]
