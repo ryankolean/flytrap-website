@@ -79,6 +79,7 @@ Prints the specials it would publish; writes nothing, downloads nothing.
 
 ## Relationship to the manual flow
 
-The `flytrap-specials` skill + the tweaks-panel form publisher still write the
-same block, so they remain available as a manual override / emergency path — but
-they are no longer the weekly routine. Toast is.
+The tweaks-panel form publisher still writes the same block, so it remains
+available as a manual override / emergency path — but it is no longer the weekly
+routine. Toast is. (The old Instagram-based `flytrap-specials` skill was retired
+when Toast became the sole source.)

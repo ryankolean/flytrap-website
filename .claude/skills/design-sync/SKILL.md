@@ -68,7 +68,6 @@ Version increments by 1 every successful sync. New version = new branch `design-
 - `screenshots/` — Claude Design canvas screenshots. Excluded.
 - `uploads/` — Claude Design upload staging. Excluded.
 - `.thumbnail` — Claude Design preview thumbnail. Excluded.
-- `AUTOMATION.md` — planning doc. If changed, surface to user; do NOT auto-commit.
 
 **Decisions that need user input every sync:**
 1. Has `tweaks-panel.jsx` UI been hidden in production? Check `tweaks-panel.jsx` for a feature flag or visibility check. If the panel renders an editor in prod, ask user whether to gate it (e.g. `?tweaks=1` URL flag) before merging.
@@ -369,7 +368,6 @@ gh issue create --title "[design-sync v${NEXT}] <issue>" --body "<details>" --la
 
 Common follow-ups:
 - Tweaks panel visible in prod — needs gating
-- Specials data is hardcoded — should hook into Instagram (see `AUTOMATION.md`)
 - Asset bloat — uploads/ growing
 - New external script needs SRI hash
 
@@ -388,15 +386,10 @@ A cheaper poll: compare the project's preview iframe URL `src` (`https://<projec
 
 ---
 
-## Sub-workflow: Weekly Instagram specials sync
+## Sub-workflow: Weekly specials sync
 
-**Moved to its own skill.** The weekly Instagram specials pull now lives in
-`.claude/skills/flytrap-specials/SKILL.md` and is the single source of truth for
-fetching the post, the carousel/caption guards, image processing, the `data.js`
-edit, verification, and the PR.
-
-Use that skill (trigger: "update flytrap specials", or a new
-`instagram.com/p/<code>` link) instead of an inlined copy here. The procedure
-that used to live in this section drifted out of sync and shipped a
-thumbnail-resolution bug (it pulled the 150x150 entry of an unsorted
-`display_resources` array); keeping one copy prevents a repeat.
+**Automated from Toast.** The weekly specials — plus the soup + mini-muffin and
+the full standing menu — are pulled from Toast by the Toast sync workflow every
+15 minutes; there is no manual weekly pull to run. See `docs/SPECIALS_SYNC.md`
+and `docs/TOAST_MENU_SYNC.md`. The tweaks-panel form is the manual override /
+emergency path. (This replaced the old Instagram-based specials skill.)

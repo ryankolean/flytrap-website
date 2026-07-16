@@ -62,7 +62,7 @@ Add new sections as new `.jsx` files at root + new `<script type="text/babel">` 
 5. PR `design-sync` → `main`. Merge = live deploy.
 
 The full sync procedure (fetch archive, diff, re-apply local patches, versioned
-branches, Instagram specials pull) lives in `.claude/skills/design-sync/SKILL.md`.
+branches) lives in `.claude/skills/design-sync/SKILL.md`.
 A sync run MUST follow that skill, not an ad-hoc copy.
 
 ## Branch & PR discipline
@@ -109,15 +109,14 @@ Current local patches (also enforced by `.github/workflows/guardrails.yml`):
 
 ## Specials section rules
 
-- Source of truth is the restaurant's weekly Instagram post (`FT_DATA.sourcePost`).
-  Pull images from the carousel children, not the embed DOM. The full weekly
-  procedure lives in the `flytrap-specials` skill
-  (`.claude/skills/flytrap-specials/SKILL.md`).
-- **No price unless it's in the Instagram caption.** `Sections.jsx` only renders
-  the price block when `s.price` is set; omit the field entirely when absent.
-- **No SAVORY / SWEET badges.** Savory vs sweet is positional only — `specials[0]`
-  is savory, `specials[1]` is sweet. Do not add an `eyebrow` field or a
-  `.special-badge` element.
+- **Source of truth is Toast.** The `SPECIALS` + `EXTRAS` blocks of `data.js` are
+  auto-synced from Toast by the Toast sync workflow (see `docs/SPECIALS_SYNC.md`);
+  don't hand-edit them — a sync run overwrites them. The tweaks-panel form is the
+  manual override / emergency path.
+- **No price unless Toast has one.** `Sections.jsx` / `Menu.jsx` only render the
+  price block when `s.price` is set; the sync omits the field when Toast has none.
+- **No SAVORY / SWEET badges.** Do not add an `eyebrow` field or a
+  `.special-badge` element (guardrails enforce this).
 
 ## Canonical external URLs
 

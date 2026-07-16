@@ -117,8 +117,8 @@ window.FT_DATA = {
   // source of truth) by the Toast sync workflow. Do NOT hand-edit the
   // SPECIALS/EXTRAS blocks below: every sync run rewrites them from Toast, so
   // manual edits get overwritten. To change a special, edit it in Toast.
-  // See docs/SPECIALS_SYNC.md. The flytrap-specials skill is the manual
-  // override / emergency path.
+  // See docs/SPECIALS_SYNC.md. The tweaks-panel form is the manual override /
+  // emergency path.
   // ===========================================================================
   /* SPECIALS:START */
   sourcePost: "",
