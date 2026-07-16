@@ -11,6 +11,28 @@ function VegLeaf() {
 
 const MENU_SPECIALS = "specials";
 
+// Categories hidden from the public menu — everything after "Other Stuff": all
+// sides, the kid's menu, and the full drink/liquor list. Kara wants only the food
+// categories on the site; the bar + sides stay in Toast for in-house use. Matches
+// the live Toast category ids (assets/menu.json) and the data.js backup ids.
+// Sean/Kara feedback 2026-07-16.
+const HIDDEN_CATEGORIES = new Set([
+  // live Toast ids
+  "b-sides", "kid-s-menu", "beverages", "free-flowing", "get-canned",
+  "all-bottled-up", "mimosas-wine", "mixed-drinks",
+  "brown-booze", "gin", "rum", "sweet-sips", "tequila", "vodka",
+  // data.js backup ids
+  "sides", "drinks",
+]);
+
+// Drop hidden categories (and their items) from a { categories, items } menu.
+function visibleMenu(cats, items) {
+  return {
+    cats: (cats || []).filter((c) => !HIDDEN_CATEGORIES.has(c.id)),
+    items: (items || []).filter((it) => !HIDDEN_CATEGORIES.has(it.cat)),
+  };
+}
+
 // Load the full menu from assets/menu.json (kept fresh by the Toast sync). On any
 // fetch/parse failure, fall back to the hand-curated menu inlined in data.js
 // (FT_DATA.menuItems) so the menu is never blank on page load. Returns
@@ -22,7 +44,8 @@ function useLiveMenu() {
     const useBackup = (why) => {
       if (!alive) return;
       if (why) console.warn("[menu] live menu unavailable, showing saved backup:", why);
-      setState({ cats: window.FT_DATA.menuCategories, items: window.FT_DATA.menuItems, source: "backup" });
+      const v = visibleMenu(window.FT_DATA.menuCategories, window.FT_DATA.menuItems);
+      setState({ cats: v.cats, items: v.items, source: "backup" });
     };
     fetch("assets/menu.json", { cache: "no-store" })
       .then((r) => { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
@@ -31,7 +54,8 @@ function useLiveMenu() {
         if (!j || !Array.isArray(j.categories) || !Array.isArray(j.items) || !j.categories.length) {
           throw new Error("menu.json empty or malformed");
         }
-        setState({ cats: j.categories, items: j.items, source: "live" });
+        const v = visibleMenu(j.categories, j.items);
+        setState({ cats: v.cats, items: v.items, source: "live" });
       })
       .catch((err) => useBackup(err.message));
     return () => { alive = false; };
