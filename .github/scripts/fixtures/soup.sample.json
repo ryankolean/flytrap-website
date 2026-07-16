@@ -1,0 +1,33 @@
+{
+  "menus": [
+    {
+      "name": "Fly Trap Food",
+      "menuGroups": [
+        {
+          "name": "Weekly Specials",
+          "menuItems": [
+            { "name": "The Karen Gillan", "price": 12.95, "description": "Lemon poundcake French toast, macerated Michigan strawberries, burnt butter cream cheese.", "image": "https://cdn.toasttab.com/sample/karen-gillan.jpg" }
+          ]
+        },
+        {
+          "name": "Other Stuff",
+          "menuItems": [
+            {
+              "name": "Soup of the Day",
+              "description": "Ask your server for today's flavor.",
+              "modifierGroups": [
+                {
+                  "name": "Size",
+                  "modifierOptions": [
+                    { "name": "Cup", "price": 5.0 },
+                    { "name": "Bowl", "price": 6.0 }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
