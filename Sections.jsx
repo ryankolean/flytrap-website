@@ -45,7 +45,7 @@ function About() {
 
             <p className="about-body about-lead">So now, in a moment of honesty, for the eyes of our website visitors ONLY, we give you the real skinny on the naming of our restaurant. We had been toiling arduously at the restaurant for many weeks when we knew it was time to give our creation a name. We took a small respite from our renovations and decided to brainstorm over a few cocktails. We wrote down many different names, and with whisky as our muse combined The Fly Trap, which we thought was a punchy homage to our predecessor, with a finer diner, which was a quick rhythmic summation of the vision for our creation.</p>
 
-            <p className="about-body">We proceeded to have fun with the name by calling our specials the “daily buzz” and our carry-out business “on the fly”. After ten years in business we now have alcohol and call this part of our business “bar fly.”</p>
+            <p className="about-body">We proceeded to have fun with the name by calling our specials the “daily buzz” and our carry-out business “on the fly”. We dreamed of being able to offer our “bar flies” a spirited buzz (now a reality!).</p>
 
             <blockquote className="about-pull">This was the point we knew we needn’t search any further, we had found our identity.</blockquote>
 
