@@ -19,11 +19,16 @@ const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
 // collides with the header. Sized to ~half the header text; transform/opacity eased.
 function BackFly() {
   const ref = uR(null);
+  const trailRef = uR(null);   // SVG overlay that draws the fly's comet trail
+  const lineRef = uR(null);    // <polyline> through the fly's recent positions
+  const gradRef = uR(null);    // <linearGradient>: opaque at the fly, clear at the tail
 
   uE(() => {
     const el = ref.current;
     if (!el) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    const svg = trailRef.current, line = lineRef.current, grad = gradRef.current;
 
     // sec: section whose header the fly rides; dir: 1 = L->R, -1 = R->L;
     // park: end beside the header instead of sweeping across. Always the red glyph.
@@ -35,8 +40,58 @@ function BackFly() {
     ];
 
     let vw = 0, vh = 0;
-    const measure = () => { vw = window.innerWidth; vh = window.innerHeight; };
+    const measure = () => {
+      vw = window.innerWidth; vh = window.innerHeight;
+      // Match the SVG's user space to viewport pixels so trail points map 1:1.
+      if (svg) { svg.setAttribute("viewBox", "0 0 " + vw + " " + vh); svg.setAttribute("width", vw); svg.setAttribute("height", vh); }
+    };
     const clamp01 = (v) => Math.min(1, Math.max(0, v));
+
+    // --- Comet trail: a dashed tail that follows the fly, capped to 15% of the
+    // viewport width, coloured for contrast against whatever section it crosses
+    // (light on dark, dark on light), fading out ~500ms after the fly stops. ---
+    const TRAIL_MS = 500;            // a point lives this long, then expires
+    const TRAIL_CAP = 0.15;          // trail's horizontal span never exceeds 15% vw
+    const TRAIL_STEP = 3;            // min px the fly must move to drop a new point
+    const pts = [];                  // recent fly centres: { x, y, t }
+    let colorSel = null;             // section the trail colour was last sampled for
+    let trailColor = "245,238,220";  // "r,g,b"; cream by default (assumes a dark bg)
+    const nowMs = () => (window.performance && performance.now) ? performance.now() : Date.now();
+    // Sample the background under the fly and return a contrasting dash colour.
+    const pickTrailColor = (x, y) => {
+      let node = document.elementFromPoint(x, y), bg = null;
+      while (node) {
+        const m = getComputedStyle(node).backgroundColor.match(/rgba?\(([^)]+)\)/);
+        if (m) { const p = m[1].split(",").map(parseFloat); const a = p[3] === undefined ? 1 : p[3]; if (a > 0.1) { bg = p; break; } }
+        node = node.parentElement;
+      }
+      const L = bg ? (0.2126 * bg[0] + 0.7152 * bg[1] + 0.0722 * bg[2]) / 255 : 0;
+      return L < 0.5 ? "245,238,220" : "34,34,34";   // cream on dark, ink on light
+    };
+    const drawTrail = (t) => {
+      // Expire old points, then trim the tail so its horizontal span stays <= 15% vw.
+      while (pts.length && (t - pts[0].t) > TRAIL_MS) pts.shift();
+      if (pts.length > 1) {
+        const cap = vw * TRAIL_CAP;
+        let lo, hi;
+        const span = () => { lo = hi = pts[0].x; for (const p of pts) { if (p.x < lo) lo = p.x; if (p.x > hi) hi = p.x; } return hi - lo; };
+        while (pts.length > 2 && span() > cap) pts.shift();
+      }
+      if (!line || !grad) return;
+      if (pts.length >= 2) {
+        const head = pts[pts.length - 1], tail = pts[0];
+        line.setAttribute("points", pts.map((p) => p.x.toFixed(1) + "," + p.y.toFixed(1)).join(" "));
+        grad.setAttribute("x1", tail.x.toFixed(1)); grad.setAttribute("y1", tail.y.toFixed(1));
+        grad.setAttribute("x2", head.x.toFixed(1)); grad.setAttribute("y2", head.y.toFixed(1));
+        const st = grad.querySelectorAll("stop");
+        st[0].setAttribute("stop-color", "rgba(" + trailColor + ",0)");
+        st[1].setAttribute("stop-color", "rgba(" + trailColor + ",0.85)");
+        line.style.opacity = clamp01(1 - (t - head.t) / TRAIL_MS).toFixed(3);   // fade once the fly stops feeding it
+      } else {
+        line.setAttribute("points", "");
+        line.style.opacity = "0";
+      }
+    };
 
     // Union box of a section's header text (eyebrow + title) — the region the fly must
     // never overlap. Viewport-relative.
@@ -129,7 +184,24 @@ function BackFly() {
       el.style.transform = "translate(" + (dispX - el.offsetWidth / 2).toFixed(1) + "px," + (dispY - el.offsetHeight / 2).toFixed(1) + "px)";
       el.style.opacity = dispO.toFixed(3);
 
-      const settled = Math.abs(tgtX - dispX) < 0.3 && Math.abs(tgtY - dispY) < 0.3 && Math.abs(tgtO - dispO) < 0.01;
+      // Feed the comet trail: drop a point where the fly is (once it moves enough),
+      // clear it while the fly is invisible so it never streaks across a teleport,
+      // and resample the colour whenever the active section changes.
+      const tnow = nowMs();
+      if (dispO < 0.05) {
+        pts.length = 0;
+      } else if (dispO > 0.1) {
+        const last = pts[pts.length - 1];
+        if (!last || (Math.abs(dispX - last.x) + Math.abs(dispY - last.y)) >= TRAIL_STEP) {
+          if (curSel !== colorSel) { colorSel = curSel; trailColor = pickTrailColor(dispX, dispY); }
+          pts.push({ x: dispX, y: dispY, t: tnow });
+          if (pts.length > 160) pts.shift();
+        }
+      }
+      drawTrail(tnow);
+
+      const flySettled = Math.abs(tgtX - dispX) < 0.3 && Math.abs(tgtY - dispY) < 0.3 && Math.abs(tgtO - dispO) < 0.01;
+      const settled = flySettled && pts.length === 0;   // keep the loop alive while the tail fades out
       if (!settled) raf = requestAnimationFrame(frame);
     };
 
@@ -151,7 +223,20 @@ function BackFly() {
     };
   }, []);
 
-  return <img ref={ref} className="back-fly" src="assets/brand/fly-red.png" alt="" aria-hidden="true" />;
+  return (
+    <React.Fragment>
+      <svg ref={trailRef} className="fly-trail" aria-hidden="true">
+        <defs>
+          <linearGradient ref={gradRef} id="fly-trail-grad" gradientUnits="userSpaceOnUse">
+            <stop offset="0" stopColor="rgba(245,238,220,0)" />
+            <stop offset="1" stopColor="rgba(245,238,220,0.85)" />
+          </linearGradient>
+        </defs>
+        <polyline ref={lineRef} points="" fill="none" stroke="url(#fly-trail-grad)" />
+      </svg>
+      <img ref={ref} className="back-fly" src="assets/brand/fly-red.png" alt="" aria-hidden="true" />
+    </React.Fragment>);
+
 }
 
 function App() {
