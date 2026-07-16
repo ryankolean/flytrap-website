@@ -101,7 +101,6 @@ window.FT_DATA = {
     { year: "2009", outlet: "Hour Detroit", title: "Mind, Body & Spirits and The Fly Trap — Molly Abraham's review.", url: "https://www.hourdetroit.com/restaurants-food/mind-body-spirits-and-the-fly-trap/" },
     { year: "2025", outlet: "Hour Detroit", title: "My Longest Relationship Is With a Restaurant.", url: "https://www.hourdetroit.com/restaurants-bars/culture-convo-my-longest-relationship-is-with-a-restaurant/" },
     { year: "2024", outlet: "Crain's Detroit Business", title: "Fly Trap founders return to take over the Ferndale diner.", url: "https://www.crainsdetroit.com/restaurants/fly-trap-founders-return-take-over-ferndale-diner/" },
-    { year: "2022", outlet: "The Detroit News", title: "The Fly Trap to reopen with new ownership.", url: "https://www.detroitnews.com/story/entertainment/dining/2022/02/14/fly-trap-restaurant-ferndale-reopen-next-month-new-owner/6782241001/" },
   ],
   // Daily buzz — rotating weekly schedule
   buzz: [
