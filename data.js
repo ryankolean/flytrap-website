@@ -159,7 +159,7 @@ window.FT_DATA = {
   /* EXTRAS:END */
   pastry: { name: "Brown-Butter Sour Cherry Galette", desc: "From the Sugar Shack — flaky butter dough, Michigan sour cherries, almond frangipane, demerara crust. While they last. $5.95." },
   dishes: [
-    { src: "assets/dishes/green-eggs-ham.jpg", label: "Green Eggs & Ham" },
+    { src: "assets/dishes/the-burger.jpg", label: "The Burger" },
     { src: "assets/dishes/huevos-rancheros.jpg", label: "Huevos Rancheros" },
     { src: "assets/dishes/the-rumble.jpg", label: "The Rumble" },
     { src: "assets/dishes/fried-rice.jpg", label: "Fried Rice" },
