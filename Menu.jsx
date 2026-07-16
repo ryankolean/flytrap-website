@@ -141,6 +141,11 @@ function Menu() {
                         {s.veg ? <VegLeaf /> : null}
                       </div>
                       <p className="special-desc">{s.desc}</p>
+                      {s.price ? (
+                        <div className="special-foot">
+                          <span className="special-price">${s.price}</span>
+                        </div>
+                      ) : null}
                     </div>
                   </article>
                 ))}
