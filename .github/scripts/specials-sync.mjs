@@ -230,9 +230,21 @@ export function extractMuffin(payload, opts = {}) {
 
 async function main() {
   const fixture = process.env.TOAST_MENUS_FIXTURE
+  const payloadIn = process.env.TOAST_PAYLOAD_IN
   let payload
   if (fixture) {
     payload = JSON.parse(await readFile(resolve(REPO_ROOT, fixture), 'utf8'))
+  } else if (payloadIn) {
+    // Reuse the payload the menu step already pulled — no second /menus call.
+    // Toast caps GET /menus at 1 req/sec per location, and hitting it twice per
+    // run (menu + specials) was returning 429. An absent file means the menu was
+    // unchanged this run (the menu step skipped its pull), so there's nothing to do.
+    if (!(await exists(resolve(REPO_ROOT, payloadIn)))) {
+      console.log('No shared Toast payload (menu unchanged this run) — nothing to do.')
+      return
+    }
+    payload = JSON.parse(await readFile(resolve(REPO_ROOT, payloadIn), 'utf8'))
+    console.log('Using the menu payload shared by the menu step (no Toast call).')
   } else {
     if (!CLIENT_ID || !CLIENT_SECRET || !RESTAURANT_GUID) {
       console.log('Toast credentials not configured — skipping (no-op).')
