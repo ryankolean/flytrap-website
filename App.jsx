@@ -173,6 +173,8 @@ function BackFly() {
 
     let curSel = null;
     let dispX = null, dispY = null, dispO = 0;
+    let dispTilt = 0, prevX = 0, prevY = 0;   // eased bank angle + last position (for velocity)
+    const FLY_EASE = 0.3;                       // follow-through on the sweep — lower = floatier/smoother
     let raf = 0;
 
     const frame = () => {
@@ -202,8 +204,15 @@ function BackFly() {
         } else {
           const sX = tg.dir > 0 ? left : right;
           const eX = tg.dir > 0 ? right : left;
-          tgtX = sX + (eX - sX) * t;
-          const bob = Math.sin(t * Math.PI * 3) * (fh * 0.6);           // small vertical drift
+          // Ease the sweep (smootherstep) so the fly drifts off the margin, gathers
+          // speed across the middle, and eases in at the far side — never a constant
+          // scroll-locked slide.
+          const te = t * t * t * (t * (t * 6 - 15) + 10);
+          tgtX = sX + (eX - sX) * te;
+          // Flowing vertical undulation: two out-of-phase waves so the float never
+          // repeats mechanically. Phase shifts per section (dir) for a little whimsy.
+          const TAU = Math.PI * 2, ph = tg.dir > 0 ? 0 : 1.3;
+          const undulate = fh * (Math.sin(t * TAU * 1.6 + ph) * 0.62 + Math.sin(t * TAU * 2.9 + ph) * 0.26);
           // Route through open space with a smooth arc: ride the header row out in the
           // side margins, rise into the clear band above the header as the sweep nears
           // the text, then settle back after. The rise is a smoothstep of horizontal
@@ -212,19 +221,27 @@ function BackFly() {
           const edge = Math.min(tgtX - (box.left - pad), (box.right + pad) - tgtX);
           const wRaw = clamp01(edge / pad);
           const w = wRaw * wRaw * (3 - 2 * wRaw);
-          const baseY = box.cy + bob;
+          const baseY = box.cy + undulate;
           const overY = box.top - fh * 0.5 - 8;                        // clear band above the header
           tgtY = baseY + (overY - baseY) * w;
           tgtO = 0.92 * clamp01(Math.min(t, 1 - t) / 0.12);             // fade in and out at the band ends
         }
       }
 
-      if (dispX === null) { dispX = tgtX; dispY = tgtY; }
-      if (dispO < 0.05) { dispX = tgtX; dispY = tgtY; }                  // teleport while invisible (no cross-screen slide)
-      dispX += (tgtX - dispX) * 0.5;
-      dispY += (tgtY - dispY) * 0.5;
+      if (dispX === null) { dispX = tgtX; dispY = tgtY; prevX = tgtX; prevY = tgtY; }
+      if (dispO < 0.05) { dispX = tgtX; dispY = tgtY; prevX = tgtX; prevY = tgtY; }  // teleport while invisible (no cross-screen slide)
+      dispX += (tgtX - dispX) * FLY_EASE;
+      dispY += (tgtY - dispY) * FLY_EASE;
       dispO += (tgtO - dispO) * 0.5;
-      el.style.transform = "translate(" + (dispX - el.offsetWidth / 2).toFixed(1) + "px," + (dispY - el.offsetHeight / 2).toFixed(1) + "px)";
+      // Bank the fly into its flight — nose-up as it climbs, nose-down as it dives —
+      // plus a faint position-driven flutter, so it reads alive and whimsical rather
+      // than a sprite sliding flat. Tilt fades out with the fly and eases smoothly.
+      const vx = dispX - prevX, vy = dispY - prevY;
+      prevX = dispX; prevY = dispY;
+      const bank = Math.max(-0.42, Math.min(0.42, Math.atan2(vy, Math.abs(vx) + 0.001)));
+      const flutter = Math.sin((dispX + dispY) * 0.06) * 0.05;
+      dispTilt += ((bank + flutter) * dispO - dispTilt) * 0.2;
+      el.style.transform = "translate(" + (dispX - el.offsetWidth / 2).toFixed(1) + "px," + (dispY - el.offsetHeight / 2).toFixed(1) + "px) rotate(" + (dispTilt * 57.2958).toFixed(1) + "deg)";
       el.style.opacity = dispO.toFixed(3);
 
       // Lay the trail: drop fixed dashes where the fly has been while it's visible,
