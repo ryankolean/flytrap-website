@@ -126,8 +126,32 @@ async function writeMenuJson(obj) {
   return true
 }
 
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms))
+
+// fetch() wrapper that respects Toast's rate limits. On 429 (or a 5xx) it backs
+// off and retries, honouring the Retry-After / X-Toast-RateLimit-Reset headers
+// Toast returns, with a jittered exponential fallback. Toast caps GET /menus at
+// 1 request/sec per location, so a short wait clears a burst 429.
+async function fetchToast(url, opts) {
+  const MAX_ATTEMPTS = 4
+  for (let attempt = 1; ; attempt++) {
+    const r = await fetch(url, opts)
+    if (r.status !== 429 && r.status < 500) return r
+    if (attempt >= MAX_ATTEMPTS) return r
+    const retryAfter = Number(r.headers.get('retry-after'))
+    const reset = Number(r.headers.get('x-toast-ratelimit-reset'))
+    let waitMs
+    if (retryAfter > 0) waitMs = retryAfter * 1000
+    else if (reset > 0) waitMs = reset * 1000 - Date.now()
+    else waitMs = 500 * 2 ** (attempt - 1)
+    waitMs = Math.min(15000, Math.max(500, waitMs)) + Math.floor(Math.random() * 250)
+    console.log(`Toast ${r.status} on ${url} — backing off ${Math.round(waitMs)}ms (attempt ${attempt}/${MAX_ATTEMPTS}).`)
+    await sleep(waitMs)
+  }
+}
+
 async function login() {
-  const r = await fetch(`${HOST}/authentication/v1/authentication/login`, {
+  const r = await fetchToast(`${HOST}/authentication/v1/authentication/login`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ clientId: CLIENT_ID, clientSecret: CLIENT_SECRET, userAccessType: 'TOAST_MACHINE_CLIENT' }),
@@ -140,7 +164,7 @@ async function login() {
 }
 
 async function apiGet(token, path) {
-  const r = await fetch(`${HOST}${path}`, {
+  const r = await fetchToast(`${HOST}${path}`, {
     headers: { Authorization: `Bearer ${token}`, 'Toast-Restaurant-External-ID': RESTAURANT_GUID },
   })
   if (!r.ok) throw new Error(`GET ${path} failed ${r.status}: ${await r.text()}`)
@@ -194,9 +218,21 @@ async function main() {
   const token = await login()
   console.log('Auth OK.')
 
-  // Only pull /menus when Toast's published timestamp changed.
+  // Only pull /menus when Toast's published timestamp changed. Toast caps
+  // GET /menus at 1 request/sec per location, so skipping the pull on an
+  // unchanged menu is both the rate-limit-friendly and the cheap thing to do —
+  // most runs stop here after two light calls (auth + metadata).
   const meta = await apiGet(token, '/menus/v2/metadata')
   const lastUpdated = meta?.lastUpdated || meta?.lastPublished || null
+
+  if (lastUpdated && !process.env.TOAST_DUMP && !dryRun) {
+    let prevUpdated = null
+    try { prevUpdated = JSON.parse(await readFile(MENU_JSON, 'utf8')).lastUpdated } catch { /* no prior menu.json */ }
+    if (prevUpdated && prevUpdated === lastUpdated) {
+      console.log(`Menu unchanged (lastUpdated=${lastUpdated}) — skipping the /menus pull.`)
+      return
+    }
+  }
 
   // Full listing to a file, every group (incl. excluded), for review.
   if (process.env.TOAST_DUMP) {
@@ -218,6 +254,13 @@ async function main() {
     }
     console.log(`[dry-run] veg items flagged: ${base.items.filter((i) => i.veg).length} (using marker ${JSON.stringify(VEG_MARKER)})`)
     return
+  }
+
+  // Hand the payload we just pulled to the specials step so it doesn't call
+  // /menus a second time — that second call is what was tripping the 429.
+  if (process.env.TOAST_PAYLOAD_OUT) {
+    await writeFile(process.env.TOAST_PAYLOAD_OUT, JSON.stringify(payload))
+    console.log(`Shared the menu payload with the specials step (${process.env.TOAST_PAYLOAD_OUT}).`)
   }
 
   const changed = await writeMenuJson(buildMenuJson(base, lastUpdated))

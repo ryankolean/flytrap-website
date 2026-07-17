@@ -61,11 +61,16 @@ jobs:
       - name: Pull full menu from Toast
         env:
           TOAST_EXCLUDE_GROUPS: ${{ secrets.TOAST_EXCLUDE_GROUPS }}
+          # Save the pulled /menus payload so the specials step can reuse it.
+          TOAST_PAYLOAD_OUT: ${{ runner.temp }}/toast-menus.json
         run: node .github/scripts/toast-sync.mjs
 
-      - name: Pull specials + soup + muffin from Toast
+      - name: Update specials + soup + muffin from the shared payload
         env:
           TOAST_SPECIALS_GROUP: ${{ secrets.TOAST_SPECIALS_GROUP }}
+          # Reuse the menu step's payload instead of calling /menus again — Toast
+          # caps GET /menus at 1 req/sec per location, so a second call 429s.
+          TOAST_PAYLOAD_IN: ${{ runner.temp }}/toast-menus.json
         run: node .github/scripts/specials-sync.mjs
 
       - name: Commit + push if anything changed
