@@ -304,10 +304,9 @@ button { font-family: inherit; }
 }
 .fly-trail polyline {
   fill: none;
-  stroke-width: 2;
-  stroke-dasharray: 6 7;      /* evenly spaced medium dashes */
+  stroke-width: 1.2;          /* thin */
   stroke-linecap: round;
-  stroke-linejoin: round;
+  stroke-linejoin: round;     /* each dash is a short curved segment along the path */
 }
 @media (prefers-reduced-motion: reduce) { .fly-trail { display: none; } }
 
