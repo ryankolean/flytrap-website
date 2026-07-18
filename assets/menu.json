@@ -1,6 +1,6 @@
 {
   "source": "toast",
-  "lastUpdated": "2026-07-17T19:36:14.272+0000",
+  "lastUpdated": "2026-07-18T13:19:14.293+0000",
   "categories": [
     {
       "id": "all-things-eggs",
@@ -992,6 +992,12 @@
       "nm": "Pixie Harbaugh",
       "desc": "",
       "price": "9.00"
+    },
+    {
+      "cat": "mixed-drinks",
+      "nm": "Coconut Pete's Mai Tai",
+      "desc": "",
+      "price": "10.00"
     },
     {
       "cat": "vodka",
