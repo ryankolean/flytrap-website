@@ -993,20 +993,6 @@ section { position: relative; }
 }
 .menu-jumpnav .menu-tabs::-webkit-scrollbar { display: none; }
 .menu-jumpnav .menu-tabs button { flex: 0 0 auto; }
-.menu-foot .veg-legend {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 5px;
-  flex-wrap: wrap;
-  margin: 0;
-  font-family: var(--font-serif);
-  font-size: 12px;
-  line-height: 1.35;
-  color: var(--color-text-charcoal);
-  text-align: center;
-}
-
 
 /* category section */
 .menu-cat {
@@ -1061,8 +1047,6 @@ section { position: relative; }
   font-size: 17px;
   color: var(--color-checker-black);
 }
-.veg-leaf { color: #4A7A2A; flex: 0 0 auto; vertical-align: middle; }
-.menu-item .veg-leaf { align-self: center; }
 .menu-item .veg-tag {
   display: inline-flex;
   align-items: center;
