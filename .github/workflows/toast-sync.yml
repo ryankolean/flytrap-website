@@ -22,10 +22,12 @@ name: Toast sync
 
 on:
   schedule:
-    # Every 15 minutes. Most runs are a no-op (nothing committed unless Toast
-    # actually changed). GitHub's scheduler is best-effort and can lag a few
-    # minutes under load.
-    - cron: '*/15 * * * *'
+    # Target ~every 15 minutes, offset off the top of the hour. GitHub's
+    # scheduler is best-effort and drops sub-hourly runs under load; the :00
+    # slot is the most congested, so 2/17/32/47 tends to lose fewer runs than
+    # */15. Still not guaranteed on time. Most runs are a no-op (nothing
+    # committed unless Toast actually changed).
+    - cron: '2,17,32,47 * * * *'
   workflow_dispatch:
     inputs:
       dry_run:
