@@ -643,6 +643,10 @@ section { position: relative; }
 @media (min-width: 768px) {
   .specials-extras { grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 24px; }
 }
+/* Lone extras card (e.g. soup sold out) centers instead of sitting in the left
+   column. Two-class specificity overrides the 1fr 1fr rule at every width. */
+.specials-extras.solo { grid-template-columns: 1fr; }
+.specials-extras.solo .extra-card { justify-self: center; width: 100%; max-width: 460px; }
 .extra-card {
   background: #fff;
   border-radius: 10px;

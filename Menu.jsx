@@ -69,6 +69,12 @@ function Menu() {
   const specials = window.FT_DATA.specials || [];
   const muffinSpecial = window.FT_DATA.muffinSpecial;
   const soupSpecial = window.FT_DATA.soupSpecial;
+  // Soup of the day is hidden when it has no flavor (sold out / cleared on a Toast
+  // out-of-stock day); when only one extras card remains it centers instead of
+  // sitting in the left grid column.
+  const muffinAvailable = !!muffinSpecial;
+  const soupAvailable = !!(soupSpecial && soupSpecial.flavor);
+  const extrasCount = (muffinAvailable ? 1 : 0) + (soupAvailable ? 1 : 0);
 
   // Jump-nav sections: Specials first, then every loaded category — all stacked.
   const sections = [{ id: MENU_SPECIALS, title: "Specials" }].concat(
@@ -175,16 +181,16 @@ function Menu() {
                   </p>
                 ) : null}
               </div>
-              {(muffinSpecial || soupSpecial) ? (
-                <div className="specials-extras">
-                  {muffinSpecial ? (
+              {extrasCount ? (
+                <div className={"specials-extras" + (extrasCount === 1 ? " solo" : "")}>
+                  {muffinAvailable ? (
                     <div className="extra-card">
                       <span className="extra-label">{muffinSpecial.name}</span>
                       <p className="extra-flavor">{muffinSpecial.flavor}</p>
                       {muffinSpecial.price ? <p className="extra-price">{fmtExtraPrice(muffinSpecial.price)}</p> : null}
                     </div>
                   ) : null}
-                  {soupSpecial ? (
+                  {soupAvailable ? (
                     <div className="extra-card">
                       <span className="extra-label">{soupSpecial.name}</span>
                       <p className="extra-flavor">{soupSpecial.flavor}</p>
