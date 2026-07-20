@@ -18,11 +18,19 @@ tested `apps-script/lib/specials.js` block builder):
 3. Download each photo into `assets/specials/toast-<slug>.jpg` (self-hosted —
    `.special-photo` is `aspect-ratio: 1/1; object-fit: cover`, so any aspect
    crops cleanly).
-4. Read the **soup** ("Cup of Soup" + "Bowl of Soup" — each item's price plus
-   their shared description as the flavor) and the **mini-muffin** (price +
-   description as the flavor) from anywhere in the menu.
+4. Read the **soup** (the **"Soup O' The Day"** item — flavor from its
+   description, cup from its base price, bowl from a "Bowl" size modifier, plus an
+   **out-of-stock** flag; falls back to legacy "Cup of Soup" / "Bowl of Soup"
+   items) and the **mini-muffin** (price + description as the flavor) from
+   anywhere in the menu.
 5. Rewrite the `/* SPECIALS:START … END */` block **and** the
    `/* EXTRAS:START … END */` block (soup + muffin) of `data.js`.
+
+On an **out-of-stock soup day** — the Toast item flagged out of stock, with its
+description set to a message like "No soup on the weekend!" — the sync writes
+`available:false` and **clears the prices**, so the site passes that description
+through on its own with no price hanging off it. In stock, it shows the flavor +
+Cup/Bowl.
 
 `.github/workflows/toast-sync.yml` runs this **and** the menu pull every 15
 minutes (+ manual dispatch) in a single job: it makes one commit of `data.js` +
@@ -53,12 +61,18 @@ block keeps its own last-good committed state as the fallback.
 - **Which specials show:** anything in the "Weekly Specials" group **with a
   photo**. To feature a special, give it a photo in Toast; to pull it, remove the
   photo or move it out of the group.
-- **Soup + muffin:** matched by item name anywhere in the menu — "Cup of Soup" /
-  "Bowl of Soup" for the two soup prices + shared flavor, and the "Muffin" item
-  for the muffin price + flavor. Item names are overridable at the script level
-  via `TOAST_SOUP_CUP_ITEM`, `TOAST_SOUP_BOWL_ITEM`, `TOAST_MUFFIN_ITEM`.
-- **Vegetarian leaf:** append the veg marker (default `(v)`) to the item's Toast
-  description. It's stripped from the shown text and turns on the green leaf.
+- **Soup:** the **"Soup O' The Day"** item — its description is the flavor, its
+  base price is the Cup price, and a "Bowl" size modifier (when present) is the
+  Bowl price. To take the soup down for the day, mark the item **out of stock** in
+  Toast and set its description to the message you want shown (e.g. "No soup on the
+  weekend!"); the site shows that message with no price. Legacy "Cup of Soup" /
+  "Bowl of Soup" items are still read as a fallback. Overridable via
+  `TOAST_SOUP_ITEM` (+ `TOAST_SOUP_CUP_ITEM`, `TOAST_SOUP_BOWL_ITEM`).
+- **Muffin:** the "Muffin" item (matched loosely) for the muffin price + flavor;
+  overridable via `TOAST_MUFFIN_ITEM`.
+- **Vegetarian leaf:** append the 🥬 glyph to the item's Toast description (soup,
+  specials, and menu items keep it inline, so it renders as the green leaf). The
+  `(v)` text marker on specials is also stripped and flags the item vegetarian.
 
 ## Test it offline (no network)
 

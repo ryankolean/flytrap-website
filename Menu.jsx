@@ -69,12 +69,15 @@ function Menu() {
   const specials = window.FT_DATA.specials || [];
   const muffinSpecial = window.FT_DATA.muffinSpecial;
   const soupSpecial = window.FT_DATA.soupSpecial;
-  // Soup of the day is hidden when it has no flavor (sold out / cleared on a Toast
-  // out-of-stock day); when only one extras card remains it centers instead of
-  // sitting in the left grid column.
+  // Soup of the day always shows whenever Toast gives it a flavor — including an
+  // out-of-stock message ("No soup on the weekend!"), which passes straight
+  // through; only a truly empty soupSpecial is hidden. Prices show only when the
+  // soup is in stock (available), so an out-of-stock day shows the message alone.
+  // When only one extras card remains it centers instead of sitting in the left
+  // grid column.
   const muffinAvailable = !!muffinSpecial;
-  const soupAvailable = !!(soupSpecial && soupSpecial.flavor);
-  const extrasCount = (muffinAvailable ? 1 : 0) + (soupAvailable ? 1 : 0);
+  const soupShown = !!(soupSpecial && soupSpecial.flavor);
+  const extrasCount = (muffinAvailable ? 1 : 0) + (soupShown ? 1 : 0);
 
   // Jump-nav sections: Specials first, then every loaded category — all stacked.
   const sections = [{ id: MENU_SPECIALS, title: "Specials" }].concat(
@@ -190,11 +193,11 @@ function Menu() {
                       {muffinSpecial.price ? <p className="extra-price">{fmtExtraPrice(muffinSpecial.price)}</p> : null}
                     </div>
                   ) : null}
-                  {soupAvailable ? (
+                  {soupShown ? (
                     <div className="extra-card">
                       <span className="extra-label">{soupSpecial.name}</span>
                       <p className="extra-flavor">{soupSpecial.flavor}</p>
-                      {(soupSpecial.cup || soupSpecial.bowl) ? (
+                      {soupSpecial.available && (soupSpecial.cup || soupSpecial.bowl) ? (
                         <p className="extra-price">
                           {soupSpecial.cup ? "Cup " + fmtExtraPrice(soupSpecial.cup) : null}
                           {soupSpecial.cup && soupSpecial.bowl ? " · " : null}
