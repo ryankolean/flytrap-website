@@ -232,7 +232,7 @@ function Menu() {
             </p>
 
             <div className="menu-foot">
-              All dishes can also be made vegan with modifications (except the Mac).<br />
+              <span className="veg-legend">🥬 = Vegetarian. All dishes can also be made vegan with modifications (except the Mac).</span><br />
               All menu items available for carry out.<br />
               Consuming raw or undercooked meats, shellfish, or eggs may increase the risk of foodborne illness.
             </div>
