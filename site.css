@@ -1061,8 +1061,6 @@ section { position: relative; }
   font-size: 17px;
   color: var(--color-checker-black);
 }
-.veg-leaf { color: #4A7A2A; flex: 0 0 auto; vertical-align: middle; }
-.menu-item .veg-leaf { align-self: center; }
 .menu-item .veg-tag {
   display: inline-flex;
   align-items: center;

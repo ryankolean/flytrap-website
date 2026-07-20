@@ -1,14 +1,4 @@
 // Menu: all sections stacked, sticky jump-nav with scrollspy (Group 7)
-function VegLeaf() {
-  return (
-    <svg className="veg-leaf" viewBox="0 0 24 24" width="15" height="15" role="img" aria-label="Vegetarian" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <title>Vegetarian</title>
-      <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.52-4.48 10-10 10Z" />
-      <path d="M2 21c0-3 1.85-5.36 5.08-6" />
-    </svg>
-  );
-}
-
 const MENU_SPECIALS = "specials";
 
 // Format an extras price: under $1 shows in cents (0.99 -> "99¢"), $1+ in dollars
@@ -169,7 +159,6 @@ function Menu() {
                     <div className="special-body">
                       <div className="special-headline">
                         <h3>{s.name}</h3>
-                        {s.veg ? <VegLeaf /> : null}
                       </div>
                       <p className="special-desc">{s.desc}</p>
                       {s.price ? (
@@ -229,7 +218,6 @@ function Menu() {
                     <div className="menu-item" key={c.id + i}>
                       <div className="nm-row">
                         <span className="nm">{it.nm}</span>
-                        {it.veg ? <VegLeaf /> : null}
                       </div>
                       <span className="pr">${it.price}</span>
                       {it.desc ? <p className="desc">{it.desc}</p> : null}
