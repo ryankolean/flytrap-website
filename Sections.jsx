@@ -434,7 +434,7 @@ function DailyBuzzPage({ onBack }) {
           <div className="grid">
             <div className="col">
               <h4>Soup of the day</h4>
-              <h3>{soup.flavor}</h3>
+              {soup && soup.flavor ? <h3>{soup.flavor}</h3> : null}
             </div>
             <div className="col">
               <h4>From the Sugar Shack</h4>

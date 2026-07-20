@@ -8,7 +8,7 @@
           "menuItems": [
             { "name": "The Karen Gillan", "price": 12.95, "description": "It's lemon poundcake French toast! Served up with macerated Michigan strawberries and burnt butter cream cheese.", "image": "https://cdn.toasttab.com/sample/karen-gillan.jpg" },
             { "name": "El Puerco Borracho", "price": 14.95, "description": "Pork carnitas swimming in beer soaked pintos served up with eggs how you like 'em, a jack cheese and scallion quesadilla, lime crema and salsa verde.", "image": "https://cdn.toasttab.com/sample/puerco-borracho.jpg" },
-            { "name": "Cup of Soup", "price": 5.0, "description": "Daily soup, no photo — should be dropped." }
+            { "name": "Soup O' The Day", "price": 5.0, "outOfStock": false, "description": "Egg Drop 🥬", "modifierGroups": [ { "name": "Size", "modifierOptions": [ { "name": "Cup", "price": 5.0 }, { "name": "Bowl", "price": 6.0 } ] } ] }
           ]
         },
         {
