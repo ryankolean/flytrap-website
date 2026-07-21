@@ -124,13 +124,13 @@ window.FT_DATA = {
   sourcePost: "",
   weekOf: "Week of July 6",
   specials: [
-    { id: "special-1", name: "The Paris Texas", desc: "Two eggs your way straddlin' Ontario smoked BBQ chicken and sweet potato hash with green chilies, jack cheese and herby crema. Toast? Sure.", veg: false, photo: "assets/specials/toast-the-paris-texas.jpg", price: "15.95" },
-    { id: "special-2", name: "The Turkish-ish Eggs", desc: "Eggs how you like 'em nested in a garlic yogurt sauce with aleppo pepper brown butter and a barley, cucumber tabbouleh. Yup, toast.🥬", veg: true, photo: "assets/specials/toast-the-turkish-ish-eggs.jpg", price: "12.95" },
+    { id: "special-1", name: "The Turkish-ish Eggs", desc: "Eggs how you like 'em nested in a garlic yogurt sauce with aleppo pepper brown butter and a barley, cucumber tabbouleh. Yup, toast.🥬", veg: true, photo: "assets/specials/toast-the-turkish-ish-eggs.jpg", price: "12.95" },
+    { id: "special-2", name: "the Banda Bassotti", desc: "Grilled Sourdough with Broiled Goat Cheese, Tomatoes & a Lemon Aioli topped with Balsamic Dressed Arugula; pick your side!🥬", veg: false, photo: "assets/specials/toast-the-banda-bassotti.jpg", price: "13.95" },
   ],
   /* SPECIALS:END */
   /* EXTRAS:START */
   muffinSpecial: { name: "Mini Muffins", flavor: "Banana Peanut Butter", price: "0.99" },
-  soupSpecial: { name: "Soup of the Day", flavor: "Egg Drop 🥬", available: true, cup: "5.00", bowl: "6.00" },
+  soupSpecial: { name: "Soup of the Day", flavor: "Egg Drop 🥬", available: true, cup: "5.00" },
   /* EXTRAS:END */
   pastry: { name: "Brown-Butter Sour Cherry Galette", desc: "From the Sugar Shack — flaky butter dough, Michigan sour cherries, almond frangipane, demerara crust. While they last. $5.95." },
   dishes: [
