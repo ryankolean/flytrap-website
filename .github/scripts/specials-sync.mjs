@@ -338,15 +338,21 @@ async function main() {
     console.log(`[dry-run] ${specials.length} specials: ${specials.map((s) => s.name).join(', ') || '(none)'}`)
     if (soup) console.log(`[dry-run] soup: available=${soup.available} cup=${soup.cup || '-'} bowl=${soup.bowl || '-'} flavor=${soup.flavor ?? '(unchanged)'}`)
     if (muffin) console.log(`[dry-run] muffin: price=${muffin.price ?? '-'} flavor=${muffin.flavor ?? '(unchanged)'}`)
-    // [diagnostic] Read-only dump of the raw partner-API shape for the soup item,
-    // so we can see exactly how the Cup/Bowl "Soup Sizes" modifier is delivered
-    // (inline vs references, absolute vs adjust pricing) before writing the bowl
-    // resolver. Removed before the real fix lands. Writes nothing.
+    // [diagnostic] Resolve the soup item's modifier groups -> options against the
+    // partner payload's top-level reference maps, printing each option's price +
+    // pricingStrategy so we can see the exact Cup/Bowl encoding (absolute vs
+    // adjust) before writing the bowl resolver. Read-only; removed before the fix.
     const rawSoup = findMenuItem(payload, process.env.TOAST_SOUP_ITEM || SOUP_ITEM)
-    console.log('[soup-debug] payload top-level keys:', JSON.stringify(Object.keys(payload || {})))
-    console.log('[soup-debug] raw soup item:', JSON.stringify(rawSoup))
-    for (const k of ['modifierGroups', 'modifierOptions', 'modifierGroupReferences', 'modifierOptionReferences', 'preModifierGroups', 'menuOptionGroups', 'menuOptions']) {
-      if (payload && payload[k] != null) console.log(`[soup-debug] payload.${k}:`, JSON.stringify(payload[k]).slice(0, 4000))
+    const grpMap = (payload && payload.modifierGroupReferences) || {}
+    const optMap = (payload && payload.modifierOptionReferences) || {}
+    const at = (map, ref) => (map[ref] != null ? map[ref] : map[String(ref)])
+    console.log(`[soup-debug] item price=${rawSoup?.price} strategy=${rawSoup?.pricingStrategy} groupRefs=${JSON.stringify(rawSoup?.modifierGroupReferences)}`)
+    for (const gref of (rawSoup?.modifierGroupReferences || [])) {
+      const g = at(grpMap, gref)
+      if (!g) { console.log(`[soup-debug] group ${gref}: UNRESOLVED`); continue }
+      const opts = (g.modifierOptionReferences || []).map((r) => at(optMap, r)).filter(Boolean)
+        .map((o) => ({ name: o.name, price: o.price, strategy: o.pricingStrategy, isDefault: o.isDefault }))
+      console.log(`[soup-debug] group "${g.name}" strategy=${g.pricingStrategy}: ${JSON.stringify(opts)}`)
     }
     return
   }
