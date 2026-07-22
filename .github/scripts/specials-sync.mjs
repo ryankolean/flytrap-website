@@ -194,18 +194,36 @@ function findMenuItem(payload, needle) {
 // veg flag). Only whitespace is normalised.
 const cleanFlavor = (d) => String(d == null ? '' : d).replace(/\s+/g, ' ').trim()
 
-// Best-effort size price: scan an item's modifier groups/options for one whose
-// name matches `needle` (e.g. "bowl") and return its price, or null. Toast
-// /menus/v2 nests modifier groups under the item and the exact field names vary
-// between menus, so this reads defensively rather than assuming one shape.
-function modifierPrice(item, needle) {
+// Resolve a soup *size* modifier option (e.g. "Cup" / "Bowl") for an item and
+// return the option object, or null. Toast's /menus/v2 delivers the size group by
+// integer reference — item.modifierGroupReferences -> payload.modifierGroupReferences
+// -> a group whose modifierOptionReferences index into payload.modifierOptionReferences
+// — so resolve those top-level maps. Inline modifier objects (older / other shapes)
+// are also handled. The option's `price` is the size *upcharge* on the item's base
+// price (Toast gives Cup +$0 / Bowl +$1), not an absolute price.
+function sizeOption(payload, item, needle) {
   if (!item) return null
   const want = String(needle).toLowerCase()
-  const groups = item.modifierGroups || item.modifiers || item.modifierGroupReferences || []
-  for (const g of (Array.isArray(groups) ? groups : [])) {
-    const opts = (g && (g.modifierOptions || g.options || g.items || g.modifiers)) || []
-    for (const opt of (Array.isArray(opts) ? opts : [])) {
-      if (opt && String(opt.name || '').toLowerCase().includes(want) && opt.price != null) return opt.price
+  const grpMap = (payload && payload.modifierGroupReferences) || {}
+  const optMap = (payload && payload.modifierOptionReferences) || {}
+  const at = (map, ref) => (ref == null ? null : (map[ref] != null ? map[ref] : map[String(ref)]))
+
+  const groups = []
+  const inlineGroups = item.modifierGroups || item.modifiers
+  if (Array.isArray(inlineGroups)) for (const g of inlineGroups) if (g && typeof g === 'object') groups.push(g)
+  if (Array.isArray(item.modifierGroupReferences)) {
+    for (const gref of item.modifierGroupReferences) { const g = at(grpMap, gref); if (g && typeof g === 'object') groups.push(g) }
+  }
+
+  for (const g of groups) {
+    const opts = []
+    const inlineOpts = g.modifierOptions || g.options || g.items || g.modifiers
+    if (Array.isArray(inlineOpts)) for (const o of inlineOpts) if (o && typeof o === 'object') opts.push(o)
+    if (Array.isArray(g.modifierOptionReferences)) {
+      for (const oref of g.modifierOptionReferences) { const o = at(optMap, oref); if (o && typeof o === 'object') opts.push(o) }
+    }
+    for (const o of opts) {
+      if (String(o.name || '').toLowerCase().includes(want) && o.price != null) return o
     }
   }
   return null
@@ -235,10 +253,20 @@ function soupFromSingleItem(payload, item, opts) {
     soup.bowl = ''
     return soup
   }
-  soup.cup = item.price != null ? item.price : ''
-  const modBowl = modifierPrice(item, 'bowl')
-  const bowlItem = modBowl == null ? findMenuItem(payload, opts.bowlItem || SOUP_BOWL_ITEM) : null
-  soup.bowl = modBowl != null ? modBowl : (bowlItem && bowlItem.price != null ? bowlItem.price : '')
+  // Base price is the Cup; the Bowl is a size modifier priced as an upcharge on it
+  // (Cup +$0, Bowl +$1 -> Bowl = base + $1). The size group is referenced by id, so
+  // sizeOption resolves it against the payload's top-level modifier maps.
+  const base = item.price != null ? Number(item.price) : null
+  const cupOpt = sizeOption(payload, item, 'cup')
+  const bowlOpt = sizeOption(payload, item, 'bowl')
+  soup.cup = base != null ? base + Number((cupOpt && cupOpt.price) || 0) : ''
+  if (bowlOpt && bowlOpt.price != null && base != null) {
+    soup.bowl = base + Number(bowlOpt.price)
+  } else {
+    // Legacy fallback: a separate "Bowl of Soup" item carrying an absolute price.
+    const bowlItem = findMenuItem(payload, opts.bowlItem || SOUP_BOWL_ITEM)
+    soup.bowl = bowlItem && bowlItem.price != null ? bowlItem.price : ''
+  }
   return soup
 }
 
@@ -338,22 +366,6 @@ async function main() {
     console.log(`[dry-run] ${specials.length} specials: ${specials.map((s) => s.name).join(', ') || '(none)'}`)
     if (soup) console.log(`[dry-run] soup: available=${soup.available} cup=${soup.cup || '-'} bowl=${soup.bowl || '-'} flavor=${soup.flavor ?? '(unchanged)'}`)
     if (muffin) console.log(`[dry-run] muffin: price=${muffin.price ?? '-'} flavor=${muffin.flavor ?? '(unchanged)'}`)
-    // [diagnostic] Resolve the soup item's modifier groups -> options against the
-    // partner payload's top-level reference maps, printing each option's price +
-    // pricingStrategy so we can see the exact Cup/Bowl encoding (absolute vs
-    // adjust) before writing the bowl resolver. Read-only; removed before the fix.
-    const rawSoup = findMenuItem(payload, process.env.TOAST_SOUP_ITEM || SOUP_ITEM)
-    const grpMap = (payload && payload.modifierGroupReferences) || {}
-    const optMap = (payload && payload.modifierOptionReferences) || {}
-    const at = (map, ref) => (map[ref] != null ? map[ref] : map[String(ref)])
-    console.log(`[soup-debug] item price=${rawSoup?.price} strategy=${rawSoup?.pricingStrategy} groupRefs=${JSON.stringify(rawSoup?.modifierGroupReferences)}`)
-    for (const gref of (rawSoup?.modifierGroupReferences || [])) {
-      const g = at(grpMap, gref)
-      if (!g) { console.log(`[soup-debug] group ${gref}: UNRESOLVED`); continue }
-      const opts = (g.modifierOptionReferences || []).map((r) => at(optMap, r)).filter(Boolean)
-        .map((o) => ({ name: o.name, price: o.price, strategy: o.pricingStrategy, isDefault: o.isDefault }))
-      console.log(`[soup-debug] group "${g.name}" strategy=${g.pricingStrategy}: ${JSON.stringify(opts)}`)
-    }
     return
   }
 

@@ -8,7 +8,7 @@
           "menuItems": [
             { "name": "The Karen Gillan", "price": 12.95, "description": "It's lemon poundcake French toast! Served up with macerated Michigan strawberries and burnt butter cream cheese.", "image": "https://cdn.toasttab.com/sample/karen-gillan.jpg" },
             { "name": "El Puerco Borracho", "price": 14.95, "description": "Pork carnitas swimming in beer soaked pintos served up with eggs how you like 'em, a jack cheese and scallion quesadilla, lime crema and salsa verde.", "image": "https://cdn.toasttab.com/sample/puerco-borracho.jpg" },
-            { "name": "Soup O' The Day", "price": 5.0, "outOfStock": false, "description": "Egg Drop 🥬", "modifierGroups": [ { "name": "Size", "modifierOptions": [ { "name": "Cup", "price": 5.0 }, { "name": "Bowl", "price": 6.0 } ] } ] }
+            { "name": "Soup O' The Day", "price": 5.0, "pricingStrategy": "BASE_PRICE", "outOfStock": false, "description": "Egg Drop 🥬", "modifierGroupReferences": [50] }
           ]
         },
         {
@@ -19,5 +19,12 @@
         }
       ]
     }
-  ]
+  ],
+  "modifierGroupReferences": {
+    "50": { "referenceId": 50, "name": "Soup Sizes", "pricingStrategy": "NONE", "minSelections": 1, "maxSelections": 1, "requiredMode": "REQUIRED", "modifierOptionReferences": [51, 52] }
+  },
+  "modifierOptionReferences": {
+    "51": { "referenceId": 51, "name": "Cup", "price": 0.0, "pricingStrategy": "BASE_PRICE", "isDefault": false },
+    "52": { "referenceId": 52, "name": "Bowl", "price": 1.0, "pricingStrategy": "BASE_PRICE", "isDefault": false }
+  }
 }

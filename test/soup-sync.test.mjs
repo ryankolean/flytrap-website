@@ -8,14 +8,26 @@ import { updateSoupSpecial, updateMuffinSpecial } from '../apps-script/lib/speci
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 
-// Toast payload with the given menu items in one group.
-const menu = (items) => ({ menus: [{ name: 'Food', menuGroups: [{ name: 'Weekly Specials', menuItems: items }] }] });
+// Toast payload: the given menu items in one group, plus any top-level maps
+// (the reference tables Toast /menus/v2 uses for modifier groups/options).
+const menu = (items, extra = {}) => ({ menus: [{ name: 'Food', menuGroups: [{ name: 'Weekly Specials', menuItems: items }] }], ...extra });
 // The current Toast shape: a single "Soup O' The Day" item, flavor in its
-// description (with the 🥬 veg glyph kept verbatim), cup = base price.
+// description (with the 🥬 veg glyph kept verbatim), base price = the cup.
 const soupItem = (over = {}) => ({ name: "Soup O' The Day", price: 5, description: 'Egg Drop 🥬', ...over });
-// A Cup/Bowl size modifier group on the single item.
-const size = (cup, bowl) => ({ modifierGroups: [{ name: 'Size', modifierOptions: [{ name: 'Cup', price: cup }, { name: 'Bowl', price: bowl }] }] });
-// The legacy shape: two separate items sharing a description.
+// An inline Cup/Bowl size group whose option prices are *upcharges* on the base.
+const sizeInline = (cupUp, bowlUp) => ({ modifierGroups: [{ name: 'Soup Sizes', modifierOptions: [{ name: 'Cup', price: cupUp }, { name: 'Bowl', price: bowlUp }] }] });
+// The size group as Toast /menus/v2 really delivers it: the item points at group
+// 50 by reference, and the payload carries the group + option tables (Cup/Bowl
+// priced as upcharges on the base). Spread onto menu() as the top-level maps.
+const REFS = (cupUp, bowlUp) => ({
+  modifierGroupReferences: { '50': { referenceId: 50, name: 'Soup Sizes', pricingStrategy: 'NONE', minSelections: 1, maxSelections: 1, modifierOptionReferences: [51, 52] } },
+  modifierOptionReferences: {
+    '51': { referenceId: 51, name: 'Cup', price: cupUp, pricingStrategy: 'BASE_PRICE' },
+    '52': { referenceId: 52, name: 'Bowl', price: bowlUp, pricingStrategy: 'BASE_PRICE' },
+  },
+});
+const refItem = (over = {}) => ({ ...soupItem(over), modifierGroupReferences: [50] });
+// The legacy shape: two separate items sharing a description (absolute prices).
 const cup = (price, description) => ({ name: 'Cup of Soup', price, description });
 const bowl = (price, description) => ({ name: 'Bowl of Soup', price, description });
 
@@ -24,17 +36,21 @@ test("extractSoup reads the single item: description is the flavor (🥬 kept), 
   assert.deepEqual(extractSoup(menu([soupItem()])), { available: true, flavor: 'Egg Drop 🥬', cup: 5, bowl: '' });
 });
 
-test('extractSoup pulls the bowl price from a size modifier on the item', () => {
-  assert.deepEqual(extractSoup(menu([soupItem(size(5, 6))])), { available: true, flavor: 'Egg Drop 🥬', cup: 5, bowl: 6 });
+test('extractSoup resolves the bowl from a referenced size group (Toast /menus/v2 shape): bowl = base + upcharge', () => {
+  assert.deepEqual(extractSoup(menu([refItem()], REFS(0, 1))), { available: true, flavor: 'Egg Drop 🥬', cup: 5, bowl: 6 });
+});
+
+test('extractSoup resolves the bowl from an inline size group too (upcharge on the base)', () => {
+  assert.deepEqual(extractSoup(menu([soupItem(sizeInline(0, 1))])), { available: true, flavor: 'Egg Drop 🥬', cup: 5, bowl: 6 });
 });
 
 test('extractSoup: out of stock -> available:false, prices cleared, message kept as the flavor', () => {
-  const payload = menu([soupItem({ description: 'No soup on the weekend!', outOfStock: true, ...size(5, 6) })]);
+  const payload = menu([refItem({ description: 'No soup on the weekend!', outOfStock: true })], REFS(0, 1));
   assert.deepEqual(extractSoup(payload), { available: false, flavor: 'No soup on the weekend!', cup: '', bowl: '' });
 });
 
 test('extractSoup: the single item takes precedence over legacy Cup/Bowl items', () => {
-  const soup = extractSoup(menu([soupItem(size(5, 6)), cup(4, 'Legacy'), bowl(5, 'Legacy')]));
+  const soup = extractSoup(menu([refItem(), cup(4, 'Legacy'), bowl(5, 'Legacy')], REFS(0, 1)));
   assert.deepEqual(soup, { available: true, flavor: 'Egg Drop 🥬', cup: 5, bowl: 6 });
 });
 
@@ -44,8 +60,8 @@ test('extractSoup: no size modifier -> falls back to a Bowl of Soup item for the
 
 test('extractSoup finds the item nested anywhere in the tree', () => {
   const payload = { menus: [{ menuGroups: [
-    { name: 'Food', menuGroups: [{ name: 'Sides', menuItems: [soupItem({ price: 4.5, ...size(4.5, 5.5) })] }] },
-  ] }] };
+    { name: 'Food', menuGroups: [{ name: 'Sides', menuItems: [refItem({ price: 4.5 })] }] },
+  ] }], ...REFS(0, 1) };
   assert.deepEqual(extractSoup(payload), { available: true, flavor: 'Egg Drop 🥬', cup: 4.5, bowl: 5.5 });
 });
 
