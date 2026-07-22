@@ -19,10 +19,14 @@ tested `apps-script/lib/specials.js` block builder):
    `.special-photo` is `aspect-ratio: 1/1; object-fit: cover`, so any aspect
    crops cleanly).
 4. Read the **soup** (the **"Soup O' The Day"** item — flavor from its
-   description, cup from its base price, bowl from a "Bowl" size modifier, plus an
-   **out-of-stock** flag; falls back to legacy "Cup of Soup" / "Bowl of Soup"
-   items) and the **mini-muffin** (price + description as the flavor) from
-   anywhere in the menu.
+   description, **Cup = the item's base price**, **Bowl = base + the "Bowl" size
+   upcharge**, plus an **out-of-stock** flag). Toast delivers the "Soup Sizes"
+   modifier group by *reference* (`item.modifierGroupReferences` → the payload's
+   top-level `modifierGroupReferences` / `modifierOptionReferences` tables), where
+   each size option's price is an upcharge on the base (Cup +$0, Bowl +$1 → Bowl
+   $6 on a $5 base); inline modifier objects and legacy "Cup of Soup" / "Bowl of
+   Soup" items are still handled as fallbacks. The **mini-muffin** (price +
+   description as the flavor) is read from anywhere in the menu.
 5. Rewrite the `/* SPECIALS:START … END */` block **and** the
    `/* EXTRAS:START … END */` block (soup + muffin) of `data.js`.
 
@@ -62,8 +66,9 @@ block keeps its own last-good committed state as the fallback.
   photo**. To feature a special, give it a photo in Toast; to pull it, remove the
   photo or move it out of the group.
 - **Soup:** the **"Soup O' The Day"** item — its description is the flavor, its
-  base price is the Cup price, and a "Bowl" size modifier (when present) is the
-  Bowl price. To take the soup down for the day, mark the item **out of stock** in
+  base price is the Cup price, and the **"Bowl" option of the "Soup Sizes" modifier
+  group** adds its upcharge to the base for the Bowl price (e.g. base $5 + $1 =
+  $6). To take the soup down for the day, mark the item **out of stock** in
   Toast and set its description to the message you want shown (e.g. "No soup on the
   weekend!"); the site shows that message with no price. Legacy "Cup of Soup" /
   "Bowl of Soup" items are still read as a fallback. Overridable via

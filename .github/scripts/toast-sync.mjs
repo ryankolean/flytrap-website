@@ -253,6 +253,12 @@ async function main() {
       console.log(`[dry-run]   ${c.title}: ${base.items.filter((i) => i.cat === c.id).length} items`)
     }
     console.log(`[dry-run] veg items flagged: ${base.items.filter((i) => i.veg).length} (using marker ${JSON.stringify(VEG_MARKER)})`)
+    // Still hand the pulled payload to the specials step so its dry-run can
+    // inspect the same menu without a second /menus call (which would 429).
+    if (process.env.TOAST_PAYLOAD_OUT) {
+      await writeFile(process.env.TOAST_PAYLOAD_OUT, JSON.stringify(payload))
+      console.log(`[dry-run] shared the menu payload with the specials step (${process.env.TOAST_PAYLOAD_OUT}).`)
+    }
     return
   }
 
