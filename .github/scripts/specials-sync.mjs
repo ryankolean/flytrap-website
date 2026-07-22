@@ -338,6 +338,16 @@ async function main() {
     console.log(`[dry-run] ${specials.length} specials: ${specials.map((s) => s.name).join(', ') || '(none)'}`)
     if (soup) console.log(`[dry-run] soup: available=${soup.available} cup=${soup.cup || '-'} bowl=${soup.bowl || '-'} flavor=${soup.flavor ?? '(unchanged)'}`)
     if (muffin) console.log(`[dry-run] muffin: price=${muffin.price ?? '-'} flavor=${muffin.flavor ?? '(unchanged)'}`)
+    // [diagnostic] Read-only dump of the raw partner-API shape for the soup item,
+    // so we can see exactly how the Cup/Bowl "Soup Sizes" modifier is delivered
+    // (inline vs references, absolute vs adjust pricing) before writing the bowl
+    // resolver. Removed before the real fix lands. Writes nothing.
+    const rawSoup = findMenuItem(payload, process.env.TOAST_SOUP_ITEM || SOUP_ITEM)
+    console.log('[soup-debug] payload top-level keys:', JSON.stringify(Object.keys(payload || {})))
+    console.log('[soup-debug] raw soup item:', JSON.stringify(rawSoup))
+    for (const k of ['modifierGroups', 'modifierOptions', 'modifierGroupReferences', 'modifierOptionReferences', 'preModifierGroups', 'menuOptionGroups', 'menuOptions']) {
+      if (payload && payload[k] != null) console.log(`[soup-debug] payload.${k}:`, JSON.stringify(payload[k]).slice(0, 4000))
+    }
     return
   }
 
