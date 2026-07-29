@@ -125,7 +125,7 @@ window.FT_DATA = {
   weekOf: "Week of July 6",
   specials: [
     { id: "special-1", name: "the Minnie Pearl", desc: "House Made Smoked Jalapeño, Pork and Stone Fruit Sausage Sittin' Atop Eggs Rumbled with Roasted Corn, Sweet and Hot Peppers, Jack Cheese and a Peach BBQ Sauce; comes with browns and toast.", veg: false, photo: "assets/specials/toast-the-minnie-pearl.jpg", price: "15.95" },
-    { id: "special-2", name: "the Chris Benoit", desc: "Creme Brulee French Toast?! Batter Dipped Crispelli's French Bread, Burnt Pastry Cream, Blueberries and Pistachios.🥬", veg: true, photo: "assets/specials/toast-the-chris-benoit.jpg", price: "12.95" },
+    { id: "special-2", name: "the Chris Benoit", desc: "Creme Brulee French Toast?! Batter Dipped Crispelli's Sourdough Bread, Burnt Pastry Cream, Blueberries and Pistachios.🥬", veg: true, photo: "assets/specials/toast-the-chris-benoit.jpg", price: "12.95" },
   ],
   /* SPECIALS:END */
   /* EXTRAS:START */
