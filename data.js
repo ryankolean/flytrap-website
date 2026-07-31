@@ -124,12 +124,12 @@ window.FT_DATA = {
   sourcePost: "",
   weekOf: "Week of July 6",
   specials: [
-    { id: "special-1", name: "the Minnie Pearl", desc: "House Made Smoked Jalapeño, Pork and Stone Fruit Sausage Sittin' Atop Eggs Rumbled with Roasted Corn, Sweet and Hot Peppers, Jack Cheese and a Peach BBQ Sauce; comes with browns and toast.", veg: false, photo: "assets/specials/toast-the-minnie-pearl.jpg", price: "15.95" },
-    { id: "special-2", name: "the Chris Benoit", desc: "Creme Brulee French Toast?! Batter Dipped Crispelli's Sourdough Bread, Burnt Pastry Cream, Blueberries and Pistachios.🥬", veg: true, photo: "assets/specials/toast-the-chris-benoit.jpg", price: "12.95" },
+    { id: "special-1", name: "The Cuban Croque Senora", desc: "Grilled sourdough stuffed with ham, roast pork, swiss, mustard and pickle. Broiled with a mojo mornay and topped with a sunny egg. Pick a side.", veg: false, photo: "assets/specials/toast-the-cuban-croque-senora.jpg", price: "15.95" },
+    { id: "special-2", name: "La Spazzatura", desc: "Roasted portobella, fennel, onion, greens and tomatoes hashed together with house spuds. topped with melty mozzarella, eggs and arugula pesto. Toast!🥬", veg: true, photo: "assets/specials/toast-la-spazzatura.jpg", price: "14.95" },
   ],
   /* SPECIALS:END */
   /* EXTRAS:START */
-  muffinSpecial: { name: "Mini Muffins", flavor: "Fat Elvis🥬", price: "0.99" },
+  muffinSpecial: { name: "Mini Muffins", flavor: "Mocha🥬", price: "0.99" },
   soupSpecial: { name: "Soup of the Day", flavor: "Curry Sweet Potato🥬", available: true, cup: "5.00", bowl: "6.00" },
   /* EXTRAS:END */
   pastry: { name: "Brown-Butter Sour Cherry Galette", desc: "From the Sugar Shack — flaky butter dough, Michigan sour cherries, almond frangipane, demerara crust. While they last. $5.95." },
