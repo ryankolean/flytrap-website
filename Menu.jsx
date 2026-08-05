@@ -160,11 +160,12 @@ function Menu() {
               <div className="specials-grid">
                 {specials.map((s) => (
                   <article className={"special-card" + (s.photo ? "" : " no-photo")} key={s.id}>
-                    {s.photo ? (
-                      <div className="special-photo">
-                        <img src={s.photo} alt={s.name} loading="lazy" />
-                      </div>
-                    ) : null}
+                    {/* Always render the 1:1 photo box so every card is the same
+                        shape in the grid. Without a Toast photo it shows a brand
+                        placeholder tile (black field, red fly) instead of an image. */}
+                    <div className={"special-photo" + (s.photo ? "" : " is-placeholder")}>
+                      {s.photo ? <img src={s.photo} alt={s.name} loading="lazy" /> : null}
+                    </div>
                     <div className="special-body">
                       <div className="special-headline">
                         <h3>{s.name}</h3>
