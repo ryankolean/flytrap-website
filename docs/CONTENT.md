@@ -87,12 +87,13 @@ the repo root, so a leading slash breaks the path.
 |---|---|---|---|
 | **Special photo** | `aspect-ratio: 1/1`, `object-fit: cover` — any aspect crops to a square, centred | ~720×1280, ~550 KB | Square-safe subject. Toast handles this; nothing to do. |
 | **Dish card** | Fixed height (180px mobile / 240px desktop), **natural width** — never cropped | 600–760 px wide, 44–216 KB | Export ~760 px wide, landscape-ish, JPEG q80, **under 150 KB** |
-| **Retail card** | `aspect-ratio: 3/4` portrait, `object-fit: cover` | 1100×1461 | Keep 3:4. **Export JPEG, not PNG** — see the warning below |
+| **Retail card** | `aspect-ratio: 3/4` portrait, `object-fit: cover`. Renders at 256×341 CSS px on desktop | 700×929, 110–130 KB | 3:4 portrait, **700 px wide, JPEG q80**. Never PNG — see below |
 | **Logo / fly** | Inline `<img>`, CSS-sized | 1003×401 and 71×73 PNG | PNG with alpha is correct here |
 
-> ⚠️ **`assets/retail/swat-hot-sauce.png` is 2.7 MB and `wham-jam.png` is 1.2 MB.**
-> They are photographs saved as PNG. Re-exporting them as JPEG q80 would cut ~3.5 MB
-> off the page with no visible difference. Tracked in [ROADMAP.md](../ROADMAP.md).
+> **Save retail photos as JPEG, never PNG.** These are photographs; PNG is for
+> artwork with flat colour or transparency. The retail set was 6.3 MB as two PNGs
+> plus three oversized JPEGs and is now 600 KB at the same on-screen quality. To
+> match, `sips -s format jpeg -s formatOptions 80 --resampleWidth 700 in.png --out out.jpg`.
 
 ### Adding or swapping a dish photo
 
