@@ -193,8 +193,22 @@ It fails the build on:
    check greps the whole repo for the literal hostname, **including markdown** — so
    don't type it in a doc either).
 
-> Branch protection requiring the `guardrails` check is **not** confirmed enabled.
-> Turn it on so the check blocks merges instead of only reporting.
+**Branch protection.** A repository ruleset named "main protection" is active on
+`main`: it blocks **deletion** and **force-pushes**. It deliberately does *not*
+require the `guardrails` check to pass, because that would also block the Toast
+bot — the bot pushes straight to `main` with `GITHUB_TOKEN`, its commits carry
+`[skip ci]` so `guardrails` never runs on them, and a personal (non-organisation)
+repo cannot grant the GitHub Actions integration a ruleset bypass.
+
+To require the check as well, one of these has to happen first:
+1. Give the Toast workflow a **PAT belonging to an admin** to push with, and add a
+   `RepositoryRole` admin bypass to the ruleset; or
+2. Change the workflow to open a **PR** instead of pushing to `main` — which means
+   the menu no longer updates without a human, so it defeats the point; or
+3. Move the repo into an **organisation**, where the GitHub Actions integration can
+   be listed as a bypass actor directly.
+
+Until then `guardrails` reports on every PR but does not mechanically block a merge.
 
 ### `apps-script/` — the manual specials publisher
 
