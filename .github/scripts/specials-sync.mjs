@@ -138,6 +138,59 @@ function findGroup(payload, name) {
   return null
 }
 
+// Split the Toast "Weekly Specials" group into the items that become special
+// cards and the ones that must not.
+//
+// This used to be `items.filter(it => it.image)` — a photo was the proxy for
+// "this is a featured dish, not the soup". That silently dropped any special
+// Kara published without a photo, which is the opposite of the owner feedback
+// (Sean, 2026-07-08: all specials should appear whether or not they have a
+// photo). The site has rendered photo-less cards since then; only the sync was
+// still gating.
+//
+// The soup and the muffin are excluded by NAME instead, because they're pulled
+// separately into the EXTRAS block by extractSoup/extractMuffin — if they were
+// left in they'd render twice. Items with no price (or $0) are dropped as POS
+// artifacts: Toast's menu is full of `***ADD ON***`-style zero-price entries and
+// one of those appearing as a special on the live site would be worse than
+// missing one.
+//
+// Returns { kept, skipped } — skipped carries a reason per item so a dry run can
+// show exactly what Toast holds that we chose not to publish.
+export function partitionSpecials(items, opts = {}) {
+  const soupNeedles = [
+    opts.soupItem || SOUP_ITEM,
+    opts.cupItem || SOUP_CUP_ITEM,
+    opts.bowlItem || SOUP_BOWL_ITEM,
+  ].map((n) => String(n).toLowerCase())
+  const muffinNeedle = String(opts.muffinItem || MUFFIN_ITEM).toLowerCase()
+
+  const kept = [], skipped = []
+  for (const it of (items || [])) {
+    const name = String(it?.name ?? '').trim()
+    if (!name) {
+      skipped.push({ name: '(unnamed item)', reason: 'no name' })
+      continue
+    }
+    const lc = name.toLowerCase()
+    if (soupNeedles.some((n) => n && lc.includes(n))) {
+      skipped.push({ name, reason: 'soup — published as an extras card instead' })
+      continue
+    }
+    if (muffinNeedle && lc.includes(muffinNeedle)) {
+      skipped.push({ name, reason: 'muffin — published as an extras card instead' })
+      continue
+    }
+    const price = it.price == null ? NaN : Number(it.price)
+    if (!isFinite(price) || price <= 0) {
+      skipped.push({ name, reason: 'no price or $0 — looks like a POS add-on, not a special' })
+      continue
+    }
+    kept.push(it)
+  }
+  return { kept, skipped }
+}
+
 // Photos this script downloads are named `toast-<slug>.jpg`. Once a special rotates
 // out, its file is dead weight — the sync used to download and never prune, so the
 // directory kept growing. Given the directory listing and the photo paths the new
@@ -170,18 +223,21 @@ function currentWeekOf(src) {
 function extractSpecials(payload) {
   const group = findGroup(payload, SPECIALS_GROUP)
   if (!group) throw new Error(`Toast group "${SPECIALS_GROUP}" not found — refusing to touch specials.`)
-  const items = (group.menuItems || []).filter((it) => it.image)
-  return items.map((it) => {
+  const { kept, skipped } = partitionSpecials(group.menuItems)
+  const specials = kept.map((it) => {
     const { desc, veg } = classifyVeg(it.description)
     return {
       name: it.name,
       desc,
       veg,
       price: it.price,
-      photo: `assets/specials/toast-${slug(it.name)}.jpg`,
-      image: it.image, // source URL, used for download; not written to data.js
+      // Photo is optional. Without one the site renders a text-only
+      // `.special-card.no-photo`; photo: "" keeps that path explicit in data.js.
+      photo: it.image ? `assets/specials/toast-${slug(it.name)}.jpg` : '',
+      image: it.image || null, // source URL, used for download; not written to data.js
     }
   })
+  return { specials, skipped }
 }
 
 // Find the first Toast menu item whose name matches `needle` (case-insensitive
@@ -356,11 +412,11 @@ async function main() {
     payload = await apiGet(token, '/menus/v2/menus')
   }
 
-  const specials = extractSpecials(payload)
+  const { specials, skipped } = extractSpecials(payload)
   const soup = extractSoup(payload)
   const muffin = extractMuffin(payload)
   if (!specials.length && !soup && !muffin) {
-    console.log(`No photo'd specials in "${SPECIALS_GROUP}" and no soup/muffin items — leaving data.js untouched.`)
+    console.log(`No publishable specials in "${SPECIALS_GROUP}" and no soup/muffin items — leaving data.js untouched.`)
     return
   }
 
@@ -377,13 +433,24 @@ async function main() {
   if (muffin) next = updateMuffinSpecial(next, muffin)
 
   if (DRY_RUN) {
-    console.log(`[dry-run] ${specials.length} specials: ${specials.map((s) => s.name).join(', ') || '(none)'}`)
+    console.log(`[dry-run] ${specials.length} specials would publish:`)
+    for (const s of specials) {
+      console.log(`[dry-run]   - ${s.name} — $${s.price ?? '?'}${s.veg ? ' (veg)' : ''}${s.image ? '' : ' [NO PHOTO — publishes as a text-only card]'}`)
+    }
+    if (!specials.length) console.log('[dry-run]   (none)')
+    // The whole point of this listing: show what is sitting in the Toast group
+    // that we chose not to publish, so nobody has to guess why a special the
+    // restaurant added isn't on the site.
+    console.log(`[dry-run] ${skipped.length} item(s) in "${SPECIALS_GROUP}" skipped:`)
+    for (const s of skipped) console.log(`[dry-run]   - ${s.name} — ${s.reason}`)
+    if (!skipped.length) console.log('[dry-run]   (none)')
     if (soup) console.log(`[dry-run] soup: available=${soup.available} cup=${soup.cup || '-'} bowl=${soup.bowl || '-'} flavor=${soup.flavor ?? '(unchanged)'}`)
     if (muffin) console.log(`[dry-run] muffin: price=${muffin.price ?? '-'} flavor=${muffin.flavor ?? '(unchanged)'}`)
     return
   }
 
-  const imagesReady = fixture || (await Promise.all(specials.map((s) => exists(resolve(REPO_ROOT, s.photo))))).every(Boolean)
+  const withPhotos = specials.filter((s) => s.image)
+  const imagesReady = fixture || (await Promise.all(withPhotos.map((s) => exists(resolve(REPO_ROOT, s.photo))))).every(Boolean)
   if (next === src && imagesReady) {
     console.log('Specials + extras unchanged — nothing to do.')
     return
@@ -391,17 +458,20 @@ async function main() {
 
   if (!fixture && specials.length) {
     await mkdir(ASSETS_DIR, { recursive: true })
-    for (const s of specials) await downloadImage(s.image, resolve(REPO_ROOT, s.photo))
+    // Only the specials that actually carry a Toast photo; the rest publish as
+    // text-only cards with photo: "".
+    for (const s of withPhotos) await downloadImage(s.image, resolve(REPO_ROOT, s.photo))
     // Every download succeeded, so the new set is complete — drop the photos of
     // specials that have rotated out. Runs after the downloads, never before, so a
     // failed fetch throws first and leaves the previous set intact.
-    const orphans = orphanedPhotos(await readdir(ASSETS_DIR), specials.map((s) => s.photo))
+    const orphans = orphanedPhotos(await readdir(ASSETS_DIR), withPhotos.map((s) => s.photo))
     for (const f of orphans) await rm(resolve(ASSETS_DIR, f))
     if (orphans.length) console.log(`Pruned ${orphans.length} rotated-out special photo(s): ${orphans.join(', ')}`)
   }
   await writeFile(DATA_JS, next)
   const wrote = [specials.length ? `${specials.length} specials` : '', soup ? 'soup' : '', muffin ? 'muffin' : ''].filter(Boolean).join(' + ')
-  console.log(`Wrote ${wrote} to data.js${fixture ? ' [fixture, images skipped]' : (specials.length ? ' (+ images)' : '')}.`)
+  console.log(`Wrote ${wrote} to data.js${fixture ? ' [fixture, images skipped]' : (withPhotos.length ? ' (+ images)' : '')}.`)
+  if (skipped.length) console.log(`Skipped ${skipped.length} item(s) in "${SPECIALS_GROUP}": ${skipped.map((s) => `${s.name} (${s.reason})`).join('; ')}`)
 }
 
 // Only run when executed directly (not when imported by tests).

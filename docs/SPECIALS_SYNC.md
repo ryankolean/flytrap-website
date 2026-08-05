@@ -12,10 +12,14 @@ is pulled by a sibling script into `assets/menu.json`; see
 tested `apps-script/lib/specials.js` block builder):
 
 1. Auth → `GET /menus/v2/menus`.
-2. Find the **"Weekly Specials"** Toast group; keep only items that carry a
-   **photo** (that's how the featured dishes are distinguished from the other
-   items in the group).
-3. Download each photo into `assets/specials/toast-<slug>.jpg` (self-hosted —
+2. Find the **"Weekly Specials"** Toast group and keep every item in it —
+   **a photo is not required**. Three things are excluded: the **soup** and the
+   **muffin** (matched by name; they publish as extras cards instead, and would
+   otherwise appear twice) and anything with **no price or a $0 price** (Toast's
+   menu carries POS artifacts like `***ADD ON***` that must never surface as a
+   special). A dry run prints every skipped item with its reason.
+3. Download the photo of each special **that has one** into
+   `assets/specials/toast-<slug>.jpg` (self-hosted —
    `.special-photo` is `aspect-ratio: 1/1; object-fit: cover`, so any aspect
    crops cleanly). Once every download has succeeded, delete any `toast-*.jpg`
    the new block no longer references, so the directory doesn't grow forever.
@@ -47,9 +51,9 @@ onto `main` before pushing, and triggers the Pages deploy.
 ## Fallback (no blank specials, ever)
 
 Any auth / API / image-download error throws **before** anything is written, so
-the last-good specials committed in `data.js` stay live. An empty or photo-less
-Weekly Specials group is also a no-op, as is a missing soup or muffin item (that
-card is left exactly as it was). A Toast outage can't blank the site — every
+the last-good specials committed in `data.js` stay live. An empty Weekly
+Specials group is also a no-op, as is a missing soup or muffin item (that card is
+left exactly as it was). A Toast outage can't blank the site — every
 block keeps its own last-good committed state as the fallback.
 
 ## What Toast needs (already satisfied)
@@ -65,9 +69,14 @@ block keeps its own last-good committed state as the fallback.
 
 ## Conventions Kara controls in Toast
 
-- **Which specials show:** anything in the "Weekly Specials" group **with a
-  photo**. To feature a special, give it a photo in Toast; to pull it, remove the
-  photo or move it out of the group.
+- **Which specials show:** everything in the "Weekly Specials" group that has a
+  price, except the soup and the muffin. **A photo is optional** — a special
+  without one publishes as a text-only card (red rule across the top where the
+  photo would be). To pull a special, move it out of the group. Removing only its
+  photo no longer removes the special.
+- **Seeing what was skipped:** run the workflow with **dry_run = true**
+  (Actions → Toast sync → Run workflow). It lists what would publish, flags the
+  ones with no photo, and lists every skipped item with the reason.
 - **Soup:** the **"Soup O' The Day"** item — its description is the flavor, its
   base price is the Cup price, and the **"Bowl" option of the "Soup Sizes" modifier
   group** adds its upcharge to the base for the Bowl price (e.g. base $5 + $1 =

@@ -33,8 +33,8 @@ nobody edits the repo.** The conventions Toast expects:
 
 | Thing | Convention in Toast |
 |---|---|
-| **A special appears on the site** | Put the item in the **"Weekly Specials"** group **and give it a photo**. The photo is how featured dishes are told apart from the soup/muffin in the same group. |
-| **Pull a special down** | Remove its photo, or move it out of the group. |
+| **A special appears on the site** | Put the item in the **"Weekly Specials"** group and give it a price. A photo is optional — without one it publishes as a text-only card. |
+| **Pull a special down** | Move it out of the "Weekly Specials" group. (Removing just the photo no longer pulls it — it publishes without one.) |
 | **Soup flavour** | The description of the **"Soup O' The Day"** item. |
 | **Soup prices** | Item base price = Cup. The **"Bowl"** option of the **"Soup Sizes"** modifier group adds its upcharge to the base (e.g. $5 base + $1 = $6 Bowl). |
 | **Soup unavailable** | Mark the item **out of stock** and set its description to the message you want shown ("No soup on the weekend!"). The site shows the message with no price. |
