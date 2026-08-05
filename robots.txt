@@ -1,0 +1,6 @@
+# The Fly Trap — robots.txt
+# Everything is public. Search and AI crawlers are welcome to index and cite.
+User-agent: *
+Allow: /
+
+Sitemap: https://theflytrapferndale.com/sitemap.xml
