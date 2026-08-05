@@ -18,7 +18,6 @@ this one.
 | Retail products, copy, prices, photos | The `cards` array inside `Retail()` in `Sections.jsx` + `assets/retail/` |
 | Press articles or the rotating pull-quotes | `FT_DATA.press` / `FT_DATA.pressQuotes` in `data.js` |
 | The About / origin story copy | `About()` in `Sections.jsx` (inline JSX) |
-| Daily Buzz week (`#daily-buzz` page) | `FT_DATA.buzz` and `FT_DATA.pastry` in `data.js` |
 | Opening hours | Three places — see [Hours](#hours) |
 | Address, phone, email, Instagram, order link | Several places — see [Contact details](#contact-details-are-duplicated) |
 | The logo or the fly | `assets/brand/` — see [Brand assets](#brand-assets) |
@@ -146,8 +145,7 @@ Hard-coded in **three** places. Change all three together:
    the Open/Closed badge.
 2. `App.jsx` → the hero strip text `Mon–Sun · 8a — 3p`, and `Nav.jsx` → the drawer
    pill `· 8a — 3p`.
-3. `Sections.jsx` → `Visit()`, the hours table rows (`8:00a — 3:00p`), and
-   `DailyBuzzPage`'s "Available 8a — 3p" chip.
+3. `Sections.jsx` → `Visit()`, the hours table rows (`8:00a — 3:00p`).
 
 The badge and the "today" highlight are anchored to `America/Detroit`, so they read
 correctly for out-of-state visitors. If the restaurant ever has different hours on

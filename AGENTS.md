@@ -26,7 +26,7 @@ image-slot.js           # <image-slot> web component (Claude Design starter)
 tweaks-panel.jsx        # edit-mode panel; ALSO declares the shared useState/useEffect/... aliases
 Nav.jsx                 # top nav + mobile drawer
 Menu.jsx                # menu: specials tab, extras, all categories, sticky jump-nav
-Sections.jsx            # about, dishes, retail, press, visit, footer, daily-buzz page
+Sections.jsx            # about, dishes, retail, press, visit, footer
 App.jsx                 # root component, mounts to #root; defines the hero (window.Hero = HeroWrap) + BackFly
 colors_and_type.css     # design tokens (colors, fonts, sizes)
 site.css                # layout + component styles
@@ -93,7 +93,6 @@ in `.claude/launch.json` on port 5173) and confirm at **375 / 768 / 1280**:
 - Console: zero errors. (The Babel-in-browser warning is expected.)
 - No horizontal overflow at 375 — `document.documentElement.scrollWidth === clientWidth`.
 - The changed section renders and matches intent (screenshot it).
-- Hash route `#daily-buzz` still loads.
 
 "Couldn't verify" is a valid PR note — silently shipping an unverified change is not.
 

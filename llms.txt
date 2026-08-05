@@ -22,8 +22,8 @@ The Fly Trap opened December 28, 2004. The name is a punchy homage to the space'
 - Green Eggs and Ham — poblano pesto, jack cheese, seared city ham
 - Huevos Rancheros — two eggs, black beans, jack cheese, jalapeños, pico
 - Cowboy Curtis — seared flank steak, two eggs, wildwest sauce
-- Red Chili Salmon Burger — the dish Guy Fieri featured on Diners, Drive-Ins and Dives
-- Daily Buzz — a rotating dish every morning, plus soup of the day and a Sugar Shack pastry
+- Red Chili Salmon Burger — shaved cucumber, ginger lime aioli
+- Weekly specials — a rotating set of chef specials, plus soup of the day and mini muffins, all synced from the restaurant's POS
 
 ## Press
 - Food Network — Diners, Drive-Ins and Dives (Guy Fieri)

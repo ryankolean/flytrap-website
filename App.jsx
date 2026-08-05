@@ -297,7 +297,6 @@ function BackFly() {
 }
 
 function App() {
-  const [page, setPage] = uS(window.location.hash === "#daily-buzz" ? "buzz" : "home");
   const [scrolled, setScrolled] = uS(false);
   const [pastHero, setPastHero] = uS(false);
   const [tweaks, setTweak] = window.useTweaks(TWEAK_DEFAULTS);
@@ -331,20 +330,6 @@ function App() {
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
-  }, [page]);
-
-  uE(() => {
-    const onHash = () => {
-      const h = window.location.hash;
-      if (h === "#daily-buzz") {
-        setPage("buzz");
-        window.scrollTo({ top: 0, behavior: "auto" });
-      } else {
-        setPage("home");
-      }
-    };
-    window.addEventListener("hashchange", onHash);
-    return () => window.removeEventListener("hashchange", onHash);
   }, []);
 
   // Reveal-on-scroll observer
@@ -364,29 +349,9 @@ function App() {
     }, { rootMargin: "0px 0px -10% 0px" });
     els.forEach((e) => io.observe(e));
     return () => io.disconnect();
-  }, [page, tweaks.showRetail, tweaks.showPress]);
+  }, [tweaks.showRetail, tweaks.showPress]);
 
   const navigate = (href) => {
-    if (href === "#daily-buzz") {
-      window.location.hash = "#daily-buzz";
-      setPage("buzz");
-      window.scrollTo({ top: 0, behavior: "auto" });
-      return;
-    }
-    if (page === "buzz") {
-      window.location.hash = "";
-      setPage("home");
-      // wait a tick for render then scroll
-      setTimeout(() => {
-        if (href && href !== "#top") {
-          const el = document.querySelector(href);
-          if (el) window.scrollTo({ top: el.offsetTop - 70, behavior: "smooth" });
-        } else {
-          window.scrollTo({ top: 0, behavior: "smooth" });
-        }
-      }, 60);
-      return;
-    }
     if (href === "#top") {
       window.scrollTo({ top: 0, behavior: "smooth" });
       return;
@@ -394,9 +359,6 @@ function App() {
     const el = document.querySelector(href);
     if (el) window.scrollTo({ top: el.offsetTop - 70, behavior: "smooth" });
   };
-
-  const goBuzz = () => navigate("#daily-buzz");
-  const backHome = () => navigate("#top");
 
   // Apply zone color overrides via inline styles
   const zoneColors = {
@@ -417,27 +379,23 @@ function App() {
     if (aboutEl) aboutEl.style.background = zoneColors[tweaks.aboutZone] || "";
     const pressEl = document.querySelector("#press.press");
     if (pressEl) pressEl.style.background = zoneColors[tweaks.pressZone] || "";
-  }, [tweaks.aboutZone, tweaks.pressZone, page]);
+  }, [tweaks.aboutZone, tweaks.pressZone]);
 
   return (
     <React.Fragment>
       <Nav scrolled={scrolled} pastHero={pastHero} onNavigate={navigate} />
 
-      {page === "home" ?
       <main>
-          <Hero onOpenMenu={() => navigate("#menu")} heroColor={tweaks.heroColor} />
-          <Menu />
-          <About />
-          <DishScroll />
-          {tweaks.showRetail ? <Retail /> : null}
-          {tweaks.showPress ? <Press /> : null}
-          <Visit />
-          <Footer onNavigate={navigate} />
-          <BackFly />
-        </main> :
-
-      <DailyBuzzPage onBack={backHome} />
-      }
+        <Hero onOpenMenu={() => navigate("#menu")} heroColor={tweaks.heroColor} />
+        <Menu />
+        <About />
+        <DishScroll />
+        {tweaks.showRetail ? <Retail /> : null}
+        {tweaks.showPress ? <Press /> : null}
+        <Visit />
+        <Footer onNavigate={navigate} />
+        <BackFly />
+      </main>
 
       <window.TweaksPanel title="Tweaks">
         <window.TweakSection title="Hero">

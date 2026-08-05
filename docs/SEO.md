@@ -130,6 +130,5 @@ of the same site split ranking signals and invite duplicate-content handling.
 - The press section is real, verified, high-authority coverage (Food Network, Hour
   Detroit, Crain's). Keep `FT_DATA.press` current — it feeds the `sameAs` and the
   E-E-A-T signal.
-- If the `#daily-buzz` page is kept, either link to it from the site or drop it. An
-  unlinked hash route is invisible to crawlers and to users. See
-  [ROADMAP.md](../ROADMAP.md).
+- The site is a single indexable URL. If a second page is ever added, add it to
+  `sitemap.xml` and give it its own `<title>`, description and `<h1>`.
