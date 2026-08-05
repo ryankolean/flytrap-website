@@ -31,12 +31,24 @@
 //   node .github/scripts/toast-sync.mjs
 
 import { readFile, writeFile } from 'node:fs/promises'
-import { fileURLToPath } from 'node:url'
+import { fileURLToPath, pathToFileURL } from 'node:url'
 import { dirname, resolve } from 'node:path'
+
+// True when data.js holds at least one special published with photo: "" — i.e.
+// a card currently showing the brand placeholder because Toast had no image for
+// it. Pure so it can be unit-tested; only the SPECIALS block is inspected, so an
+// empty photo anywhere else in data.js is ignored.
+export function specialsAwaitingPhoto(dataJsSource) {
+  const block = String(dataJsSource || '').match(/SPECIALS:START\s*\*\/([\s\S]*?)\/\*\s*SPECIALS:END/)
+  return !!block && /\bphoto:\s*""/.test(block[1])
+}
 
 const HERE = dirname(fileURLToPath(import.meta.url))
 const REPO_ROOT = resolve(HERE, '..', '..')
 const MENU_JSON = resolve(REPO_ROOT, 'assets', 'menu.json')
+const DATA_JS = resolve(REPO_ROOT, 'data.js')
+
+const readFileOr = (p, fallback = '') => readFile(p, 'utf8').catch(() => fallback)
 
 // --- Toast connection (from GitHub Actions secrets) ---
 const HOST = process.env.TOAST_HOSTNAME || 'https://ws-api.toasttab.com'
@@ -231,7 +243,15 @@ async function main() {
   // sync's OWN logic changes. After such a change the fix can't reach the site
   // until Toast happens to republish, which may be weeks. One forced run costs a
   // single extra /menus call.
-  if (lastUpdated && !process.env.TOAST_DUMP && !dryRun && !FORCE) {
+  //
+  // The same assumption breaks while a special is published without a photo.
+  // Attaching an image to an item in Toast does not reliably move the menu's
+  // lastUpdated, so the timestamp gate would never notice the photo appearing and
+  // the placeholder tile would stay up indefinitely. While data.js holds a special
+  // with photo: "", keep pulling so the photo lands on the next run after Kara
+  // adds it. Costs one /menus call per run, and only until every special has one.
+  const awaitingPhoto = specialsAwaitingPhoto(await readFileOr(DATA_JS))
+  if (lastUpdated && !process.env.TOAST_DUMP && !dryRun && !FORCE && !awaitingPhoto) {
     let prevUpdated = null
     try { prevUpdated = JSON.parse(await readFile(MENU_JSON, 'utf8')).lastUpdated } catch { /* no prior menu.json */ }
     if (prevUpdated && prevUpdated === lastUpdated) {
@@ -240,6 +260,7 @@ async function main() {
     }
   }
   if (FORCE) console.log('TOAST_FORCE set — pulling /menus even though the menu may be unchanged.')
+  else if (awaitingPhoto) console.log('A special is still waiting on its Toast photo — pulling /menus to check for it.')
 
   // Full listing to a file, every group (incl. excluded), for review.
   if (process.env.TOAST_DUMP) {
@@ -282,4 +303,8 @@ async function main() {
     : `assets/menu.json already current (${base.items.length} items).`)
 }
 
-main().catch((e) => { console.error(String(e?.stack || e)); process.exit(1) })
+// Only run when executed directly, so tests can import the pure helpers above
+// without kicking off a sync. Matches specials-sync.mjs.
+if (import.meta.url === pathToFileURL(process.argv[1] || '').href) {
+  main().catch((e) => { console.error(String(e?.stack || e)); process.exit(1) })
+}

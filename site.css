@@ -561,16 +561,30 @@ section { position: relative; }
 /* A special with no Toast photo renders text-only. Without this it collapses to
    a short block that reads as broken next to the photo cards, so give it a red
    top rule in place of the image and enough padding to hold the grid row. */
-.special-card.no-photo {
-  border-top: 4px solid var(--color-flytrap-red-deep);
-  justify-content: center;
-  min-height: 200px;
+/* A special Toast has no photo for yet. It keeps the same 1:1 photo box as every
+   other card — so the grid row stays even — and fills it with a brand tile
+   instead of an image: the black field of the hero, a soft red bloom, and the
+   cut-out fly. Reads as designed rather than as a missing asset. The sync keeps
+   checking Toast, so the real photo replaces this on its own once it exists. */
+.special-photo.is-placeholder {
+  background:
+    radial-gradient(circle at 50% 44%, rgba(253, 0, 3, .22), transparent 64%),
+    var(--color-checker-black);
+  display: grid;
+  place-items: center;
 }
-.special-card.no-photo .special-body { padding: 24px 20px 22px; }
-.special-card.no-photo .special-headline h3 { font-size: 26px; }
-@media (min-width: 768px) {
-  .special-card.no-photo { min-height: 240px; }
-  .special-card.no-photo .special-headline h3 { font-size: 28px; }
+.special-photo.is-placeholder::after {
+  content: "";
+  width: 32%;
+  aspect-ratio: 71 / 73;             /* fly-red.png */
+  background: url("assets/brand/fly-red.png") center / contain no-repeat;
+  opacity: .92;
+  transform: rotate(-8deg);
+}
+/* The fly holds still for anyone who asks for reduced motion; it has no
+   animation here, but keep the hover lift off the card too. */
+@media (prefers-reduced-motion: reduce) {
+  .special-card.no-photo:hover { transform: none; }
 }
 
 /* Photo focal point — Instagram square (1:1) at every breakpoint */

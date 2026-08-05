@@ -71,9 +71,15 @@ block keeps its own last-good committed state as the fallback.
 
 - **Which specials show:** everything in the "Weekly Specials" group that has a
   price, except the soup and the muffin. **A photo is optional** — a special
-  without one publishes as a text-only card (red rule across the top where the
-  photo would be). To pull a special, move it out of the group. Removing only its
-  photo no longer removes the special.
+  without one publishes with `photo: ""` and the site shows a brand placeholder
+  tile (black field, red bloom, cut-out fly) in the same 1:1 box a photo would
+  occupy, so the card keeps its shape in the grid. To pull a special, move it out
+  of the group. Removing only its photo no longer removes the special.
+- **Adding the photo later just works.** While any special is published without
+  one, the sync pulls `/menus` on every run instead of trusting the `lastUpdated`
+  timestamp — attaching an image in Toast doesn't reliably move that timestamp, so
+  the gate would otherwise never notice. Add the photo in Toast and the next run
+  (≤15 min) downloads it and swaps out the placeholder. No dispatch needed.
 - **Seeing what was skipped:** run the workflow with **dry_run = true**
   (Actions → Toast sync → Run workflow). It lists what would publish, flags the
   ones with no photo, and lists every skipped item with the reason.

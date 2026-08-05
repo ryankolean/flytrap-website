@@ -91,6 +91,10 @@ light API calls — but it assumes *"Toast hasn't changed, so nothing we derive
 from it has changed"*, which is false the moment **the sync's own logic**
 changes. A fix then can't reach the site until Toast next republishes.
 
+The gate has one automatic exception: while `data.js` holds a special with
+`photo: ""`, the pull happens every run regardless of the timestamp, so a photo
+attached in Toast is picked up on the next cycle (`specialsAwaitingPhoto()`).
+
 After changing how the sync interprets the menu, force one run:
 
 **Actions → Toast sync → Run workflow → force = true**
