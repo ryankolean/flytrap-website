@@ -1655,6 +1655,16 @@ footer {
   font-size: 12px;
   opacity: 0.6;
 }
+/* Build credit. The link inherits the footer-bottom size/colour so it reads as
+   part of the line, not a call to action — underlined only so it's discoverable
+   as a link, and it picks up the brand red on hover like the other footer links. */
+.footer-credit a {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  transition: color 150ms;
+}
+.footer-credit a:hover { color: var(--color-flytrap-red-bright); }
 
 /* ============================================================
    SCROLL REVEAL

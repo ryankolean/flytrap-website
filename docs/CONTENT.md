@@ -182,7 +182,7 @@ The canonical Toast URL is:
 | Empty-specials message | `Menu.jsx` — "No specials running this week" |
 | Backup-menu notice | `Menu.jsx` — "Showing our saved menu…" |
 | Visit lede (parking, walk-in only) | `Sections.jsx` → `Visit()` |
-| Footer tagline and copyright line | `Sections.jsx` → `Footer()` |
+| Footer tagline, copyright line, build credit | `Sections.jsx` → `Footer()` → `.footer-bottom` |
 | Page title + meta description | `index.html` |
 
 ---
