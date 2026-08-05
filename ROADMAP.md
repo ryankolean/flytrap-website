@@ -58,6 +58,9 @@ Condensed. Full history is in the merged-PR list (`gh pr list --state merged`).
   `noscript` content block, a hidden `h1`, canonical + geo meta, `robots.txt` /
   `sitemap.xml` / `llms.txt` / `404.html`, and the production React build (#114).
   `CNAME` is deliberately held until the DNS cutover — see [docs/SEO.md](docs/SEO.md).
+- Retail card images re-encoded: the two PNGs converted to JPEG and all five
+  resized to 700 px wide at q80. 6.3 MB → 600 KB with no visible change (the cards
+  render at 256 px wide).
 - `specials-sync.mjs` now prunes the photos of specials that have rotated out
   (`orphanedPhotos()`, unit-tested), and the 20 files that had accumulated were
   deleted. It only ever removes files matching its own `toast-*.jpg` naming.
@@ -96,9 +99,6 @@ Condensed. Full history is in the merged-PR list (`gh pr list --state merged`).
 
 - **Delete unused brand and detail assets** — six unreferenced files in
   `assets/brand/`, six in `assets/details/`.
-- **Re-export the retail photos as JPEG.** `swat-hot-sauce.png` (2.7 MB) and
-  `wham-jam.png` (1.2 MB) are photographs saved as PNG; ~3.5 MB of page weight for no
-  visual gain.
 
 ### Decisions someone needs to make
 
