@@ -1,110 +1,138 @@
 # Roadmap — The Fly Trap website
 
-Forward-looking plan for `flytrap-website`: what's done, what's next, what's blocked.
-Stack conventions live in [AGENTS.md](AGENTS.md).
+What's done, what's in flight, what's blocked, what's worth doing next.
+Reconciled against `origin/main` and the merged-PR history on **2026-08-05**.
 
-Driven by Kara & Gavin McMillian's feedback (via Sean McClanaghan), 2026-06-25. Work
-lands as atomic single-purpose PRs → `main` auto-deploys to GitHub Pages.
+Stack rules: [AGENTS.md](AGENTS.md) · Architecture: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
+
+Work lands as single-purpose PRs → merge to `main` → auto-deploy to GitHub Pages.
+Client direction comes from Kara & Gavin McMillian via Sean McClanaghan.
+
+---
+
+## The one thing that matters most
+
+**The site is not live on its own domain.** `theflytrapferndale.com` still serves the
+old legacy site. Merging PR #114 and doing the DNS cutover is the gate on everything
+else being worth doing. See [docs/SEO.md](docs/SEO.md).
+
+---
+
+## In flight
+
+- **PR [#114](https://github.com/ryankolean/flytrap-website/pull/114) — SEO / AEO
+  foundations.** JSON-LD, Open Graph, `noscript` content, `h1`, canonical,
+  `robots.txt` / `sitemap.xml` / `llms.txt`, `CNAME`, `404.html`, production React
+  build. Opened 2026-07-19; needs a re-verify against current `main` before merge.
+  Blocks the domain cutover.
+
+## Blocked — waiting on the client
+
+- **Retail sub-header** copy (Kara).
 
 ---
 
 ## Shipped
 
-_Audited 2026-07-02 against `origin/main` (through #53) and Sean's 2026-06-25 change
-list — every item below is live on `main`._
+Condensed. Full history is in the merged-PR list (`gh pr list --state merged`).
 
-- **Hero** — removed the "American comfort food with a global cooks' table" tagline.
-- **Menu** — removed the "What's cooking" intro; veg toggle → green-**leaf** indicator
-  (site-wide: menu, specials, daily-buzz board).
-- **About** — removed the "Under old management" blurb; interim copy pulled verbatim from
-  theflytrapferndale.net (see [Blocked](#blocked--waiting-on-the-client)).
-- **On the walls** — removed the paintings gallery; replaced with a **key-dishes scroll**
-  with prev/next nav (`FT_DATA.dishes`, `assets/dishes/`).
-- **Retail** — full copy refresh: SWAT! Sauces (3 named sauces), Wham! Jam, Gift Cards,
-  Other Fly Trap Swag.
-- **Visit** — municipal-lot parking copy + `dine@theflytrapferndale.com`.
-- **Open/closed badge** — now computed from restaurant hours (America/Detroit, 8a–3p)
-  instead of a hard-coded "Open now" (`window.ftOpenNow` / `useOpenNow` in `data.js`).
-- **Official logo** — adopted across nav / hero / footer (`assets/brand/flytrap-logo*.png`,
-  isolated descender-safe from Sean's logo).
-- **Bold red/black colors pass** — site-wide. Red: hero, about, retail. Black: specials,
-  menu (checkerboard card on black), press, dishes. Cream type, red accents. Originally shipped
-  with the *muted* brand values; superseded by the retro palette (below).
-- **Retro palette — RESOLVED (retro chosen).** Kara, Gavin & Sean picked the electric
-  theflytrapferndale.net palette over the muted values. Swapped the five color tokens in
-  `colors_and_type.css` (electric red `#FD0003`, pure black `#000000`, white), updated the
-  `theme-color` meta in `index.html`, and recolored the fixed cream logo + fly images to pure
-  white preserving alpha (`assets/brand/flytrap-logo-cream.png`, `assets/brand/fly-cream.png`).
-  The temporary `retro.html` / `modern.html` / `compare.html` comparison pages are deleted.
-- **Cut-out brand fly** — buzzing accent in the hero (`assets/brand/fly*.png`).
-- **Menu leaf icon** — redesigned the `VegLeaf` SVG into a cleaner, small-size-legible
-  leaf-with-stem; shared component, so menu + specials + daily-buzz board all updated (#40).
-- **Dead-code / asset cleanup** — removed the dead `Gallery` component + `showGallery` toggle
-  (#41); deleted the six unused `assets/flytrap-wordmark-*.png` (#42).
-- **Specials → default menu tab** — folded the specials into `Menu.jsx` as a first-class
-  `"specials"` tab that opens active (`useState(SPECIALS_TAB)`); the standalone specials
-  section is gone (#48). This is the first half of the Toast "coupled UI work" below — done
-  ahead of the Toast pull.
-- **Retro favicon** — recolored the favicon to electric red to match the palette (#49).
-- **Hero invert** — flipped the hero to a white field with electric-red branding (wordmark,
-  kicker, fly, outline CTAs), red nav with a scroll-fade-in wordmark; solid-red "See the Menu"
-  stays as the accent CTA. Added `assets/brand/flytrap-logo-red.png` + `fly-red.png` (#50).
-- **Retail header font** — matched the Retail section header to the menu section headers (#51).
-- **About simplify** — dropped the marble photo, stats, and divider (#52).
-- **Dishes eyebrow** — removed the "From the griddle" eyebrow from the key-dishes section (#53).
+**Content pipeline — Toast is the source of truth**
+- Weekly specials auto-sync from the Toast "Weekly Specials" group, photos downloaded
+  and committed (#65). Vegetarian detected from the 🥬 glyph, with `(v)` as an
+  override (#80). Specials publish with or without a photo (#73), and show a price
+  only when Toast has one (#95).
+- Full standing menu pulled into `assets/menu.json` with a committed fallback in
+  `data.js` (#94). Bar, B-sides and kid's menu hidden from the site (#97).
+- Soup of the day and mini-muffin pulled as "extras" cards (#91, #104, #105),
+  including Cup/Bowl pricing resolved through Toast's referenced size modifiers
+  (#103, #118, #119) and a hide-when-unavailable state (#115).
+- Menu + specials syncs merged into one 15-minute workflow producing one commit
+  (#106), with the `/menus` rate-limit fixed (#111) and the cron offset off the top of
+  the hour (#117).
+- `guardrails.yml` added: mechanical CI enforcement of the no-build stack, script
+  order, local patches, and the canonical Toast URL.
+
+**Design and content**
+- Retro palette adopted — electric red `#FD0003`, black, white (#47), with matching
+  favicon (#49) and inverted hero (#50).
+- Original-form logo across nav, hero and footer; scroll-linked hero shrink and
+  hand-off to the nav lockup (#83).
+- The brand fly: hero accent (#36), scroll-linked flight (#54), per-header accompaniment
+  (#60), naturalistic flight path (#112), and its dashed trail (#108, #110).
+- Specials folded into the menu as the default tab; standalone section removed (#48).
+- Menu scrolls through all sections with a sticky jump-nav and scrollspy (#76) that
+  slides to follow the active section (#85).
+- About rewritten to the diner's own origin story (#70) with an editorial treatment
+  (#88, #89, #93).
+- Press section rebuilt with verified live outlet links and rotating pull-quotes
+  (#86, #90, #100).
+- Key-dishes scroll replaced the removed paintings gallery; retail copy refresh with
+  real SWAT!/Wham! Jam product photos (#102) and a carousel for multi-option cards
+  (#61).
+- Visit section: municipal-lot parking copy, contact email, icons on contact links
+  (#92). Open/Closed badge and "today" highlight computed from `America/Detroit` (#62).
+- QA pass: dead code, route bug, accessibility — 24 verified findings (#84).
+- Dead code removed: the rotating-paintings `Hero.jsx` (#44), the `Gallery` component
+  (#41), unused wordmark assets (#42).
 
 ---
 
-## Toast integration — RESOLVED (specials-only automation, LIVE)
+## Backlog
 
-Investigated the full **menu + specials** pull from Toast. **Decision: automate only
-the specials.** Toast's full menu is ~245 items — the whole bar, Kid's menu,
-protein-variant duplicates, and `$0` POS artifacts (`***ADD ON***`, `NO BEV`, …) — so
-auto-regenerating the site menu from it would replace a clean, curated menu with noise
-for near-zero benefit (the standing menu rarely changes). The full-menu pipeline was
-built, then dropped once the live data made the tradeoff obvious (PR #56, closed).
+### Cleanup (safe, mechanical)
 
-**Shipped & live** — specials auto-sync (#65 + first sync `211ea66`):
+- **Prune orphaned specials photos.** `assets/specials/` holds 21 images; 1 is
+  referenced. The sync downloads but never prunes. Deleting the unreferenced ones is
+  safe — the guardrail only checks that referenced photos exist, not the reverse.
+  Consider adding a prune step to `specials-sync.mjs` so it doesn't grow again.
+- **Delete unused brand and detail assets** — six unreferenced files in
+  `assets/brand/`, six in `assets/details/`.
+- **Re-export the retail photos as JPEG.** `swat-hot-sauce.png` (2.7 MB) and
+  `wham-jam.png` (1.2 MB) are photographs saved as PNG; ~3.5 MB of page weight for no
+  visual gain.
+- **Remove the dead `BuzzBand` component and the unused `goBuzz` handler** — or wire
+  them back up (see below).
 
-- A **scheduled GitHub Action** (a few times/day) authenticates with Toast Standard API
-  Access (`menus:read`), reads the **"Weekly Specials"** menu group, keeps the items that
-  carry a **photo** (that's how the featured dishes are told apart from soup/muffins in the
-  same group), downloads each photo into `assets/specials/`, and rewrites only the
-  `/* SPECIALS:START…END */` block of `data.js` via the tested
-  `apps-script/lib/specials.js`. Commits on change → Pages redeploys. **No weekly
-  hand-edit; Toast is the source of truth.**
-- **Veg by meat-detection, not a tag.** A special is vegetarian unless its Toast
-  description names a meat/seafood (English + Spanish word list, word-boundary matched).
-  The `(v)` marker stays as an override for mock-meat ("tempeh bacon"). Unit-tested.
-- **Fallback:** any auth/API/download error writes nothing, so the last-good specials stay
-  live. The standing menu is never pulled — a Toast outage cannot touch it.
-- Setup + the conventions Kara controls in Toast: [docs/SPECIALS_SYNC.md](docs/SPECIALS_SYNC.md).
+### Decisions someone needs to make
 
-**The standing menu stays hand-curated** — deliberately not pulled from Toast.
+- **The `#daily-buzz` page is unreachable.** `DailyBuzzPage` renders a full week of
+  named dishes, but nothing links to it since `BuzzBand` stopped being rendered, and
+  its content (`FT_DATA.buzz`) is hand-written placeholder-ish copy that nobody
+  maintains. Either link it and assign an owner, or delete the page, the `buzz` data
+  and the `#daily-buzz` route. Right now it is maintenance debt with no traffic.
+- **Menu curation.** The site currently shows everything Toast returns minus
+  `HIDDEN_CATEGORIES`. The cleaner long-term answer is a dedicated **"Website Menu"**
+  group in Toast with `TOAST_EXCLUDE_GROUPS` set to everything else — then Kara
+  controls the site menu directly. See
+  [docs/TOAST_MENU_SYNC.md](docs/TOAST_MENU_SYNC.md#curation-tbd-for-kara--sean).
+- **Retire the Claude Design tooling?** Only one sync (v1, 2026-06-06) ever ran and
+  the repo has diverged a long way since. If it isn't coming back, `image-slot.js`,
+  the design-sync skill, and the two guardrail checks that protect the `image-slot`
+  patch can go. `tweaks-panel.jsx` must **not** simply be deleted — it declares the
+  React hook aliases every component file uses; move those to `data.js` first.
+- **Enable branch protection on `main`** requiring the `guardrails` check, so it
+  blocks merges rather than only reporting. `main` auto-deploys; nothing currently
+  stops a bad direct push.
 
-**Optional, not scheduled:**
-- **Menu-as-home-screen** with the fly-trap logo as its header (the specials tab already
-  ships as the default menu tab — #48).
+### Improvements
 
----
+- **Refresh the menu fallback in `data.js`** from a recent `assets/menu.json`. It's
+  the emergency copy and it drifts. Worth doing a couple of times a year.
+- **Self-host `Caveat`, or drop it.** It is the last third-party font, pulled from
+  Google Fonts by an `@import` in `colors_and_type.css` — a render-blocking request
+  for a couple of decorative lines of text.
+- **Per-day hours.** `ftOpenNow()` hard-codes a single 8a–3p window for all seven
+  days. If hours ever vary by day, it needs a table.
+- Optional: more cut-out-fly placements (a small swarm, section flourishes) if Kara
+  likes the accent.
 
-## Blocked — waiting on the client
+### Not doing
 
-- Final **About blurb** (Kara writing) — swap into the interim copy.
-- **Retail sub-header** text (Kara).
-
----
-
-## Backlog / chores
-
-- **Remove the dead rotating-paintings `Hero.jsx`.** It's loaded in `index.html` but never
-  renders — `App.jsx` defines `window.Hero = HeroWrap`, which shadows it via script load order.
-  It's the last consumer of `FT_DATA.paintings` + `assets/paintings/` (the Gallery that also
-  used them is gone, #41). Delete `Hero.jsx` + its `<script>` tag, then drop the `paintings`
-  array from `data.js` and the `assets/paintings/` images. Preserve the hero CTA mobile/desktop
-  patch (lives in `App.jsx`'s `HeroWrap`); check `guardrails.yml` doesn't assert `Hero.jsx`.
-- Brand fonts **Casmira** / **Lounge Bait** are **not** web-embeddable — personal-use /
-  foundry-restricted licenses. Logo *images* are fine; revisit web fonts only if a
-  commercial license is purchased.
-- Optional: more cut-out-fly placements (a small swarm / section flourishes) if Kara likes
-  the accent.
+- **Brand fonts Casmira / Lounge Bait as web fonts** — the licences are personal-use /
+  foundry-restricted and not web-embeddable. Logo *images* are fine. Revisit only if a
+  commercial licence is purchased.
+- **Auto-generating the site menu from raw Toast without curation** — investigated and
+  rejected (PR #56, closed): Toast's ~245 items include the whole bar, the kid's menu,
+  protein-variant duplicates and `$0` POS artifacts. The current approach (pull
+  everything, hide categories in code) is the compromise; see "Menu curation" above
+  for the better end state.
