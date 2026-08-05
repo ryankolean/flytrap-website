@@ -1,4 +1,4 @@
-// Menu + retail + press + buzz data for The Fly Trap
+// Menu + retail + press + dish data for The Fly Trap
 window.FT_DATA = {
   menuCategories: [
     { id: "eggs", title: "All Things Eggs", sub: "Comes with toast & smashed garlic fried potatoes when logical." },
@@ -102,16 +102,6 @@ window.FT_DATA = {
     { year: "2025", outlet: "Hour Detroit", title: "My Longest Relationship Is With a Restaurant.", url: "https://www.hourdetroit.com/restaurants-bars/culture-convo-my-longest-relationship-is-with-a-restaurant/" },
     { year: "2024", outlet: "Crain's Detroit Business", title: "Fly Trap founders return to take over the Ferndale diner.", url: "https://www.crainsdetroit.com/restaurants/fly-trap-founders-return-take-over-ferndale-diner/" },
   ],
-  // Daily buzz — rotating weekly schedule
-  buzz: [
-    { day: "Monday",    name: "The Bill Murray",  desc: "Slow-roasted brisket hash with cream-cheese chive scramble, crackly potatoes, jalapeño jam.", veg: false, price: "16.95" },
-    { day: "Tuesday",   name: "Dolly Parton",     desc: "Gingerbread waffle with peach compote, whipped cream, candied pecans, & a 9-to-5 strong cup of coffee on the side.", veg: true, price: "13.95" },
-    { day: "Wednesday", name: "RBG's Burrito",    desc: "Black bean & cotija burrito with poblano pesto, two eggs over easy, smoked-tomato salsa. Dissents are encouraged.", veg: true, price: "14.95" },
-    { day: "Thursday",  name: "The Iggy Pop",     desc: "Detroit breakfast links, raw-power scramble, kimchi, and hashbrowns torched on the flat-top.", veg: false, price: "15.95" },
-    { day: "Friday",    name: "Aretha's Crab Toast", desc: "Lump crab over grilled sourdough, dill aioli, tomato confit, soft-poached egg. Respect.", veg: false, price: "17.95" },
-    { day: "Saturday",  name: "The Lizzo",        desc: "Two thick slices of cinnamon french toast, blueberry mascarpone, lemon curd, candied bacon. About damn time.", veg: false, price: "15.95" },
-    { day: "Sunday",    name: "Stevie Wonder",    desc: "Eggs in a basket of buttery sourdough, signed-sealed-delivered hollandaise, country ham, garlic spuds.", veg: false, price: "16.95" },
-  ],
   // ===========================================================================
   // THIS WEEK'S SPECIALS + soup/muffin EXTRAS — auto-synced from Toast (the
   // source of truth) by the Toast sync workflow. Do NOT hand-edit the
@@ -131,7 +121,6 @@ window.FT_DATA = {
   muffinSpecial: { name: "Mini Muffins", flavor: "Blueberry🥬", price: "0.99" },
   soupSpecial: { name: "Soup of the Day", flavor: "Nona's Cannellini🥬", available: true, cup: "5.00", bowl: "6.00" },
   /* EXTRAS:END */
-  pastry: { name: "Brown-Butter Sour Cherry Galette", desc: "From the Sugar Shack — flaky butter dough, Michigan sour cherries, almond frangipane, demerara crust. While they last. $5.95." },
   dishes: [
     { src: "assets/dishes/the-burger.jpg", label: "The Burger" },
     { src: "assets/dishes/huevos-rancheros.jpg", label: "Huevos Rancheros" },

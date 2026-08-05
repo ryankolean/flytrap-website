@@ -13,18 +13,19 @@ Client direction comes from Kara & Gavin McMillian via Sean McClanaghan.
 ## The one thing that matters most
 
 **The site is not live on its own domain.** `theflytrapferndale.com` still serves the
-old legacy site. Merging PR #114 and doing the DNS cutover is the gate on everything
-else being worth doing. See [docs/SEO.md](docs/SEO.md).
+old legacy site. The SEO payload is shipped and pointing at that domain, so the DNS
+cutover is now the only thing standing between this site and being the real one — and
+it gates how much the rest of the backlog is worth. See [docs/SEO.md](docs/SEO.md).
 
 ---
 
-## In flight
+## Next up
 
-- **PR [#114](https://github.com/ryankolean/flytrap-website/pull/114) — SEO / AEO
-  foundations.** JSON-LD, Open Graph, `noscript` content, `h1`, canonical,
-  `robots.txt` / `sitemap.xml` / `llms.txt`, `CNAME`, `404.html`, production React
-  build. Opened 2026-07-19; needs a re-verify against current `main` before merge.
-  Blocks the domain cutover.
+- **The domain cutover.** DNS for `theflytrapferndale.com` → GitHub Pages, commit the
+  one-line `CNAME` in the same change, set the custom domain in Settings → Pages,
+  enable Enforce HTTPS, then 301-forward `.net` at the registrar. Everything else is
+  ready and pointing at that domain. Full checklist in [docs/SEO.md](docs/SEO.md).
+  Needs registrar access — Ryan.
 
 ## Blocked — waiting on the client
 
@@ -51,6 +52,15 @@ Condensed. Full history is in the merged-PR list (`gh pr list --state merged`).
   the hour (#117).
 - `guardrails.yml` added: mechanical CI enforcement of the no-build stack, script
   order, local patches, and the canonical Toast URL.
+
+**Cleanup**
+- SEO/AEO payload shipped: `Restaurant` JSON-LD, Open Graph + Twitter Card, a
+  `noscript` content block, a hidden `h1`, canonical + geo meta, `robots.txt` /
+  `sitemap.xml` / `llms.txt` / `404.html`, and the production React build (#114).
+  `CNAME` is deliberately held until the DNS cutover — see [docs/SEO.md](docs/SEO.md).
+- Removed the unreachable `#daily-buzz` sub-page, its `BuzzBand` teaser, the
+  `FT_DATA.buzz` / `pastry` data and ~270 lines of `db-*` / `buzz-*` CSS. Nothing
+  linked to it and nobody maintained the copy.
 
 **Design and content**
 - Retro palette adopted — electric red `#FD0003`, black, white (#47), with matching
@@ -90,16 +100,9 @@ Condensed. Full history is in the merged-PR list (`gh pr list --state merged`).
 - **Re-export the retail photos as JPEG.** `swat-hot-sauce.png` (2.7 MB) and
   `wham-jam.png` (1.2 MB) are photographs saved as PNG; ~3.5 MB of page weight for no
   visual gain.
-- **Remove the dead `BuzzBand` component and the unused `goBuzz` handler** — or wire
-  them back up (see below).
 
 ### Decisions someone needs to make
 
-- **The `#daily-buzz` page is unreachable.** `DailyBuzzPage` renders a full week of
-  named dishes, but nothing links to it since `BuzzBand` stopped being rendered, and
-  its content (`FT_DATA.buzz`) is hand-written placeholder-ish copy that nobody
-  maintains. Either link it and assign an owner, or delete the page, the `buzz` data
-  and the `#daily-buzz` route. Right now it is maintenance debt with no traffic.
 - **Menu curation.** The site currently shows everything Toast returns minus
   `HIDDEN_CATEGORIES`. The cleaner long-term answer is a dedicated **"Website Menu"**
   group in Toast with `TOAST_EXCLUDE_GROUPS` set to everything else — then Kara

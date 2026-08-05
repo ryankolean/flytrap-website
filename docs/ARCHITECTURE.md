@@ -36,7 +36,7 @@ This flat layout is deliberate and enforced — see [AGENTS.md](../AGENTS.md).
 | `tweaks-panel.jsx` | Claude Design's edit-mode panel. **Also declares the shared `const { useState, useEffect, useRef, useMemo, useCallback } = React;` that every later component relies on.** Renders nothing in production. |
 | `Nav.jsx` | Sticky top nav + mobile drawer. `window.Nav`. |
 | `Menu.jsx` | The menu section: specials tab, soup/muffin cards, all menu categories, sticky jump-nav with scrollspy. `window.Menu`. |
-| `Sections.jsx` | `About`, `DishScroll`, `Retail` (+ `RetailCarousel`), `PressQuote`, `Press`, `Visit`, `Footer`, `DailyBuzzPage`, `BuzzBand`. |
+| `Sections.jsx` | `About`, `DishScroll`, `Retail` (+ `RetailCarousel`), `PressQuote`, `Press`, `Visit`, `Footer`. |
 | `App.jsx` | Root component + router + scroll effects, the `BackFly` animation, and the hero (`window.Hero = HeroWrap`). Mounts to `#root`. |
 | `image-slot.js` | `<image-slot>` web component from the Claude Design starter. Not used by any current section; kept because a guardrail asserts its local patch. |
 | `colors_and_type.css` | Design tokens: `@font-face` declarations, colors, type scale, spacing, radii, shadows, easing. |
@@ -89,11 +89,9 @@ There is one page and one pseudo-route:
 
 - **`/`** → `App` renders `Hero, Menu, About, DishScroll, Retail, Press, Visit, Footer, BackFly`.
   Nav links are in-page smooth scrolls to `#menu`, `#about`, `#retail`, `#press`, `#visit`.
-- **`#daily-buzz`** → `App` swaps the whole `<main>` for `DailyBuzzPage` (the rotating
-  week of named dishes + soup + pastry).
-  ⚠️ Nothing on the site currently links to it. `BuzzBand` — the band that used to
-  link there — is defined and exported but never rendered. The page is only reachable
-  by typing the hash. See [ROADMAP.md](../ROADMAP.md).
+There is no second page and no client-side router. The `#daily-buzz` sub-page and its
+`BuzzBand` teaser were removed once it became clear nothing linked to them and nobody
+maintained the copy.
 
 ### Notable behaviours
 
@@ -122,7 +120,6 @@ This is the single most important thing to understand before editing anything.
 | Dish scroll photos | `data.js` → `FT_DATA.dishes` + `assets/dishes/` | Human |
 | Retail cards, copy, prices, photos | **`Sections.jsx` → the `cards` array inside `Retail()`** (hard-coded, not in `data.js`) | Human |
 | Press articles + pull-quotes | `data.js` → `FT_DATA.press` / `pressQuotes` | Human |
-| Daily Buzz week | `data.js` → `FT_DATA.buzz`, `FT_DATA.pastry` | Human |
 | About copy | `Sections.jsx` → `About()`, inline JSX | Human |
 | Address, phone, email, hours, Toast order URL | Hard-coded in **several** places — see [CONTENT.md](CONTENT.md#contact-details-are-duplicated) | Human |
 
