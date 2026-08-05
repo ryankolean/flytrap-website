@@ -123,10 +123,7 @@ window.FT_DATA = {
   /* EXTRAS:END */
   dishes: [
     { src: "assets/dishes/the-burger.jpg", label: "Meatloaf Sandwich Special" },
-    { src: "assets/dishes/huevos-rancheros.jpg", label: "Huevos Rancheros" },
-    { src: "assets/dishes/the-rumble.jpg", label: "The Rumble" },
-    { src: "assets/dishes/fried-rice.jpg", label: "Fried Rice" },
-    { src: "assets/dishes/catch-a-buzz.jpg", label: "Catch a Buzz" }
+    { src: "assets/dishes/fried-rice.jpg", label: "Fried Rice" }
   ],
 };
 
