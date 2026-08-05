@@ -125,12 +125,15 @@ Six other brand files (`flytrap-logo-orange.png`, `flytrap-logo-original.png`,
 **not referenced anywhere**. Neither are the six photos in `assets/details/`. They're
 kept as source material; delete them if you want a smaller repo.
 
-### Orphaned specials photos
+### Specials photos clean themselves up
 
-`assets/specials/` currently holds **21 images, of which 1 is in use.** The sync
-downloads new photos but never prunes old ones. Deleting the unreferenced ones is
-safe — the guardrail only checks the other direction (that every photo referenced in
-`data.js` exists on disk).
+`assets/specials/` holds only the photos of the specials currently running. After a
+successful pull, `specials-sync.mjs` deletes any `toast-*.jpg` the new specials block
+no longer references (`orphanedPhotos()`, unit-tested).
+
+The prune is deliberately narrow: it only removes files matching the sync's own
+`toast-<slug>.jpg` naming, and only after every download succeeded. Anything you add
+by hand, or that the Apps Script form published as `week-*.jpg`, is left alone.
 
 ---
 
