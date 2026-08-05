@@ -309,9 +309,8 @@ function Footer({ onNavigate }) {
           <div className="footer-brand">
             <img src="assets/brand/flytrap-logo-original-red.png" alt="The Fly Trap — a finer diner" />
             <span className="tag">Catch a Buzz.</span>
-            <p style={{ fontSize: 13, opacity: .7, lineHeight: 1.55, marginTop: 12, maxWidth: "32ch" }}>
-              22950 Woodward Ave, Ferndale, MI 48220. Walk in, sit down, eat magnificently.
-            </p>
+            <p className="footer-addr">22950 Woodward Ave, Ferndale, MI 48220.</p>
+            <p className="footer-motto">Walk in, sit down, eat magnificently.</p>
           </div>
           <div className="footer-col">
             <h6>Eat</h6>

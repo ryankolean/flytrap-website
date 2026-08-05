@@ -1624,6 +1624,22 @@ footer {
   color: var(--color-flytrap-red-bright);
   display: block;
 }
+/* Address and motto under the footer wordmark. Two separate lines: the address
+   is plain, the motto sits below it in italic. Both carry the styles that used
+   to be inline on the single combined paragraph. */
+.footer-addr,
+.footer-motto {
+  font-size: 13px;
+  line-height: 1.55;
+  opacity: 0.7;
+  max-width: 32ch;
+  margin: 0;
+}
+.footer-addr { margin-top: 12px; }
+.footer-motto {
+  margin-top: 6px;
+  font-style: italic;
+}
 .footer-col h6 {
   font-family: var(--font-sans);
   font-size: 11px;
