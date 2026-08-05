@@ -1,30 +1,4 @@
-// About + Retail + Press + Buzz band + Visit + Footer + DailyBuzz page
-
-function BuzzBand({ onGoBuzz }) {
-  const dayName = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"][window.ftTodayIdx()];
-  const buzz = window.FT_DATA.buzz.find((b) => b.day === dayName) || window.FT_DATA.buzz[0];
-
-  return (
-    <section className="buzz-band" id="daily-buzz-band" data-screen-label="Buzz Band">
-      <div className="container">
-        <div className="buzz-grid">
-          <div className="buzz-stamp">
-            Today's Buzz
-            <span className="day">{dayName}</span>
-          </div>
-          <div className="buzz-body">
-            <h3>{buzz.name}</h3>
-            <p>{buzz.desc}</p>
-          </div>
-          <a className="buzz-cta" href="#daily-buzz" onClick={(e) => {e.preventDefault();onGoBuzz();}}>
-            See the week
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M13 5l7 7-7 7" /></svg>
-          </a>
-        </div>
-      </div>
-    </section>);
-
-}
+// About + Dishes + Retail + Press + Visit + Footer
 
 function About() {
   return (
@@ -371,87 +345,8 @@ function Footer({ onNavigate }) {
 
 }
 
-function DailyBuzzPage({ onBack }) {
-  const todayIdx = window.ftTodayIdx(); // 0=Sun..6=Sat, in America/Detroit
-  const dayMap = { Sunday: 0, Monday: 1, Tuesday: 2, Wednesday: 3, Thursday: 4, Friday: 5, Saturday: 6 };
-  const buzz = window.FT_DATA.buzz;
-  const soup = window.FT_DATA.soupSpecial;
-  const pastry = window.FT_DATA.pastry;
-
-  // Build calendar dates for the upcoming week, anchored to Detroit's current
-  // date (noon avoids DST edges) so labels match todayIdx for any visitor.
-  const today = new Date(new Date().toLocaleDateString("en-US", { timeZone: "America/Detroit" }) + " 12:00");
-  const dateFor = (dayOfWeek) => {
-    const d = new Date(today);
-    const diff = (dayOfWeek - todayIdx + 7) % 7;
-    d.setDate(today.getDate() + diff);
-    return d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
-  };
-
-  return (
-    <main data-screen-label="Daily Buzz Page">
-      <section className="db-hero">
-        <div className="container">
-          <a href="#top" className="crumb" onClick={(e) => {e.preventDefault();onBack();}}>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M19 12H5M12 19l-7-7 7-7" /></svg>
-            Back to home
-          </a>
-          <div style={{ fontFamily: "var(--font-script)", fontSize: 32, color: "var(--color-flytrap-red-deep)", transform: "rotate(-2deg)", display: "inline-block", marginBottom: 4 }}>
-            this week's
-          </div>
-          <h1>Daily Buzz.</h1>
-          <p className="sub">A different rotating dish every morning, named after a pop-culture figure who probably eats here in another universe. Plus the soup of the day and whatever the Sugar Shack pulled out of the oven.</p>
-        </div>
-      </section>
-
-      <section className="db-week">
-        <div className="container">
-          {buzz.map((b, i) => {
-            const dayNum = dayMap[b.day];
-            const isToday = dayNum === todayIdx;
-            return (
-              <div key={i} className={"db-day" + (isToday ? " today" : "")}>
-                <div className="when">
-                  {b.day}{isToday ? " · today" : ""}
-                  <span className="date">{dateFor(dayNum)}</span>
-                </div>
-                <div>
-                  <h3 className="nm">{b.name}</h3>
-                  <p className="desc">{b.desc}</p>
-                  <div className="meta">
-                    <span className="chip price">${b.price}</span>
-                    <span className="chip">Available 8a — 3p, while it lasts</span>
-                  </div>
-                </div>
-              </div>);
-
-          })}
-        </div>
-      </section>
-
-      <section className="db-soup">
-        <div className="container">
-          <div className="grid">
-            <div className="col">
-              <h4>Soup of the day</h4>
-              {soup && soup.flavor ? <h3>{soup.flavor}</h3> : null}
-            </div>
-            <div className="col">
-              <h4>From the Sugar Shack</h4>
-              <h3>{pastry.name}</h3>
-              <p>{pastry.desc}</p>
-            </div>
-          </div>
-        </div>
-      </section>
-    </main>);
-
-}
-
-window.BuzzBand = BuzzBand;
 window.About = About;
 window.Retail = Retail;
 window.Press = Press;
 window.Visit = Visit;
 window.Footer = Footer;
-window.DailyBuzzPage = DailyBuzzPage;

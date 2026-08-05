@@ -42,7 +42,6 @@ Before opening a PR, serve the site and confirm at **375 / 768 / 1280** widths:
   `document.documentElement.scrollWidth === document.documentElement.clientWidth`
   must be `true`.
 - The section you changed renders as intended. Screenshot it.
-- `#daily-buzz` still loads (it is a separate render path and easy to break).
 - If you touched the menu: reload with the network throttled or with
   `assets/menu.json` renamed, and confirm the backup menu + "Showing our saved menu"
   notice appear.
