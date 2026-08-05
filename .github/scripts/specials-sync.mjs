@@ -30,7 +30,7 @@
 //   TOAST_MENUS_FIXTURE=.github/scripts/fixtures/specials.sample.json \
 //   node .github/scripts/specials-sync.mjs
 
-import { readFile, writeFile, mkdir, access } from 'node:fs/promises'
+import { readFile, writeFile, mkdir, access, readdir, rm } from 'node:fs/promises'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 import { dirname, resolve } from 'node:path'
 import specialsLib from '../../apps-script/lib/specials.js'
@@ -136,6 +136,20 @@ function findGroup(payload, name) {
     for (const sub of (g.menuGroups || [])) stack.push(sub)
   }
   return null
+}
+
+// Photos this script downloads are named `toast-<slug>.jpg`. Once a special rotates
+// out, its file is dead weight — the sync used to download and never prune, so the
+// directory kept growing. Given the directory listing and the photo paths the new
+// block references, return the filenames that are safe to delete.
+//
+// Deliberately narrow: only files matching the sync's own `toast-*.jpg` naming are
+// ever considered. Anything hand-added or published by the Apps Script form
+// (`week-*.jpg`) is left alone — this runs unattended, so it only removes files it
+// created itself.
+export function orphanedPhotos(filenames, keptPhotoPaths) {
+  const keep = new Set(keptPhotoPaths.map((p) => p.split('/').pop()))
+  return filenames.filter((f) => /^toast-.+\.jpg$/.test(f) && !keep.has(f))
 }
 
 async function downloadImage(url, destPath) {
@@ -378,6 +392,12 @@ async function main() {
   if (!fixture && specials.length) {
     await mkdir(ASSETS_DIR, { recursive: true })
     for (const s of specials) await downloadImage(s.image, resolve(REPO_ROOT, s.photo))
+    // Every download succeeded, so the new set is complete — drop the photos of
+    // specials that have rotated out. Runs after the downloads, never before, so a
+    // failed fetch throws first and leaves the previous set intact.
+    const orphans = orphanedPhotos(await readdir(ASSETS_DIR), specials.map((s) => s.photo))
+    for (const f of orphans) await rm(resolve(ASSETS_DIR, f))
+    if (orphans.length) console.log(`Pruned ${orphans.length} rotated-out special photo(s): ${orphans.join(', ')}`)
   }
   await writeFile(DATA_JS, next)
   const wrote = [specials.length ? `${specials.length} specials` : '', soup ? 'soup' : '', muffin ? 'muffin' : ''].filter(Boolean).join(' + ')
