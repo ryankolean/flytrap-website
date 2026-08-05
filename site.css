@@ -558,6 +558,21 @@ section { position: relative; }
 }
 .special-card:hover { transform: translateY(-3px); box-shadow: 0 18px 40px rgba(0,0,0,.14); }
 
+/* A special with no Toast photo renders text-only. Without this it collapses to
+   a short block that reads as broken next to the photo cards, so give it a red
+   top rule in place of the image and enough padding to hold the grid row. */
+.special-card.no-photo {
+  border-top: 4px solid var(--color-flytrap-red-deep);
+  justify-content: center;
+  min-height: 200px;
+}
+.special-card.no-photo .special-body { padding: 24px 20px 22px; }
+.special-card.no-photo .special-headline h3 { font-size: 26px; }
+@media (min-width: 768px) {
+  .special-card.no-photo { min-height: 240px; }
+  .special-card.no-photo .special-headline h3 { font-size: 28px; }
+}
+
 /* Photo focal point — Instagram square (1:1) at every breakpoint */
 .special-photo {
   position: relative;
