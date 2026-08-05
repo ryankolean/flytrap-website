@@ -420,7 +420,6 @@ function DailyBuzzPage({ onBack }) {
                   <p className="desc">{b.desc}</p>
                   <div className="meta">
                     <span className="chip price">${b.price}</span>
-                    {b.veg ? <VegLeaf /> : null}
                     <span className="chip">Available 8a — 3p, while it lasts</span>
                   </div>
                 </div>
@@ -435,7 +434,7 @@ function DailyBuzzPage({ onBack }) {
           <div className="grid">
             <div className="col">
               <h4>Soup of the day</h4>
-              <h3>{soup.flavor}</h3>
+              {soup && soup.flavor ? <h3>{soup.flavor}</h3> : null}
             </div>
             <div className="col">
               <h4>From the Sugar Shack</h4>

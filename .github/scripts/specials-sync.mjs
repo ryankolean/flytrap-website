@@ -13,10 +13,12 @@
 // Flow: auth -> GET /menus/v2/menus -> find the "Weekly Specials" group ->
 // keep only items that carry a Toast photo -> download each photo into
 // assets/specials/ -> rewrite the /* SPECIALS:START..END */ block in data.js.
-// Also reads the "Cup of Soup" + "Bowl of Soup" items (each item's price plus
-// their shared description as the flavor) into soupSpecial, and the mini-muffin
-// item (price + its description as the flavor) into muffinSpecial. Missing
-// soup/muffin = that card left as-is.
+// Also reads the "Soup O' The Day" item (flavor from its description, cup from
+// its base price, bowl from a size modifier, and an out-of-stock flag) into
+// soupSpecial, and the mini-muffin item (price + its description as the flavor)
+// into muffinSpecial. On an out-of-stock soup day the flavor/message is kept and
+// the prices cleared, so the site shows the message alone. Missing soup/muffin =
+// that card left as-is.
 //
 // Fallback: ANY auth/API/download error throws before writing, so the last-good
 // specials committed in data.js stay live. An empty/photo-less group is also a
@@ -48,11 +50,13 @@ const SPECIALS_GROUP = process.env.TOAST_SPECIALS_GROUP || 'Weekly Specials'
 const VEG_MARKER = process.env.TOAST_VEG_MARKER || '(v)'
 const DRY_RUN = !!process.env.TOAST_DRY_RUN
 
-// Soup of the Day: Toast has it as two separate items — "Cup of Soup" and
-// "Bowl of Soup" — that share a description (the day's flavor). We pull each
-// item's price plus that shared description and write them into soupSpecial in
-// data.js. Names are matched case-insensitively; override via env if Kara
-// renames them.
+// Soup of the Day. The current Toast menu carries it as a single "Soup O' The
+// Day" item — flavor in the description, cup price = the item's base price, bowl
+// price = a size modifier (when offered), and an out-of-stock flag for the "no
+// soup today" days. Older menus split it into separate "Cup of Soup" / "Bowl of
+// Soup" items that share a description; that shape is still handled as a fallback.
+// All names are matched case-insensitively; override via env if Kara renames them.
+const SOUP_ITEM = process.env.TOAST_SOUP_ITEM || "Soup O' The Day"
 const SOUP_CUP_ITEM = process.env.TOAST_SOUP_CUP_ITEM || 'Cup of Soup'
 const SOUP_BOWL_ITEM = process.env.TOAST_SOUP_BOWL_ITEM || 'Bowl of Soup'
 
@@ -184,25 +188,108 @@ function findMenuItem(payload, needle) {
   return found
 }
 
-// Toast carries the soup as two separate items — "Cup of Soup" and "Bowl of
-// Soup" — that share a description (the day's flavor). Pull each item's price and
-// the shared description. Returns { cup?, bowl?, flavor? }, or null when neither
-// item is found — in which case the caller leaves the hand-set soupSpecial
-// untouched (never blanks it). Flavor is only taken when the two descriptions
-// agree (or only one item exists); a blank or mismatched Toast description leaves
-// the hand-set flavor in place. Exported for tests.
+// The soup's flavor is the Toast item description, kept verbatim — including the
+// 🥬 (U+1F96C) glyph Kara appends for a vegetarian soup, which the site renders
+// inline the same way it does on specials and menu items (there is no separate
+// veg flag). Only whitespace is normalised.
+const cleanFlavor = (d) => String(d == null ? '' : d).replace(/\s+/g, ' ').trim()
+
+// Resolve a soup *size* modifier option (e.g. "Cup" / "Bowl") for an item and
+// return the option object, or null. Toast's /menus/v2 delivers the size group by
+// integer reference — item.modifierGroupReferences -> payload.modifierGroupReferences
+// -> a group whose modifierOptionReferences index into payload.modifierOptionReferences
+// — so resolve those top-level maps. Inline modifier objects (older / other shapes)
+// are also handled. The option's `price` is the size *upcharge* on the item's base
+// price (Toast gives Cup +$0 / Bowl +$1), not an absolute price.
+function sizeOption(payload, item, needle) {
+  if (!item) return null
+  const want = String(needle).toLowerCase()
+  const grpMap = (payload && payload.modifierGroupReferences) || {}
+  const optMap = (payload && payload.modifierOptionReferences) || {}
+  const at = (map, ref) => (ref == null ? null : (map[ref] != null ? map[ref] : map[String(ref)]))
+
+  const groups = []
+  const inlineGroups = item.modifierGroups || item.modifiers
+  if (Array.isArray(inlineGroups)) for (const g of inlineGroups) if (g && typeof g === 'object') groups.push(g)
+  if (Array.isArray(item.modifierGroupReferences)) {
+    for (const gref of item.modifierGroupReferences) { const g = at(grpMap, gref); if (g && typeof g === 'object') groups.push(g) }
+  }
+
+  for (const g of groups) {
+    const opts = []
+    const inlineOpts = g.modifierOptions || g.options || g.items || g.modifiers
+    if (Array.isArray(inlineOpts)) for (const o of inlineOpts) if (o && typeof o === 'object') opts.push(o)
+    if (Array.isArray(g.modifierOptionReferences)) {
+      for (const oref of g.modifierOptionReferences) { const o = at(optMap, oref); if (o && typeof o === 'object') opts.push(o) }
+    }
+    for (const o of opts) {
+      if (String(o.name || '').toLowerCase().includes(want) && o.price != null) return o
+    }
+  }
+  return null
+}
+
+// Soup of the Day -> { available, flavor?, cup, bowl } or null. `available` is
+// the in-stock flag: on an out-of-stock day the flavor carries whatever Kara
+// typed (e.g. "No soup on the weekend!") and cup/bowl are cleared, so the site
+// shows that message alone with no price hanging off it. null (no soup item at
+// all) leaves the hand-set soupSpecial untouched — the sync never blanks it.
+// Exported for tests.
 export function extractSoup(payload, opts = {}) {
+  // Current menu shape: a single "Soup O' The Day" item.
+  const item = findMenuItem(payload, opts.soupItem || SOUP_ITEM)
+  if (item) return soupFromSingleItem(payload, item, opts)
+  // Legacy menu shape: separate "Cup of Soup" / "Bowl of Soup" items.
+  return soupFromCupBowlItems(payload, opts)
+}
+
+function soupFromSingleItem(payload, item, opts) {
+  const available = item.outOfStock !== true
+  const soup = { available }
+  const flavor = cleanFlavor(item.description)
+  if (flavor) soup.flavor = flavor
+  if (!available) {
+    soup.cup = ''
+    soup.bowl = ''
+    return soup
+  }
+  // Base price is the Cup; the Bowl is a size modifier priced as an upcharge on it
+  // (Cup +$0, Bowl +$1 -> Bowl = base + $1). The size group is referenced by id, so
+  // sizeOption resolves it against the payload's top-level modifier maps.
+  const base = item.price != null ? Number(item.price) : null
+  const cupOpt = sizeOption(payload, item, 'cup')
+  const bowlOpt = sizeOption(payload, item, 'bowl')
+  soup.cup = base != null ? base + Number((cupOpt && cupOpt.price) || 0) : ''
+  if (bowlOpt && bowlOpt.price != null && base != null) {
+    soup.bowl = base + Number(bowlOpt.price)
+  } else {
+    // Legacy fallback: a separate "Bowl of Soup" item carrying an absolute price.
+    const bowlItem = findMenuItem(payload, opts.bowlItem || SOUP_BOWL_ITEM)
+    soup.bowl = bowlItem && bowlItem.price != null ? bowlItem.price : ''
+  }
+  return soup
+}
+
+function soupFromCupBowlItems(payload, opts) {
   const cupItem = findMenuItem(payload, opts.cupItem || SOUP_CUP_ITEM)
   const bowlItem = findMenuItem(payload, opts.bowlItem || SOUP_BOWL_ITEM)
   if (!cupItem && !bowlItem) return null
 
-  const soup = {}
-  if (cupItem && cupItem.price != null) soup.cup = cupItem.price
-  if (bowlItem && bowlItem.price != null) soup.bowl = bowlItem.price
+  // Available unless every present soup item is flagged out of stock.
+  const present = [cupItem, bowlItem].filter(Boolean)
+  const available = present.some((it) => it.outOfStock !== true)
 
-  const clean = (d) => String(d == null ? '' : d).replace(/\s+/g, ' ').trim()
-  const cupDesc = clean(cupItem && cupItem.description)
-  const bowlDesc = clean(bowlItem && bowlItem.description)
+  const soup = { available }
+  if (available) {
+    if (cupItem && cupItem.price != null) soup.cup = cupItem.price
+    if (bowlItem && bowlItem.price != null) soup.bowl = bowlItem.price
+  } else {
+    soup.cup = ''
+    soup.bowl = ''
+  }
+
+  const cupDesc = cleanFlavor(cupItem && cupItem.description)
+  const bowlDesc = cleanFlavor(bowlItem && bowlItem.description)
   if (cupDesc && bowlDesc) {
     if (cupDesc === bowlDesc) soup.flavor = cupDesc
     else console.warn(`[soup] Cup/Bowl descriptions differ — leaving flavor hand-set. cup=${JSON.stringify(cupDesc)} bowl=${JSON.stringify(bowlDesc)}`)
@@ -210,7 +297,7 @@ export function extractSoup(payload, opts = {}) {
     soup.flavor = cupDesc || bowlDesc
   }
 
-  if (soup.cup == null && soup.bowl == null && soup.flavor == null) return null
+  if (soup.flavor == null && soup.cup == null && soup.bowl == null) return null
   return soup
 }
 
@@ -277,7 +364,7 @@ async function main() {
 
   if (DRY_RUN) {
     console.log(`[dry-run] ${specials.length} specials: ${specials.map((s) => s.name).join(', ') || '(none)'}`)
-    if (soup) console.log(`[dry-run] soup: cup=${soup.cup ?? '-'} bowl=${soup.bowl ?? '-'} flavor=${soup.flavor ?? '(unchanged)'}`)
+    if (soup) console.log(`[dry-run] soup: available=${soup.available} cup=${soup.cup || '-'} bowl=${soup.bowl || '-'} flavor=${soup.flavor ?? '(unchanged)'}`)
     if (muffin) console.log(`[dry-run] muffin: price=${muffin.price ?? '-'} flavor=${muffin.flavor ?? '(unchanged)'}`)
     return
   }

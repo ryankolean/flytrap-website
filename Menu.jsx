@@ -1,14 +1,4 @@
 // Menu: all sections stacked, sticky jump-nav with scrollspy (Group 7)
-function VegLeaf() {
-  return (
-    <svg className="veg-leaf" viewBox="0 0 24 24" width="15" height="15" role="img" aria-label="Vegetarian" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <title>Vegetarian</title>
-      <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.52-4.48 10-10 10Z" />
-      <path d="M2 21c0-3 1.85-5.36 5.08-6" />
-    </svg>
-  );
-}
-
 const MENU_SPECIALS = "specials";
 
 // Format an extras price: under $1 shows in cents (0.99 -> "99¢"), $1+ in dollars
@@ -79,6 +69,15 @@ function Menu() {
   const specials = window.FT_DATA.specials || [];
   const muffinSpecial = window.FT_DATA.muffinSpecial;
   const soupSpecial = window.FT_DATA.soupSpecial;
+  // Soup of the day always shows whenever Toast gives it a flavor — including an
+  // out-of-stock message ("No soup on the weekend!"), which passes straight
+  // through; only a truly empty soupSpecial is hidden. Prices show only when the
+  // soup is in stock (available), so an out-of-stock day shows the message alone.
+  // When only one extras card remains it centers instead of sitting in the left
+  // grid column.
+  const muffinAvailable = !!muffinSpecial;
+  const soupShown = !!(soupSpecial && soupSpecial.flavor);
+  const extrasCount = (muffinAvailable ? 1 : 0) + (soupShown ? 1 : 0);
 
   // Jump-nav sections: Specials first, then every loaded category — all stacked.
   const sections = [{ id: MENU_SPECIALS, title: "Specials" }].concat(
@@ -169,7 +168,6 @@ function Menu() {
                     <div className="special-body">
                       <div className="special-headline">
                         <h3>{s.name}</h3>
-                        {s.veg ? <VegLeaf /> : null}
                       </div>
                       <p className="special-desc">{s.desc}</p>
                       {s.price ? (
@@ -186,20 +184,20 @@ function Menu() {
                   </p>
                 ) : null}
               </div>
-              {(muffinSpecial || soupSpecial) ? (
-                <div className="specials-extras">
-                  {muffinSpecial ? (
+              {extrasCount ? (
+                <div className={"specials-extras" + (extrasCount === 1 ? " solo" : "")}>
+                  {muffinAvailable ? (
                     <div className="extra-card">
                       <span className="extra-label">{muffinSpecial.name}</span>
                       <p className="extra-flavor">{muffinSpecial.flavor}</p>
                       {muffinSpecial.price ? <p className="extra-price">{fmtExtraPrice(muffinSpecial.price)}</p> : null}
                     </div>
                   ) : null}
-                  {soupSpecial ? (
+                  {soupShown ? (
                     <div className="extra-card">
                       <span className="extra-label">{soupSpecial.name}</span>
                       <p className="extra-flavor">{soupSpecial.flavor}</p>
-                      {(soupSpecial.cup || soupSpecial.bowl) ? (
+                      {soupSpecial.available && (soupSpecial.cup || soupSpecial.bowl) ? (
                         <p className="extra-price">
                           {soupSpecial.cup ? "Cup " + fmtExtraPrice(soupSpecial.cup) : null}
                           {soupSpecial.cup && soupSpecial.bowl ? " · " : null}
@@ -229,7 +227,6 @@ function Menu() {
                     <div className="menu-item" key={c.id + i}>
                       <div className="nm-row">
                         <span className="nm">{it.nm}</span>
-                        {it.veg ? <VegLeaf /> : null}
                       </div>
                       <span className="pr">${it.price}</span>
                       {it.desc ? <p className="desc">{it.desc}</p> : null}

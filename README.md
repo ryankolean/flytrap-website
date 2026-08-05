@@ -1,34 +1,63 @@
-# The Fly Trap — static site
+# The Fly Trap — website
 
-Plain static HTML/CSS/JS. No build step. Open `index.html` in a browser, or serve the directory with any static server.
+Marketing site for **The Fly Trap: a finer diner**, 22950 Woodward Ave, Ferndale, MI.
 
-## Quick start
+A **no-build static site**: HTML + plain CSS + React loaded from a CDN and JSX
+transpiled in the browser. There is no `package.json`, no bundler, no server.
+Menu and specials content is pulled from **Toast** by a scheduled GitHub Action.
+
+| | |
+|---|---|
+| **Repo** | `ryankolean/flytrap-website` |
+| **Deployed** | GitHub Pages from `main` → https://ryankolean.github.io/flytrap-website/ |
+| **Production domain** | **Not cut over yet.** `theflytrapferndale.com` still serves the old legacy site. See [docs/SEO.md](docs/SEO.md). |
+| **Content source** | Toast POS (menu, weekly specials, soup, muffin) + hand-edited files for everything else |
+| **CI** | `guardrails` on every PR, `toast-sync` every 15 min, `pages` on every push to `main` |
+
+## Run it locally
+
+Any static file server works. From the repo root:
 
 ```bash
-# any static server works; here are two:
-npx serve .
-# or
 python3 -m http.server 8000
 ```
 
-Then visit http://localhost:8000 (or whatever port your server prints).
+Then open http://localhost:8000. There is nothing to install and nothing to build —
+what you serve is what deploys.
 
-## Stack
+Run the unit tests (Node 20+, no dependencies):
 
-- HTML + CSS + React (loaded via UMD `<script>` tags)
-- JSX transpiled in-browser via Babel standalone
-- No bundler, no npm install
+```bash
+node --test test/*.mjs
+```
 
-## Files
+## Documentation
 
-- `index.html` — entry point
-- `App.jsx` — root component, navigation, hero
-- `Nav.jsx`, `Menu.jsx`, `Sections.jsx` — page sections (the hero lives in `App.jsx`)
-- `data.js` — menu + content data
-- `colors_and_type.css`, `site.css` — styles
-- `assets/` — images, paintings, wordmarks
-- `fonts/` — self-hosted Fraunces + Inter (woff2)
+Read these in order:
 
-## Deploy
+1. **[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)** — file-by-file map, how the page
+   is assembled, where data comes from, and every automated job.
+2. **[docs/DEVELOPING.md](docs/DEVELOPING.md)** — how to make a change: workflow,
+   verification gate, the gotchas that will bite you, and a section written for AI
+   coding agents.
+3. **[docs/CONTENT.md](docs/CONTENT.md)** — the things that change often (photos,
+   specials, menu, press, hours, copy): where each one lives and how to update it.
+4. **[docs/SEO.md](docs/SEO.md)** — what SEO exists today, what is still open, and
+   the domain-cutover checklist.
+5. **[ROADMAP.md](ROADMAP.md)** — what shipped, what's in flight, what's blocked.
+6. **[AGENTS.md](AGENTS.md)** — the hard stack constraints. These are enforced by CI.
 
-Drop the contents of this folder onto any static host (Vercel, Netlify, GitHub Pages, S3+CloudFront). No env vars, no server.
+Deep dives on the two sync scripts:
+[docs/TOAST_MENU_SYNC.md](docs/TOAST_MENU_SYNC.md) ·
+[docs/SPECIALS_SYNC.md](docs/SPECIALS_SYNC.md)
+
+## What you need access to
+
+- **GitHub** — repo admin (Actions secrets, Pages settings, branch protection).
+- **Toast** — Standard API Access credential with the `menus:read` scope. Stored as
+  the repo secrets `TOAST_CLIENT_ID`, `TOAST_CLIENT_SECRET`, `TOAST_RESTAURANT_GUID`.
+  Kara manages the actual menu content inside Toast.
+- **Domain registrar** for `theflytrapferndale.com` / `.net` — needed for the
+  production cutover only.
+- **Google Apps Script** project (optional) — the emergency manual specials
+  publisher in `apps-script/`. Needs its own GitHub token.
