@@ -58,6 +58,9 @@ Condensed. Full history is in the merged-PR list (`gh pr list --state merged`).
   `noscript` content block, a hidden `h1`, canonical + geo meta, `robots.txt` /
   `sitemap.xml` / `llms.txt` / `404.html`, and the production React build (#114).
   `CNAME` is deliberately held until the DNS cutover — see [docs/SEO.md](docs/SEO.md).
+- `specials-sync.mjs` now prunes the photos of specials that have rotated out
+  (`orphanedPhotos()`, unit-tested), and the 20 files that had accumulated were
+  deleted. It only ever removes files matching its own `toast-*.jpg` naming.
 - Removed the unreachable `#daily-buzz` sub-page, its `BuzzBand` teaser, the
   `FT_DATA.buzz` / `pastry` data and ~270 lines of `db-*` / `buzz-*` CSS. Nothing
   linked to it and nobody maintained the copy.
