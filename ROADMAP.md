@@ -58,6 +58,9 @@ Condensed. Full history is in the merged-PR list (`gh pr list --state merged`).
   `noscript` content block, a hidden `h1`, canonical + geo meta, `robots.txt` /
   `sitemap.xml` / `llms.txt` / `404.html`, and the production React build (#114).
   `CNAME` is deliberately held until the DNS cutover — see [docs/SEO.md](docs/SEO.md).
+- `specials-sync.mjs` now prunes the photos of specials that have rotated out
+  (`orphanedPhotos()`, unit-tested), and the 20 files that had accumulated were
+  deleted. It only ever removes files matching its own `toast-*.jpg` naming.
 - Removed the unreachable `#daily-buzz` sub-page, its `BuzzBand` teaser, the
   `FT_DATA.buzz` / `pastry` data and ~270 lines of `db-*` / `buzz-*` CSS. Nothing
   linked to it and nobody maintained the copy.
@@ -91,10 +94,6 @@ Condensed. Full history is in the merged-PR list (`gh pr list --state merged`).
 
 ### Cleanup (safe, mechanical)
 
-- **Prune orphaned specials photos.** `assets/specials/` holds 21 images; 1 is
-  referenced. The sync downloads but never prunes. Deleting the unreferenced ones is
-  safe — the guardrail only checks that referenced photos exist, not the reverse.
-  Consider adding a prune step to `specials-sync.mjs` so it doesn't grow again.
 - **Delete unused brand and detail assets** — six unreferenced files in
   `assets/brand/`, six in `assets/details/`.
 - **Re-export the retail photos as JPEG.** `swat-hot-sauce.png` (2.7 MB) and

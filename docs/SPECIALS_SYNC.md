@@ -17,7 +17,10 @@ tested `apps-script/lib/specials.js` block builder):
    items in the group).
 3. Download each photo into `assets/specials/toast-<slug>.jpg` (self-hosted —
    `.special-photo` is `aspect-ratio: 1/1; object-fit: cover`, so any aspect
-   crops cleanly).
+   crops cleanly). Once every download has succeeded, delete any `toast-*.jpg`
+   the new block no longer references, so the directory doesn't grow forever.
+   Only the script's own `toast-` naming is ever pruned — hand-added files and the
+   form publisher's `week-*.jpg` are left alone.
 4. Read the **soup** (the **"Soup O' The Day"** item — flavor from its
    description, **Cup = the item's base price**, **Bowl = base + the "Bowl" size
    upcharge**, plus an **out-of-stock** flag). Toast delivers the "Soup Sizes"
