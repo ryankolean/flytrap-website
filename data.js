@@ -122,7 +122,7 @@ window.FT_DATA = {
   soupSpecial: { name: "Soup of the Day", flavor: "Nona's Cannellini🥬", available: true, cup: "5.00", bowl: "6.00" },
   /* EXTRAS:END */
   dishes: [
-    { src: "assets/dishes/the-burger.jpg", label: "The Burger" },
+    { src: "assets/dishes/the-burger.jpg", label: "Meatloaf Sandwich Special" },
     { src: "assets/dishes/fried-rice.jpg", label: "Fried Rice" }
   ],
 };
