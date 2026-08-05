@@ -214,6 +214,7 @@ async function main() {
   }
 
   const dryRun = !!process.env.TOAST_DRY_RUN
+  const FORCE = !!process.env.TOAST_FORCE
 
   const token = await login()
   console.log('Auth OK.')
@@ -225,7 +226,12 @@ async function main() {
   const meta = await apiGet(token, '/menus/v2/metadata')
   const lastUpdated = meta?.lastUpdated || meta?.lastPublished || null
 
-  if (lastUpdated && !process.env.TOAST_DUMP && !dryRun) {
+  // TOAST_FORCE pulls anyway. The gate assumes "Toast's menu hasn't changed, so
+  // neither has anything we derive from it" — which stops being true whenever the
+  // sync's OWN logic changes. After such a change the fix can't reach the site
+  // until Toast happens to republish, which may be weeks. One forced run costs a
+  // single extra /menus call.
+  if (lastUpdated && !process.env.TOAST_DUMP && !dryRun && !FORCE) {
     let prevUpdated = null
     try { prevUpdated = JSON.parse(await readFile(MENU_JSON, 'utf8')).lastUpdated } catch { /* no prior menu.json */ }
     if (prevUpdated && prevUpdated === lastUpdated) {
@@ -233,6 +239,7 @@ async function main() {
       return
     }
   }
+  if (FORCE) console.log('TOAST_FORCE set — pulling /menus even though the menu may be unchanged.')
 
   // Full listing to a file, every group (incl. excluded), for review.
   if (process.env.TOAST_DUMP) {
