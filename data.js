@@ -115,6 +115,7 @@ window.FT_DATA = {
   weekOf: "Week of July 6",
   specials: [
     { id: "special-1", name: "The Cuban Croque Senora", desc: "Grilled sourdough stuffed with ham, roast pork, swiss, mustard and pickle. Broiled with a mojo mornay and topped with a sunny egg. Pick a side.", veg: false, photo: "assets/specials/toast-the-cuban-croque-senora.jpg", price: "15.95" },
+    { id: "special-2", name: "La Figata", desc: "House made calabrian chili, provolone and pork sausage sitting atop an egg rumble with sweet pepper, red onion, spinach and more provolone. Browns and toast.", veg: false, photo: "", price: "15.95" },
   ],
   /* SPECIALS:END */
   /* EXTRAS:START */
