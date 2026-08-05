@@ -61,6 +61,8 @@ Condensed. Full history is in the merged-PR list (`gh pr list --state merged`).
 - Retail card images re-encoded: the two PNGs converted to JPEG and all five
   resized to 700 px wide at q80. 6.3 MB → 600 KB with no visible change (the cards
   render at 256 px wide).
+- Branch protection: a "main protection" ruleset now blocks deletion and
+  force-pushes on `main`.
 - `specials-sync.mjs` now prunes the photos of specials that have rotated out
   (`orphanedPhotos()`, unit-tested), and the 20 files that had accumulated were
   deleted. It only ever removes files matching its own `toast-*.jpg` naming.
@@ -112,9 +114,11 @@ Condensed. Full history is in the merged-PR list (`gh pr list --state merged`).
   the design-sync skill, and the two guardrail checks that protect the `image-slot`
   patch can go. `tweaks-panel.jsx` must **not** simply be deleted — it declares the
   React hook aliases every component file uses; move those to `data.js` first.
-- **Enable branch protection on `main`** requiring the `guardrails` check, so it
-  blocks merges rather than only reporting. `main` auto-deploys; nothing currently
-  stops a bad direct push.
+- **Make `guardrails` a blocking check.** Deletion and force-push protection is now
+  active on `main`, but requiring the status check would block the Toast bot's own
+  pushes — see the options in
+  [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md#guardrailsyml--ci). Needs a decision;
+  the cheapest is giving the sync workflow an admin PAT plus a ruleset bypass.
 
 ### Improvements
 
