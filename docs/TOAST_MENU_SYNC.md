@@ -82,6 +82,23 @@ for now. Options to clean it up, once they decide:
 - **In code:** add filters to `toast-sync.mjs` (drop `price == 0`, drop
   modifier/add-on groups, dedupe variants).
 
+## Forcing a run after changing the sync logic
+
+The menu step skips the `/menus` pull whenever Toast's `lastUpdated` matches the
+timestamp in the committed `assets/menu.json`, and the specials step then has no
+payload to work from. That is the right default — it keeps most runs down to two
+light API calls — but it assumes *"Toast hasn't changed, so nothing we derive
+from it has changed"*, which is false the moment **the sync's own logic**
+changes. A fix then can't reach the site until Toast next republishes.
+
+After changing how the sync interprets the menu, force one run:
+
+**Actions → Toast sync → Run workflow → force = true**
+
+That sets `TOAST_FORCE=1`, which pulls `/menus` regardless of the timestamp. It
+costs one extra API call. Scheduled runs never set it, so the rate-limit
+behaviour is unchanged. Locally: `TOAST_FORCE=1 node .github/scripts/toast-sync.mjs`.
+
 ## Test / verify
 
 Offline (no network), against the sample fixtures:

@@ -91,6 +91,14 @@ block keeps its own last-good committed state as the fallback.
   specials, and menu items keep it inline, so it renders as the green leaf). The
   `(v)` text marker on specials is also stripped and flags the item vegetarian.
 
+## Forcing a run
+
+The specials step reuses the menu step's payload, and the menu step skips its
+pull when Toast reports the menu unchanged — so a change to the sync's own logic
+won't reach the site until Toast next republishes. Force one run with
+**Actions → Toast sync → Run workflow → force = true**. See
+[TOAST_MENU_SYNC.md](TOAST_MENU_SYNC.md#forcing-a-run-after-changing-the-sync-logic).
+
 ## Test it offline (no network)
 
 ```bash

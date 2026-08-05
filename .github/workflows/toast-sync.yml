@@ -34,6 +34,10 @@ on:
         description: 'Verify only — pull from Toast and log, write/commit nothing'
         type: boolean
         default: false
+      force:
+        description: 'Force — pull /menus even if Toast says the menu is unchanged. Use after changing the sync logic itself.'
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -53,6 +57,9 @@ jobs:
       TOAST_HOSTNAME: ${{ secrets.TOAST_HOSTNAME }}
       TOAST_VEG_MARKER: ${{ secrets.TOAST_VEG_MARKER }}
       TOAST_DRY_RUN: ${{ inputs.dry_run && '1' || '' }}
+      # Bypasses the lastUpdated gate in toast-sync.mjs. Manual dispatch only —
+      # the scheduled runs never set it, so the rate-limit behaviour is unchanged.
+      TOAST_FORCE: ${{ inputs.force && '1' || '' }}
     steps:
       - uses: actions/checkout@v7
 
