@@ -338,7 +338,6 @@ function Footer({ onNavigate }) {
         </div>
         <div className="footer-bottom">
           <span>© 2026 The Fly Trap · Buzzin' since 2004 · Ferndale, MI</span>
-          <span>Designed with marbles, hot sauce, and seventeen flies.</span>
           <span className="footer-credit">
             Designed and developed by{" "}
             <a href="https://summitsoftwaresolutions.dev" target="_blank" rel="noopener">Ryan Kolean</a>
