@@ -2,6 +2,11 @@
 
 Stack constraints for any agent (Claude Design, Claude Code, Codex, etc.) generating code in this repo.
 
+Orientation and procedure live alongside this file:
+[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) (how it fits together) ·
+[docs/DEVELOPING.md](docs/DEVELOPING.md) (how to change it, incl. agent rules) ·
+[docs/CONTENT.md](docs/CONTENT.md) (what changes often).
+
 ## Stack — HARD CONSTRAINTS
 
 - **No build step.** No `package.json`, no `node_modules`, no bundler.
@@ -14,17 +19,23 @@ Stack constraints for any agent (Claude Design, Claude Code, Codex, etc.) genera
 ## File layout (do not rename, do not move)
 
 ```
-index.html              # entry point, all <script> tags here
-App.jsx                 # root component, mounts to #root; defines the hero (window.Hero = HeroWrap, incl. live open/closed badge)
-Nav.jsx                 # top nav
-Menu.jsx                # menu w/ tabs + veg filter
-Sections.jsx            # about, retail, press, visit
-data.js                 # menu + content data (plain object on window.DATA)
+index.html              # entry point, all <script> tags here (load order is the dependency graph)
+data.js                 # content data on window.FT_DATA + open/closed time helpers
+                        #   -> the SPECIALS: / EXTRAS: marker blocks are MACHINE-WRITTEN
+image-slot.js           # <image-slot> web component (Claude Design starter)
+tweaks-panel.jsx        # edit-mode panel; ALSO declares the shared useState/useEffect/... aliases
+Nav.jsx                 # top nav + mobile drawer
+Menu.jsx                # menu: specials tab, extras, all categories, sticky jump-nav
+Sections.jsx            # about, dishes, retail, press, visit, footer, daily-buzz page
+App.jsx                 # root component, mounts to #root; defines the hero (window.Hero = HeroWrap) + BackFly
 colors_and_type.css     # design tokens (colors, fonts, sizes)
 site.css                # layout + component styles
-assets/                 # images, wordmarks
+assets/                 # images; assets/menu.json is MACHINE-WRITTEN by the Toast sync
 fonts/                  # self-hosted Fraunces + Inter (woff2)
 ```
+
+Never hand-edit `assets/menu.json` or the `SPECIALS:` / `EXTRAS:` blocks of
+`data.js` — the Toast sync rewrites both every 15 minutes.
 
 Add new sections as new `.jsx` files at root + new `<script type="text/babel">` tag in `index.html`. Do not introduce subfolders for components.
 
@@ -76,8 +87,8 @@ A sync run MUST follow that skill, not an ad-hoc copy.
 
 ## Verification gate (REQUIRED before every PR)
 
-Run the site (`python3 -m http.server 8000`, or the `flytrap` launch config on
-port 5178) and confirm at **375 / 768 / 1280**:
+Run the site (`python3 -m http.server 8000`, or the `flytrap-static` launch config
+in `.claude/launch.json` on port 5173) and confirm at **375 / 768 / 1280**:
 
 - Console: zero errors. (The Babel-in-browser warning is expected.)
 - No horizontal overflow at 375 — `document.documentElement.scrollWidth === clientWidth`.
