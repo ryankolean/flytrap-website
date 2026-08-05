@@ -192,7 +192,9 @@ It fails the build on:
 4. The canonical Toast ordering URL missing from `Nav.jsx` or `App.jsx`.
 5. Re-introduced `special-badge` markup or an `eyebrow:` field in `data.js`.
 6. A specials photo referenced in `data.js` but not committed.
-7. `bolt.host` references or a committed `.env`.
+7. A committed `.env`, or any reference to the legacy Bolt preview domain (the
+   check greps the whole repo for the literal hostname, **including markdown** — so
+   don't type it in a doc either).
 
 > Branch protection requiring the `guardrails` check is **not** confirmed enabled.
 > Turn it on so the check blocks merges instead of only reporting.
