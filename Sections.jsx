@@ -129,7 +129,7 @@ function Retail() {
     { name: "THE O.G. - HABANERO HOT SAUCE", photo: "assets/retail/swat-og.jpg", desc: "Ya mon! Jamaican-ish in style with vibrant habanero, smoky chipotle and warm Caribbean spices." },
     { name: "LA PICA – JALAPEÑO HOT SAUCE", photo: "assets/retail/swat-pica.jpg", desc: "¡Oye! Mexican-ish in style with herbaceous spices, earthly jalapeño & a garlicky zing." },
     { name: "LIL' PRIK – THAI CHILI HOT SAUCE", photo: "assets/retail/swat-prik.jpg", desc: "The sweetest of the bunch. Thai-ish in style kicked up with chilies, tamari & charred onion." }] },
-  { cls: "jam", label: "Wham! Jam", photo: "assets/retail/wham-jam.jpg", title: "Wham! Jam", desc: "These three flavors are always in stock: Strawberry Basil, Blackberry Ginger & Mango Tamarindo. Funky fun flavors are offered at the restaurant and bottled in limited quantities at the restaurant.", price: "$8 / jar", ask: "" },
+  { cls: "jam", label: "Wham! Jam", photo: "assets/retail/wham-jam.jpg", title: "Wham! Jam", desc: "These three flavors are always in stock: Strawberry Basil, Blackberry Ginger & Mango Tamarindo. Funky fun flavors are offered at the restaurant and bottled in limited quantities.", price: "$8 / jar", ask: "" },
   { cls: "gift", label: "Gift Cards", title: "Gift Cards", desc: "Great gifts available in any denomination.", price: "", ask: "" },
   { cls: "tees", label: "the fly trap", title: "Other Fly Trap Swag", desc: "Sometimes there are T-Shirts, sometimes sweatshirts, maybe pins, maybe patches, come see us to find out!", price: "", ask: "" }];
 
