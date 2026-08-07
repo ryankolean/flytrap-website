@@ -114,13 +114,13 @@ window.FT_DATA = {
   sourcePost: "",
   weekOf: "Week of July 6",
   specials: [
-    { id: "special-1", name: "The Cuban Croque Senora", desc: "Grilled sourdough stuffed with ham, roast pork, swiss, mustard and pickle. Broiled with a mojo mornay and topped with a sunny egg. Pick a side.", veg: false, photo: "assets/specials/toast-the-cuban-croque-senora.jpg", price: "15.95" },
-    { id: "special-2", name: "La Figata", desc: "House made calabrian chili, provolone and pork sausage sitting atop an egg rumble with sweet pepper, red onion, spinach and more provolone. Browns and toast.", veg: false, photo: "assets/specials/toast-la-figata.jpg", price: "15.95" },
+    { id: "special-1", name: "The Malaka", desc: "House made chicken gyro sausage served up with eggs how you like 'em on a schmear of favosalata. Topped with a cucumber, tomato and feta cream; comes with pita!", veg: false, photo: "assets/specials/toast-the-malaka.jpg", price: "15.95" },
+    { id: "special-2", name: "The Sloppy Toad", desc: "Pecan smoked BBQ pullled mushroom sandwich on a house roll with jack cheese, caramelized onion, tomato and a fresno vinegar slaw; pick your side! 🥬", veg: true, photo: "assets/specials/toast-the-sloppy-toad.jpg", price: "14.95" },
   ],
   /* SPECIALS:END */
   /* EXTRAS:START */
   muffinSpecial: { name: "Mini Muffins", flavor: "Blueberry🥬", price: "0.99" },
-  soupSpecial: { name: "Soup of the Day", flavor: "Nona's Cannellini🥬", available: true, cup: "5.00", bowl: "6.00" },
+  soupSpecial: { name: "Soup of the Day", flavor: "Sorry! No soup on the weekend!", available: true, cup: "5.00", bowl: "6.00" },
   /* EXTRAS:END */
   // "A few of our favorites" slider. Captions are the labels Sean sent with each
   // photo (he named the files after the caption he wanted); the label is also the
