@@ -121,8 +121,8 @@ Current local patches (also enforced by `.github/workflows/guardrails.yml`):
 
 - **Source of truth is Toast.** The `SPECIALS` + `EXTRAS` blocks of `data.js` are
   auto-synced from Toast by the Toast sync workflow (see `docs/SPECIALS_SYNC.md`);
-  don't hand-edit them — a sync run overwrites them. The tweaks-panel form is the
-  manual override / emergency path.
+  don't hand-edit them — a sync run overwrites them. There is no manual override:
+  to change a special, change it in Toast.
 - **No price unless Toast has one.** `Sections.jsx` / `Menu.jsx` only render the
   price block when `s.price` is set; the sync omits the field when Toast has none.
 - **No SAVORY / SWEET badges.** Do not add an `eyebrow` field or a
