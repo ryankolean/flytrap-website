@@ -31,6 +31,7 @@
 //   node .github/scripts/specials-sync.mjs
 
 import { readFile, writeFile, mkdir, access, readdir, rm } from 'node:fs/promises'
+import { createHash } from 'node:crypto'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 import { dirname, resolve } from 'node:path'
 import specialsLib from '../../apps-script/lib/specials.js'
@@ -41,6 +42,9 @@ const HERE = dirname(fileURLToPath(import.meta.url))
 const REPO_ROOT = resolve(HERE, '..', '..')
 const DATA_JS = resolve(REPO_ROOT, 'data.js')
 const ASSETS_DIR = resolve(REPO_ROOT, 'assets/specials')
+// Archive of every special ever published. Lives under docs/ so it stays out of
+// the Pages deploy artifact — it is a record for the restaurant, not a site asset.
+const HISTORY_JSON = resolve(REPO_ROOT, 'docs/specials-history.json')
 
 const HOST = process.env.TOAST_HOSTNAME || 'https://ws-api.toasttab.com'
 const CLIENT_ID = process.env.TOAST_CLIENT_ID
@@ -200,6 +204,64 @@ export function partitionSpecials(items, opts = {}) {
 // ever considered. Anything hand-added or published by the Apps Script form
 // (`week-*.jpg`) is left alone — this runs unattended, so it only removes files it
 // created itself.
+// Running record of every special that has ever been published, in
+// docs/specials-history.json. The site never reads it — it exists so the
+// restaurant can answer "what did we run last spring?" without a developer.
+//
+// Why this is needed at all: the sync prunes a special's photo once it rotates
+// out, and data.js only ever holds the current week. The photos are not lost —
+// git keeps every blob that was ever committed — but recovering one means
+// `git log --diff-filter=D` and a `git show`, which is not a thing anyone at the
+// restaurant is going to do.
+//
+// A special is matched on name + description, so the same dish running for three
+// weeks is one entry with a moving `lastSeen` rather than three duplicates. A
+// reworked description counts as a new entry, which is the right call — it is a
+// different dish as far as the customer is concerned.
+//
+// `photoBlob` is git's own hash of the image bytes. Once the photo is pruned from
+// the working tree, `git cat-file -p <photoBlob> > photo.jpg` still recovers it,
+// with no need to hunt through history for the commit that deleted it.
+// Match key for a description. The 🥬 glyph is a vegetarian marker Kara appends
+// in Toast, not part of the dish — adding it to an existing special would
+// otherwise register as a brand new one. (It did: The Turkish-ish Eggs appeared
+// twice in the seeded history, same photo and price, differing only by the glyph.)
+// A real wording change still counts as a new entry, which is intended.
+const histKey = (desc) => String(desc || '').replace(/🥬/g, '').replace(/\s+/g, ' ').trim()
+
+export function updateSpecialsHistory(existing, specials, isoDate) {
+  const out = (Array.isArray(existing) ? existing : []).map((e) => ({ ...e }))
+  for (const s of specials) {
+    const match = out.find((e) => e.name === s.name && histKey(e.desc) === histKey(s.desc))
+    if (match) {
+      match.lastSeen = isoDate
+      match.veg = !!s.veg
+      if (s.price) match.price = String(s.price)
+      if (s.photo) match.photo = s.photo
+      if (s.photoBlob) match.photoBlob = s.photoBlob
+    } else {
+      out.push({
+        firstSeen: isoDate,
+        lastSeen: isoDate,
+        name: s.name,
+        desc: s.desc || '',
+        price: s.price ? String(s.price) : '',
+        veg: !!s.veg,
+        photo: s.photo || '',
+        photoBlob: s.photoBlob || '',
+      })
+    }
+  }
+  return out
+}
+
+// git's blob id for a file's bytes: sha1("blob <bytelength>\0" + bytes).
+// Same value `git hash-object` prints, computed without shelling out to git.
+export function gitBlobSha(buf) {
+  const header = Buffer.from(`blob ${buf.length}\0`, 'utf8')
+  return createHash('sha1').update(Buffer.concat([header, buf])).digest('hex')
+}
+
 export function orphanedPhotos(filenames, keptPhotoPaths) {
   const keep = new Set(keptPhotoPaths.map((p) => p.split('/').pop()))
   return filenames.filter((f) => /^toast-.+\.jpg$/.test(f) && !keep.has(f))
@@ -469,6 +531,30 @@ async function main() {
     if (orphans.length) console.log(`Pruned ${orphans.length} rotated-out special photo(s): ${orphans.join(', ')}`)
   }
   await writeFile(DATA_JS, next)
+
+  // Append to the archive after data.js is written, so a special is only ever
+  // recorded as published if it actually was. Hash each photo that's still on
+  // disk so it stays recoverable with `git cat-file -p <photoBlob>` once the
+  // prune removes it.
+  if (specials.length) {
+    const stamped = []
+    for (const s of specials) {
+      let photoBlob = ''
+      if (s.photo) {
+        try { photoBlob = gitBlobSha(await readFile(resolve(REPO_ROOT, s.photo))) } catch { /* fixture run: no image on disk */ }
+      }
+      stamped.push({ ...s, photoBlob })
+    }
+    let prior = []
+    try { prior = JSON.parse(await readFile(HISTORY_JSON, 'utf8')) } catch { /* first run */ }
+    const today = new Date().toISOString().slice(0, 10)
+    const history = updateSpecialsHistory(prior, stamped, today)
+    if (JSON.stringify(history) !== JSON.stringify(prior)) {
+      await mkdir(dirname(HISTORY_JSON), { recursive: true })
+      await writeFile(HISTORY_JSON, JSON.stringify(history, null, 2) + '\n')
+      console.log(`Specials history: ${history.length} entr${history.length === 1 ? 'y' : 'ies'} recorded in docs/specials-history.json.`)
+    }
+  }
   const wrote = [specials.length ? `${specials.length} specials` : '', soup ? 'soup' : '', muffin ? 'muffin' : ''].filter(Boolean).join(' + ')
   console.log(`Wrote ${wrote} to data.js${fixture ? ' [fixture, images skipped]' : (withPhotos.length ? ' (+ images)' : '')}.`)
   if (skipped.length) console.log(`Skipped ${skipped.length} item(s) in "${SPECIALS_GROUP}": ${skipped.map((s) => `${s.name} (${s.reason})`).join('; ')}`)

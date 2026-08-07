@@ -1,0 +1,202 @@
+[
+  {
+    "firstSeen": "2026-06-24",
+    "lastSeen": "2026-06-24",
+    "name": "The Jack Soo",
+    "desc": "",
+    "price": "",
+    "veg": false,
+    "photo": "",
+    "photoBlob": ""
+  },
+  {
+    "firstSeen": "2026-06-24",
+    "lastSeen": "2026-06-24",
+    "name": "The Delroy Lindo",
+    "desc": "",
+    "price": "",
+    "veg": false,
+    "photo": "",
+    "photoBlob": ""
+  },
+  {
+    "firstSeen": "2026-06-24",
+    "lastSeen": "2026-06-29",
+    "name": "The Transcontinental Tango",
+    "desc": "A rumble of eggs with house made merguez sausage, feta cheese, Kalamata olives, red onion and greens; comes with spuds and toast!",
+    "price": "",
+    "veg": false,
+    "photo": "assets/specials/week-2026-06-24-1.jpg",
+    "photoBlob": "50442f5adb5e6df52d1c1374dae7129496d4ec3c"
+  },
+  {
+    "firstSeen": "2026-06-29",
+    "lastSeen": "2026-07-04",
+    "name": "The Lionel Messi",
+    "desc": "A rumble of eggs with roasted poblano peppers, red onion, greens and provoleta cheese chunks, topped with homemade Argentinian chorizo and chimichurri sauce; spuds and toast.",
+    "price": "",
+    "veg": false,
+    "photo": "assets/specials/week-2026-06-29-1.jpg",
+    "photoBlob": "f662c04b105382763f6069392a66fe2f56f81f6f"
+  },
+  {
+    "firstSeen": "2026-06-29",
+    "lastSeen": "2026-07-04",
+    "name": "The Lee Kang-In",
+    "desc": "A buldak noodle omelette — gochujang spicy ramen, house vegetarian kimchi, scallions and American cheese, topped with kewpie mayo and red chili sauce; spuds and toast.",
+    "price": "",
+    "veg": true,
+    "photo": "assets/specials/week-2026-06-29-2.jpg",
+    "photoBlob": "c040f5db9c2531d55e53885a8a888ebb6d8a41a8"
+  },
+  {
+    "firstSeen": "2026-07-06",
+    "lastSeen": "2026-07-08",
+    "name": "The Karen Gillan",
+    "desc": "It's lemon poundcake French toast! Served up with macerated Michigan strawberries and burnt butter cream cheese.",
+    "price": "12.95",
+    "veg": true,
+    "photo": "assets/specials/toast-the-karen-gillan.jpg",
+    "photoBlob": "adbdec8bbbadb353f8abc23f705deb08a5fcd056"
+  },
+  {
+    "firstSeen": "2026-07-06",
+    "lastSeen": "2026-07-08",
+    "name": "El Puerco Borracho",
+    "desc": "Pork carnitas swimming in beer soaked pintos served up with eggs how you like 'em, a jack cheese and scallion quesadilla, lime crema and salsa verde.",
+    "price": "14.95",
+    "veg": false,
+    "photo": "assets/specials/toast-el-puerco-borracho.jpg",
+    "photoBlob": "b33b9d5f7418fe2ecc585b2ffb7d9f5bbb58ca7a"
+  },
+  {
+    "firstSeen": "2026-07-08",
+    "lastSeen": "2026-07-08",
+    "name": "Mini Muffins",
+    "desc": "Blueberry Lemon",
+    "price": "0.99",
+    "veg": true,
+    "photo": "assets/specials/toast-mini-muffins.jpg",
+    "photoBlob": "70a6117607d99b46f23f64c5a8c37cc0ac01907b"
+  },
+  {
+    "firstSeen": "2026-07-09",
+    "lastSeen": "2026-07-10",
+    "name": "The Riz Ahmed",
+    "desc": "A rumble of eggs with roasted hearts of palm, feta, jalapeños, red onion and greens topped with za'atar spice; comes with browns and toast.",
+    "price": "13.95",
+    "veg": false,
+    "photo": "",
+    "photoBlob": ""
+  },
+  {
+    "firstSeen": "2026-07-10",
+    "lastSeen": "2026-07-16",
+    "name": "The Ali Wong",
+    "desc": "Eggs how you like 'em served up with quinoa green goddess cakes, lime ginger dressed greens, whipped goat cheese and hoisin sauce. Yup, toast.",
+    "price": "13.95",
+    "veg": false,
+    "photo": "assets/specials/toast-the-ali-wong.jpg",
+    "photoBlob": "39158a3ae7c9fa76e16b32477e8484fdce7a1569"
+  },
+  {
+    "firstSeen": "2026-07-10",
+    "lastSeen": "2026-07-16",
+    "name": "The Lou Costello",
+    "desc": "House made Calabrian chili and provolone sausage sitting atop an egg rumble of herby oven dried tomatoes, arugula, caramelized onion and gorgonzola. Browns and toast.",
+    "price": "15.95",
+    "veg": false,
+    "photo": "assets/specials/toast-the-lou-costello.jpg",
+    "photoBlob": "41c3378a4b323d3f4c4c1dc878e6a2f6af2e90a3"
+  },
+  {
+    "firstSeen": "2026-07-17",
+    "lastSeen": "2026-07-20",
+    "name": "The Paris Texas",
+    "desc": "Two eggs your way straddlin' Ontario smoked BBQ chicken and sweet potato hash with green chilies, jack cheese and herby crema. Toast? Sure.",
+    "price": "15.95",
+    "veg": false,
+    "photo": "assets/specials/toast-the-paris-texas.jpg",
+    "photoBlob": "252fdfb082059f9c4b6b5b733da1c1decb0c02e7"
+  },
+  {
+    "firstSeen": "2026-07-17",
+    "lastSeen": "2026-07-22",
+    "name": "The Turkish-ish Eggs",
+    "desc": "Eggs how you like 'em nested in a garlic yogurt sauce with aleppo pepper brown butter and a barley, cucumber tabbouleh. Yup, toast.",
+    "price": "12.95",
+    "veg": true,
+    "photo": "assets/specials/toast-the-turkish-ish-eggs.jpg",
+    "photoBlob": "97bb3b84392d1901f07c8ab1cf92321bb3271da6"
+  },
+  {
+    "firstSeen": "2026-07-21",
+    "lastSeen": "2026-07-22",
+    "name": "the Banda Bassotti",
+    "desc": "Grilled Sourdough with Broiled Goat Cheese, Tomatoes & a Lemon Aioli topped with Balsamic Dressed Arugula; pick your side!🥬",
+    "price": "13.95",
+    "veg": false,
+    "photo": "assets/specials/toast-the-banda-bassotti.jpg",
+    "photoBlob": "404e6c475f075a6951822419c7cfec12e3598d03"
+  },
+  {
+    "firstSeen": "2026-07-24",
+    "lastSeen": "2026-07-29",
+    "name": "the Minnie Pearl",
+    "desc": "House Made Smoked Jalapeño, Pork and Stone Fruit Sausage Sittin' Atop Eggs Rumbled with Roasted Corn, Sweet and Hot Peppers, Jack Cheese and a Peach BBQ Sauce; comes with browns and toast.",
+    "price": "15.95",
+    "veg": false,
+    "photo": "assets/specials/toast-the-minnie-pearl.jpg",
+    "photoBlob": "ec62f1d6757699bd23df14fb9598d525ae393ee2"
+  },
+  {
+    "firstSeen": "2026-07-24",
+    "lastSeen": "2026-07-27",
+    "name": "the Chris Benoit",
+    "desc": "Creme Brulee French Toast?! Batter Dipped Crispelli's French Bread, Burnt Pastry Cream, Blueberries and Pistachios.🥬",
+    "price": "12.95",
+    "veg": true,
+    "photo": "assets/specials/toast-the-chris-benoit.jpg",
+    "photoBlob": "76d1bfe4d8404a47afd91356cfea788d3a260b48"
+  },
+  {
+    "firstSeen": "2026-07-29",
+    "lastSeen": "2026-07-29",
+    "name": "the Chris Benoit",
+    "desc": "Creme Brulee French Toast?! Batter Dipped Crispelli's Sourdough Bread, Burnt Pastry Cream, Blueberries and Pistachios.🥬",
+    "price": "12.95",
+    "veg": true,
+    "photo": "assets/specials/toast-the-chris-benoit.jpg",
+    "photoBlob": "76d1bfe4d8404a47afd91356cfea788d3a260b48"
+  },
+  {
+    "firstSeen": "2026-07-31",
+    "lastSeen": "2026-08-06",
+    "name": "The Cuban Croque Senora",
+    "desc": "Grilled sourdough stuffed with ham, roast pork, swiss, mustard and pickle. Broiled with a mojo mornay and topped with a sunny egg. Pick a side.",
+    "price": "15.95",
+    "veg": false,
+    "photo": "assets/specials/toast-the-cuban-croque-senora.jpg",
+    "photoBlob": "fab73c951fbb02f7900ba6374eea625b25713db1"
+  },
+  {
+    "firstSeen": "2026-07-31",
+    "lastSeen": "2026-08-03",
+    "name": "La Spazzatura",
+    "desc": "Roasted portobella, fennel, onion, greens and tomatoes hashed together with house spuds. topped with melty mozzarella, eggs and arugula pesto. Toast!🥬",
+    "price": "14.95",
+    "veg": true,
+    "photo": "assets/specials/toast-la-spazzatura.jpg",
+    "photoBlob": "2dac9fcee4245566d30fc95e3b9e6204b7d8907b"
+  },
+  {
+    "firstSeen": "2026-08-05",
+    "lastSeen": "2026-08-06",
+    "name": "La Figata",
+    "desc": "House made calabrian chili, provolone and pork sausage sitting atop an egg rumble with sweet pepper, red onion, spinach and more provolone. Browns and toast.",
+    "price": "15.95",
+    "veg": false,
+    "photo": "assets/specials/toast-la-figata.jpg",
+    "photoBlob": "7fbdf0090da9d4fb0e4481ba43d24329d35f3efe"
+  }
+]
