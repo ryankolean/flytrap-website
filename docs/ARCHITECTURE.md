@@ -50,7 +50,7 @@ This flat layout is deliberate and enforced — see [AGENTS.md](../AGENTS.md).
 | Path | What it is |
 |---|---|
 | `.github/scripts/toast-sync.mjs` | Pulls the standing menu from Toast → `assets/menu.json`. |
-| `.github/scripts/specials-sync.mjs` | Pulls weekly specials + soup + muffin → the marked blocks in `data.js`, downloads special photos. |
+| `.github/scripts/specials-sync.mjs` | Pulls weekly specials + soup + muffin → the marked blocks in `data.js`, downloads special photos, and appends to `docs/specials-history.json`. |
 | `.github/scripts/fixtures/*.json` | Sample Toast payloads for offline testing. |
 | `.github/workflows/toast-sync.yml` | The scheduled sync job. |
 | `.github/workflows/pages.yml` | Deploy to GitHub Pages. |

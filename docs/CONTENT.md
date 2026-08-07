@@ -129,6 +129,13 @@ Six other brand files (`flytrap-logo-orange.png`, `flytrap-logo-original.png`,
 **not referenced anywhere**. Neither are the six photos in `assets/details/`. They're
 kept as source material; delete them if you want a smaller repo.
 
+### Every special is archived
+
+`docs/specials-history.json` records each special that has ever run — dates, name,
+description, price, and a handle for recovering its photo even after the file is
+pruned. Nothing to maintain; the sync appends to it. See
+[SPECIALS_SYNC.md](SPECIALS_SYNC.md#the-archive--every-special-ever-run).
+
 ### Specials photos clean themselves up
 
 `assets/specials/` holds only the photos of the specials currently running. After a

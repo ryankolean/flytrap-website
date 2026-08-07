@@ -122,6 +122,33 @@ TOAST_DRY_RUN=1 TOAST_CLIENT_ID=… TOAST_CLIENT_SECRET=… TOAST_RESTAURANT_GUI
 ```
 Prints the specials it would publish; writes nothing, downloads nothing.
 
+## The archive — every special ever run
+
+`docs/specials-history.json` is a running record of every special that has been
+published, appended by the sync whenever `data.js` changes. The site never reads
+it; it exists so the restaurant can answer "what did we run last spring?" without
+a developer.
+
+Each entry carries `firstSeen` / `lastSeen` dates, the name, description, price,
+veg flag, the photo path, and `photoBlob` — git's own hash of the image bytes.
+
+A special running for three weeks is **one** entry with a moving `lastSeen`, not
+three. Matching is on name plus description, with the 🥬 veg glyph ignored (adding
+the marker to an existing special is not a new dish). A genuine wording change
+does create a new entry, which is intended — a Chris Benoit made with sourdough is
+not the one made with French bread.
+
+### Getting a pruned photo back
+
+The sync deletes a special's photo once it rotates out, but git keeps every blob
+that was ever committed. `photoBlob` is the direct handle:
+
+```bash
+git cat-file -p 97bb3b84392d... > the-turkish-ish-eggs.jpg
+```
+
+No need to hunt for the commit that deleted it.
+
 ## There is no manual override
 
 Toast is the only way in. A Google Apps Script form used to publish specials
