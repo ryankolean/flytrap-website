@@ -57,11 +57,14 @@ Details: [SPECIALS_SYNC.md](SPECIALS_SYNC.md) · [TOAST_MENU_SYNC.md](TOAST_MENU
 The next sync overwrites them. Do not remove the marker comments either — the
 splice function throws without them, which breaks the sync.
 
-### The emergency manual path
+### There is no manual override
 
-`apps-script/` is a Google Apps Script web form that publishes specials directly to
-`main`. It is the override if Toast is unusable. Whatever it writes is replaced by
-the next successful Toast sync, so treat it as temporary.
+Toast is the only way to change a special. A Google Apps Script form used to publish
+directly to `main`; it was removed because the next sync overwrote whatever it wrote
+within 15 minutes, so it offered false reassurance rather than a real fallback.
+
+If Toast is down, the last good specials stay on the site untouched — that is the
+fallback.
 
 ---
 
@@ -134,7 +137,8 @@ no longer references (`orphanedPhotos()`, unit-tested).
 
 The prune is deliberately narrow: it only removes files matching the sync's own
 `toast-<slug>.jpg` naming, and only after every download succeeded. Anything you add
-by hand, or that the Apps Script form published as `week-*.jpg`, is left alone.
+by hand, or that the retired Apps Script form published as `week-*.jpg`, is left
+alone.
 
 ---
 

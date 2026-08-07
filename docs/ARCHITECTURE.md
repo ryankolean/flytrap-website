@@ -55,7 +55,7 @@ This flat layout is deliberate and enforced — see [AGENTS.md](../AGENTS.md).
 | `.github/workflows/toast-sync.yml` | The scheduled sync job. |
 | `.github/workflows/pages.yml` | Deploy to GitHub Pages. |
 | `.github/workflows/guardrails.yml` | Mechanical enforcement of the stack rules. |
-| `apps-script/` | Google Apps Script "publish specials from a web form" tool — the manual override path. `lib/specials.js` is **also imported by the sync script and the tests**, so it is not dead code. |
+| `apps-script/lib/` | Shared block-building helpers. `specials.js` is imported by `.github/scripts/specials-sync.mjs` and the tests; `github.js` by `test/github.test.mjs`. The Apps Script web app that gave the directory its name is gone — only the library remains. |
 | `test/*.mjs` | `node:test` unit tests for the specials/soup block builders. |
 | `.claude/` | Agent tooling: the design-sync skill and its state, launch config, archived plans/reports. |
 
@@ -210,15 +210,21 @@ To require the check as well, one of these has to happen first:
 
 Until then `guardrails` reports on every PR but does not mechanically block a merge.
 
-### `apps-script/` — the manual specials publisher
+### `apps-script/lib/` — shared helpers, not an app
 
-A Google Apps Script web app (`doGet` serves `Form.html`) that lets a non-developer
-submit specials with photos. It builds the same `SPECIALS` block with
-`lib/specials.js` and commits **straight to `main`** via the GitHub API. Guarded by a
-passcode in Script Properties (`FORM_PASSCODE`) and a token (`GH_TOKEN`).
+The directory is named after a Google Apps Script web app that used to let a
+non-developer submit specials through a passcode-protected form, committing straight
+to `main` via the GitHub API with a personal access token.
 
-This is the emergency path only — Toast is the routine source. Note that anything it
-writes will be overwritten by the next Toast sync run.
+**That app was removed.** Once Toast became the source of truth, the next sync
+overwrote anything the form published within 15 minutes, so it was not the fallback
+it appeared to be — and it carried a personal token and a hardcoded repo path that
+would break on any change of ownership.
+
+What remains is the library it shared with the sync: `lib/specials.js` (builds and
+splices the `SPECIALS` / `EXTRAS` blocks — used by `specials-sync.mjs` and the tests)
+and `lib/github.js` (used by `test/github.test.mjs`). Renaming the directory would
+churn those import paths for no functional gain, so the name stays.
 
 ### Claude Design sync (legacy)
 

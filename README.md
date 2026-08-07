@@ -59,5 +59,3 @@ Deep dives on the two sync scripts:
   Kara manages the actual menu content inside Toast.
 - **Domain registrar** for `theflytrapferndale.com` / `.net` — needed for the
   production cutover only.
-- **Google Apps Script** project (optional) — the emergency manual specials
-  publisher in `apps-script/`. Needs its own GitHub token.

@@ -24,7 +24,7 @@ tested `apps-script/lib/specials.js` block builder):
    crops cleanly). Once every download has succeeded, delete any `toast-*.jpg`
    the new block no longer references, so the directory doesn't grow forever.
    Only the script's own `toast-` naming is ever pruned — hand-added files and the
-   form publisher's `week-*.jpg` are left alone.
+   retired form publisher's `week-*.jpg` are left alone.
 4. Read the **soup** (the **"Soup O' The Day"** item — flavor from its
    description, **Cup = the item's base price**, **Bowl = base + the "Bowl" size
    upcharge**, plus an **out-of-stock** flag). Toast delivers the "Soup Sizes"
@@ -122,9 +122,13 @@ TOAST_DRY_RUN=1 TOAST_CLIENT_ID=… TOAST_CLIENT_SECRET=… TOAST_RESTAURANT_GUI
 ```
 Prints the specials it would publish; writes nothing, downloads nothing.
 
-## Relationship to the manual flow
+## There is no manual override
 
-The tweaks-panel form publisher still writes the same block, so it remains
-available as a manual override / emergency path — but it is no longer the weekly
-routine. Toast is. (The old Instagram-based `flytrap-specials` skill was retired
-when Toast became the sole source.)
+Toast is the only way in. A Google Apps Script form used to publish specials
+straight to `main`, and the earlier Instagram-based `flytrap-specials` skill before
+that; both are retired. The form was removed because anything it wrote was
+overwritten by the next sync within 15 minutes — it read like a safety net but
+wasn't one.
+
+If Toast is unreachable, the last good specials stay live (see Fallback above).
+To change what's on the site, change it in Toast.
