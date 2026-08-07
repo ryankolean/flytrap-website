@@ -8,13 +8,22 @@ Audited against `main` on **2026-08-05**.
 
 The site is **not yet the production site**. `theflytrapferndale.com` still serves the
 old legacy site; this repo deploys to
-`https://ryankolean.github.io/flytrap-website/`. `theflytrapferndale.net` does not
+`https://the-fly-trap-a-finer-diner.github.io/flytrap-website/`. `theflytrapferndale.net` does not
 currently resolve.
 
 The SEO/AEO payload is **on `main`** (PR
-[#114](https://github.com/ryankolean/flytrap-website/pull/114)). What remains is the
+[#114](https://github.com/the-Fly-Trap-a-finer-diner/flytrap-website/pull/114)). What remains is the
 **DNS cutover** plus the one-line `CNAME` file, which are deliberately held together —
 see [below](#cname-is-deliberately-not-committed-yet).
+
+> The repo moved from `ryankolean/` to the `the-Fly-Trap-a-finer-diner` organization
+> on 2026-08-07, so the staging URL changed with it. GitHub does not redirect Pages
+> across a transfer — the old `ryankolean.github.io/flytrap-website` address is dead,
+> not redirecting. Anyone still holding that link needs the new one.
+>
+> This also matters for the cutover: **custom-domain verification is per-account**, so
+> `theflytrapferndale.com` must be verified under the *organization*, not a personal
+> account.
 
 ---
 
@@ -65,7 +74,7 @@ In the app itself, things that help without being "SEO tags":
 
 ## Where this came from
 
-PR [#114](https://github.com/ryankolean/flytrap-website/pull/114) landed the whole
+PR [#114](https://github.com/the-Fly-Trap-a-finer-diner/flytrap-website/pull/114) landed the whole
 payload above. The problem it solved: the site renders entirely client-side, so the
 served `<body>` was just `<div id="root"></div>`. Google can render JS, but Bing and
 the AI answer engines (GPTBot, ClaudeBot, PerplexityBot, Google-Extended, Applebot)
@@ -78,7 +87,7 @@ repo's no-build constraint.
 ### `CNAME` is deliberately not committed yet
 
 A `CNAME` file makes GitHub Pages bind the custom domain and **301-redirect
-`ryankolean.github.io/flytrap-website/` to it**. DNS for `theflytrapferndale.com`
+`the-fly-trap-a-finer-diner.github.io/flytrap-website/` to it**. DNS for `theflytrapferndale.com`
 still points at the old legacy site, so shipping `CNAME` before the DNS change would
 send every visitor of the staging URL to the old site — effectively taking the new
 site offline.
@@ -101,7 +110,7 @@ of the same site split ranking signals and invite duplicate-content handling.
 ### Cutover checklist (registrar + GitHub, not in the repo)
 
 1. **`.com` (primary)** — apex `A`/`AAAA` (or `ALIAS`) records → GitHub Pages IPs;
-   `www` `CNAME` → `ryankolean.github.io`. Then commit the one-line `CNAME` file
+   `www` `CNAME` → `the-fly-trap-a-finer-diner.github.io`. Then commit the one-line `CNAME` file
    (see above), set the custom domain in **Settings → Pages**, and enable
    **Enforce HTTPS**. Do these together — the `CNAME` file redirects the staging URL
    the moment it deploys.

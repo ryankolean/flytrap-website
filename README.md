@@ -8,8 +8,8 @@ Menu and specials content is pulled from **Toast** by a scheduled GitHub Action.
 
 | | |
 |---|---|
-| **Repo** | `ryankolean/flytrap-website` |
-| **Deployed** | GitHub Pages from `main` → https://ryankolean.github.io/flytrap-website/ |
+| **Repo** | `the-Fly-Trap-a-finer-diner/flytrap-website` |
+| **Deployed** | GitHub Pages from `main` → https://the-fly-trap-a-finer-diner.github.io/flytrap-website/ |
 | **Production domain** | **Not cut over yet.** `theflytrapferndale.com` still serves the old legacy site. See [docs/SEO.md](docs/SEO.md). |
 | **Content source** | Toast POS (menu, weekly specials, soup, muffin) + hand-edited files for everything else |
 | **CI** | `guardrails` on every PR, `toast-sync` every 15 min, `pages` on every push to `main` |

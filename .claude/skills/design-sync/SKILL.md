@@ -7,7 +7,7 @@ description: Pull updates from the Claude Design project "The Fly Trap - A Finer
 
 ## Project links
 
-- **Repo:** https://github.com/ryankolean/flytrap-website
+- **Repo:** https://github.com/the-Fly-Trap-a-finer-diner/flytrap-website
 - **Claude Design project:** https://claude.ai/design/p/019de9e7-4c3e-72d2-ab13-812e9dc9223d
 - **Project ID:** `019de9e7-4c3e-72d2-ab13-812e9dc9223d`
 - **Live site:** GitHub Pages from `main` (`.github/workflows/pages.yml`)
